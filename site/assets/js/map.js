@@ -19,20 +19,62 @@ let geoJsonLayer = null;
 export async function initMap(metaConfig) {
     console.log("[map.js] Inicializando mapa interativo...");
 
-    // 1. Inicializa o objeto Leaflet centrado no Brasil
+    // 1. Inicializa o objeto Leaflet centrado no Brasil com aceleração via Canvas
     leafletMap = L.map("leaflet-map", {
         center: [-14.235, -51.925],
         zoom: 4,
         minZoom: 3,
-        maxZoom: 14
+        maxZoom: 18,
+        preferCanvas: true
     });
 
-    // 2. Base Cartográfica OpenStreetMap / CartoDB Positron
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: "abcd",
-        maxZoom: 19
-    }).addTo(leafletMap);
+    // 2. Camadas de Mapa Base (Google Maps e alternativas sem restrição de API Key)
+    const googlePadrao = L.tileLayer(
+        "https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=pt-BR",
+        {
+            subdomains: ["0", "1", "2", "3"],
+            attribution: "Dados do mapa &copy; Google",
+            maxZoom: 20
+        }
+    );
+
+    const googleTerreno = L.tileLayer(
+        "https://mt{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}&hl=pt-BR",
+        {
+            subdomains: ["0", "1", "2", "3"],
+            attribution: "Dados do mapa &copy; Google Relevo",
+            maxZoom: 20
+        }
+    );
+
+    const googleHibrido = L.tileLayer(
+        "https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}&hl=pt-BR",
+        {
+            subdomains: ["0", "1", "2", "3"],
+            attribution: "Imagens &copy; Google Satélite",
+            maxZoom: 20
+        }
+    );
+
+    const openStreetMap = L.tileLayer(
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }
+    );
+
+    // Google Maps Padrão ativado por padrão
+    googlePadrao.addTo(leafletMap);
+
+    // Controle de seleção de mapa base estilo Google Maps
+    const baseMaps = {
+        "Google Maps (Padrão)": googlePadrao,
+        "Google Maps (Relevo)": googleTerreno,
+        "Google Maps (Satélite)": googleHibrido,
+        "OpenStreetMap": openStreetMap
+    };
+    L.control.layers(baseMaps, null, { position: "topright" }).addTo(leafletMap);
 
     // 3. Carrega o payload de dados municipais
     await loadMapaResumo();
@@ -124,12 +166,12 @@ function styleFeature(feature) {
     // Regra 3 e 4: Sem classificação recebe padrão visual cinza neutro
     if (!mun || mun.status === "sem_classificacao" || mun[activeLayerKey] === null) {
         return {
-            fillColor: "#cbd5e1",
-            weight: 0.5,
-            opacity: 1,
-            color: "#94a3b8",
+            fillColor: "#94a3b8",
+            weight: 0.6,
+            opacity: 0.9,
+            color: "#475569",
             dashArray: "2, 2",
-            fillOpacity: 0.6
+            fillOpacity: 0.35
         };
     }
 
