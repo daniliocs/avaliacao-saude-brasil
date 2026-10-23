@@ -9,12 +9,13 @@
  * - Disparo da Ficha Lateral (openDrawer)
  */
 
-import { openDrawer } from "./drawer_municipio.js?v=0.2.1";
+import { openDrawer } from "./drawer_municipio.js?v=0.3.0";
 
 let leafletMap = null;
 let mapaResumoData = {};
 let rankingsData = {};
 let activeLayerKey = "nota_geral"; // 'nota_geral' | 'd1_nota' | 'd2_nota' | 'd3_nota'
+let activeRankDim = "nota_geral";  // 'nota_geral' | 'd1_nota' | 'd2_nota' | 'd3_nota'
 let geoJsonLayer = null;
 
 const UF_CENTERS = {
@@ -111,10 +112,11 @@ export async function initMap(metaConfig) {
         if (leafletMap) leafletMap.invalidateSize();
     }, 150);
 
-    // 3. Configura controles de busca, filtros, seletor de camada e ranking IMEDIATAMENTE
+    // 3. Configura controles de busca, filtros, seletor de camada, rankings e modal de info
     setupLayerSelector();
     setupSearchAndFilters();
     setupRankingsModal();
+    setupInfoModal();
 
     // 4. Carrega os dados e malha de forma assíncrona
     loadMapaResumo().then(() => {
@@ -227,13 +229,29 @@ function renderGeoJson(geoData) {
             if (escoreFmt) {
                 statusBlock = `
                     <div style="margin: 4px 0 6px 0;">
-                        <span style="background:${corNota}; color:#ffffff; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.85rem; display:inline-block;">
-                            Nota D1.1: ${escoreFmt} / 100
+                        <span style="background:${corNota}; color:#ffffff; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.875rem; display:inline-block;">
+                            Nota Geral: ${escoreFmt} / 100
                         </span>
                     </div>
-                    <span style="color:#1e293b;">📉 Mortalidade Infantil: <strong>${tmiFmt}</strong></span><br>
-                    <span style="color:#475569;">🏆 Ranking Nacional: <strong>#${mun.posicao_nacional}</strong> de 5.570</span><br>
-                    <span style="color:#475569;">🥇 Ranking Estadual (${mun.uf}): <strong>#${mun.posicao_estadual}º</strong></span><br>
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:4px; padding:4px 6px; margin-bottom:6px; font-size:0.75rem;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                            <span><strong>D1</strong> Resultados:</span>
+                            <strong style="color:${getColorForScore(mun.d1_nota)}">${mun.d1_nota !== null && mun.d1_nota !== undefined ? mun.d1_nota.toFixed(1) : '—'}</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                            <span><strong>D2</strong> Primária:</span>
+                            <strong style="color:${getColorForScore(mun.d2_nota)}">${mun.d2_nota !== null && mun.d2_nota !== undefined ? mun.d2_nota.toFixed(1) : '—'}</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span><strong>D3</strong> Estrutura:</span>
+                            <strong style="color:${getColorForScore(mun.d3_nota)}">${mun.d3_nota !== null && mun.d3_nota !== undefined ? mun.d3_nota.toFixed(1) : '—'}</strong>
+                        </div>
+                    </div>
+                    <div style="font-size:0.78rem; line-height:1.45; color:#334155;">
+                        <span>🏆 Ranking Nacional: <strong>#${mun.posicao_nacional}</strong> de 5.570</span><br>
+                        <span>🥇 Ranking Estadual (${mun.uf}): <strong>#${mun.posicao_estadual}º</strong></span><br>
+                        <span>👥 Grupo de Pares: <strong>#${mun.posicao_grupo_pares || '—'}º</strong></span>
+                    </div>
                 `;
             } else {
                 statusBlock = `<span style="color:#d97706; font-weight:700;">Status: Sem Classificação (Fase 0)</span><br>`;
@@ -405,6 +423,7 @@ function setupRankingsModal() {
     const btnRanking = document.getElementById("btn-toggle-ranking");
     const modalRanking = document.getElementById("rankings-modal");
     const btnCloseRank = document.getElementById("btn-close-ranking");
+    const rankDimButtons = document.querySelectorAll(".rank-dim-btn");
 
     if (btnRanking && modalRanking) {
         btnRanking.addEventListener("click", () => {
@@ -429,9 +448,53 @@ function setupRankingsModal() {
         });
     }
 
+    // Filtros de Dimensão dentro do Modal de Ranking
+    rankDimButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            rankDimButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            activeRankDim = btn.dataset.rankDim || "nota_geral";
+            const ufFilter = document.getElementById("uf-filter");
+            const activeUf = ufFilter ? ufFilter.value : "";
+            renderRankingsContent(activeUf);
+        });
+    });
+
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && modalRanking && modalRanking.classList.contains("active")) {
             modalRanking.classList.remove("active");
+        }
+    });
+}
+
+function setupInfoModal() {
+    const btnInfo = document.getElementById("btn-info");
+    const modalInfo = document.getElementById("info-modal");
+    const btnCloseInfo = document.getElementById("btn-close-info");
+
+    if (btnInfo && modalInfo) {
+        btnInfo.addEventListener("click", () => {
+            modalInfo.classList.add("active");
+        });
+    }
+
+    if (btnCloseInfo && modalInfo) {
+        btnCloseInfo.addEventListener("click", () => {
+            modalInfo.classList.remove("active");
+        });
+    }
+
+    if (modalInfo) {
+        modalInfo.addEventListener("click", (e) => {
+            if (e.target === modalInfo) {
+                modalInfo.classList.remove("active");
+            }
+        });
+    }
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modalInfo && modalInfo.classList.contains("active")) {
+            modalInfo.classList.remove("active");
         }
     });
 }
@@ -443,6 +506,36 @@ function renderRankingsContent(selectedUf = "") {
         return;
     }
 
+    // Seleciona ou calcula a lista de acordo com activeRankDim
+    let brasilTop10 = [];
+    let ufTop10 = [];
+    const allMun = Object.values(mapaResumoData);
+
+    if (activeRankDim === "nota_geral") {
+        brasilTop10 = rankingsData.top10_brasil_melhores || [];
+        ufTop10 = selectedUf ? (rankingsData.rankings_por_uf?.[selectedUf]?.melhores || []) : [];
+    } else {
+        brasilTop10 = allMun
+            .filter(m => typeof m[activeRankDim] === "number")
+            .sort((a, b) => b[activeRankDim] - a[activeRankDim])
+            .slice(0, 10);
+
+        if (selectedUf) {
+            ufTop10 = allMun
+                .filter(m => m.uf === selectedUf && typeof m[activeRankDim] === "number")
+                .sort((a, b) => b[activeRankDim] - a[activeRankDim])
+                .slice(0, 10);
+        }
+    }
+
+    const dimLabelMap = {
+        "nota_geral": "Índice Consolidado (D1 + D2 + D3)",
+        "d1_nota": "Dimensão 1 — Mortalidade Infantil (SIM / SINASC)",
+        "d2_nota": "Dimensão 2 — Atenção Primária (Pré-natal e Vacinas)",
+        "d3_nota": "Dimensão 3 — Estrutura e Acesso (Leitos, Médicos, ESF)"
+    };
+    const activeLabel = dimLabelMap[activeRankDim] || "Índice Consolidado";
+
     const ufInfo = selectedUf ? rankingsData.rankings_por_uf?.[selectedUf] : null;
     const ufTitle = selectedUf ? `Top 10 — ${selectedUf} (Média Estadual: ${ufInfo?.media_escore_uf || '—'} pts)` : "Selecione um Estado no filtro de UF para ver o ranking estadual";
 
@@ -450,18 +543,31 @@ function renderRankingsContent(selectedUf = "") {
         if (!items || items.length === 0) return "<p style='color:var(--color-text-subtle);'>Nenhum município listado.</p>";
         return `
             <div style="display:flex; flex-direction:column; gap:0.4rem;">
-                ${items.map((m, idx) => `
-                    <div class="ranking-row-item" data-ibge="${m.ibge7}" style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0.65rem; border:1px solid var(--color-border); border-radius:6px; background:var(--color-surface); cursor:pointer;">
-                        <div>
-                            <span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${idx + 1}</span>
-                            <strong>${m.nome} (${m.uf})</strong>
-                            <div style="font-size:0.75rem; color:var(--color-text-subtle);">${m.populacao ? m.populacao.toLocaleString('pt-BR') + ' hab.' : ''} | TMI: ${m.tmi_bayes.toFixed(1)}/mil NV</div>
+                ${items.map((m, idx) => {
+                    const d1 = typeof m.d1_nota === "number" ? m.d1_nota.toFixed(1) : "—";
+                    const d2 = typeof m.d2_nota === "number" ? m.d2_nota.toFixed(1) : "—";
+                    const d3 = typeof m.d3_nota === "number" ? m.d3_nota.toFixed(1) : "—";
+                    const score = typeof m[activeRankDim] === "number" ? m[activeRankDim] : (typeof m.escore === "number" ? m.escore : m.nota_geral);
+                    const scoreFmt = typeof score === "number" ? score.toFixed(1) : "—";
+
+                    return `
+                        <div class="ranking-row-item" data-ibge="${m.ibge7}" style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0.65rem; border:1px solid var(--color-border); border-radius:6px; background:var(--color-surface); cursor:pointer;">
+                            <div>
+                                <span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${idx + 1}</span>
+                                <strong>${m.nome} (${m.uf})</strong>
+                                <div style="font-size:0.75rem; color:var(--color-text-subtle); margin-top:1px;">
+                                    ${m.populacao ? m.populacao.toLocaleString('pt-BR') + ' hab.' : ''} &bull; 
+                                    <span>D1: <strong>${d1}</strong></span> | 
+                                    <span>D2: <strong>${d2}</strong></span> | 
+                                    <span>D3: <strong>${d3}</strong></span>
+                                </div>
+                            </div>
+                            <span style="background:${getColorForScore(score)}; color:#fff; font-weight:700; font-size:0.8125rem; padding:2px 8px; border-radius:4px; margin-left:8px;">
+                                ${scoreFmt}
+                            </span>
                         </div>
-                        <span style="background:${getColorForScore(m.escore)}; color:#fff; font-weight:700; font-size:0.8125rem; padding:2px 8px; border-radius:4px;">
-                            ${m.escore.toFixed(1)}
-                        </span>
-                    </div>
-                `).join("")}
+                    `;
+                }).join("")}
             </div>
         `;
     };
@@ -470,21 +576,21 @@ function renderRankingsContent(selectedUf = "") {
         <div style="display:flex; flex-direction:column; gap:1.25rem;">
             <div>
                 <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:0.5rem; color:#1e293b;">
-                    🇧🇷 Top 10 Brasil — Menor Mortalidade Infantil (D1.1)
+                    🇧🇷 Top 10 Brasil — ${activeLabel}
                 </h4>
-                ${renderList(rankingsData.top10_brasil_melhores)}
+                ${renderList(brasilTop10)}
             </div>
 
             <div>
                 <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:0.5rem; color:#1e293b;">
                     🏛️ ${ufTitle}
                 </h4>
-                ${selectedUf ? renderList(ufInfo?.melhores) : `<p style="font-size:0.8125rem; color:var(--color-text-subtle);">Escolha um estado no topo da página (ex.: MG, SP, BA) para listar os líderes estaduais.</p>`}
+                ${selectedUf ? renderList(ufTop10) : `<p style="font-size:0.8125rem; color:var(--color-text-subtle);">Escolha um estado no filtro do topo da tela (ex.: SP, SC, MG, RS) para listar os 10 melhores municipais.</p>`}
             </div>
         </div>
     `;
 
-    // Clique em qualquer item do ranking voa para o município e abre a ficha
+    // Clique em qualquer item do ranking fecha modal e abre a ficha do município
     container.querySelectorAll(".ranking-row-item").forEach(item => {
         item.addEventListener("click", () => {
             const ibge7 = item.dataset.ibge;

@@ -66,9 +66,11 @@ def gate_schema_municipios(df: pd.DataFrame, expected_count: int = 5570) -> bool
     return True
 
 
-def gate_plausible_ranges(df: pd.DataFrame, rate_columns: list, proportion_columns: list, pop_col: str = None) -> bool:
+def gate_plausible_ranges(df: pd.DataFrame, rate_columns: list = None, proportion_columns: list = None, pop_col: str = None) -> bool:
     """Valida se os valores numéricos respeitam as leis da epidemiologia e demografia."""
     print("[QualityGate:Plausibilidade] Checando limites matemáticos e biológicos...")
+    rate_columns = rate_columns or []
+    proportion_columns = proportion_columns or []
 
     # 1. População estritamente positiva
     if pop_col and pop_col in df.columns:
@@ -206,7 +208,23 @@ def run_all_gates(dim_municipio_path: str = "data/processed/dim_municipio.parque
             sys.exit(1)
         print("[QualityGate:Indicadores] OK — Indicador D1.1 validado com 100% de integridade epidemiológica.")
 
-    # 4. Gate de reprodutibilidade e proveniência
+    # 4. Gate de validação do Índice Sintético Consolidado (se gerado)
+    indice_parquet = "data/processed/indice_saude_municipal.parquet"
+    if os.path.exists(indice_parquet):
+        print("[QualityGate:Índice] Validando Índice Sintético Consolidado (D1, D2, D3)...")
+        df_ind = pd.read_parquet(indice_parquet)
+        if len(df_ind) != 5570:
+            print(f"[QualityGate:FATAL] Índice Consolidado não possui 5.570 municípios: {len(df_ind)}")
+            sys.exit(1)
+        if not gate_plausible_ranges(df_ind, proportion_columns=["nota_geral", "d1_nota", "d2_nota", "d3_nota"]):
+            print("[QualityGate:FATAL] Escores fora da faixa [0, 100] no Índice Consolidado. ABORTANDO.")
+            sys.exit(1)
+        if not gate_completeness(df_ind, ["nota_geral", "d1_nota", "d2_nota", "d3_nota", "posicao_nacional", "posicao_estadual"], min_completeness_ratio=1.0):
+            print("[QualityGate:FATAL] Completude incompleta no Índice Consolidado. ABORTANDO.")
+            sys.exit(1)
+        print("[QualityGate:Índice] OK — Índice Consolidado (5.570 municípios) validado com sucesso.")
+
+    # 5. Gate de reprodutibilidade e proveniência
     input_artifacts = [
         "config/indicadores.yaml",
         "config/pesos.yaml",
@@ -216,6 +234,8 @@ def run_all_gates(dim_municipio_path: str = "data/processed/dim_municipio.parque
     ]
     if os.path.exists(d1_parquet):
         input_artifacts.append(d1_parquet)
+    if os.path.exists(indice_parquet):
+        input_artifacts.append(indice_parquet)
 
     manifest_path = "data/releases/latest/provenance_manifest.json"
     gate_reproducibility_hashes(input_artifacts, manifest_path)

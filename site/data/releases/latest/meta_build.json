@@ -1,6 +1,6 @@
 {
-  "build_timestamp": "2026-10-23T17:38:29.578569+00:00",
-  "versao_metodologia": "v0.2.0-fase2",
+  "build_timestamp": "2026-10-23T22:08:34.942486+00:00",
+  "versao_metodologia": "v0.3.0",
   "status_metodologia": "Rascunho Técnico (Fase 0)",
   "regras_inegociaveis": [
     "Proibido inventar dados numéricos ou limites",
@@ -735,6 +735,10 @@
     "data/processed/indicador_d1_1.parquet": {
       "sha256": "a73a6c82a1bf283d48292de31b621679a9624d4d5e34dd10efbbf36e46acf0f6",
       "bytes": 327605
+    },
+    "data/processed/indice_saude_municipal.parquet": {
+      "sha256": "d812a498746f4aaa009f07cd9c095d3511fd9ef56a3f70dedfc3716b39277275",
+      "bytes": 710730
     }
   }
 }

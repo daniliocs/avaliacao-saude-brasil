@@ -6,6 +6,35 @@ O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [v0.3.0] - 2026-10-23
+
+### Adicionado
+- **Índice Sintético de Saúde Pública Municipal Consolidado (D1, D2 e D3)**:
+  - Ingestão de dados oficiais 2022 de múltiplos sistemas nacionais via IEPS Data API (`data/raw/ieps_indicadores_2022.csv`):
+    - **D2.2**: Proporção de Nascidos Vivos com 7+ Consultas de Pré-Natal (%) [SINASC];
+    - **D2.3**: Cobertura Vacinal contra Poliomielite em menores de 1 ano (%) [SI-PNI / DATASUS];
+    - **D3.1**: Leitos de Internação SUS por 100.000 habitantes [CNES / DATASUS];
+    - **D3.2**: Médicos por 1.000 habitantes [CNES / DATASUS];
+    - **D3.3**: Cobertura Populacional da Estratégia Saúde da Família - ESF (%) [SAPS / SISAB];
+    - **Camada Privada**: Leitos Privados Não-SUS por 100.000 habitantes [CNES].
+  - Implementação do script de consolidação do índice `pipeline/indicators/build_composite_index.py`:
+    - Integração de D1 (Mortalidade Infantil suavizada), D2 (Atenção Primária) e D3 (Estrutura e Acesso);
+    - Ponderação estrita de 33,3% para cada dimensão;
+    - Normalização dos indicadores para a escala padrão 0–100 conforme metas e diretrizes sanitárias;
+    - Geração de `data/processed/indice_saude_municipal.parquet` e `.csv` (espelhados para download no site);
+    - Eliminação completa de distorções cartorárias observadas em indicadores isolados (ex.: Marabá/PA, antes #1 em D1 isolado por sub-registro de cartório, posiciona-se em #5.146 com nota 60,5 no índice consolidado, refletindo fidedignamente o déficit assistencial; e municípios com reconhecida excelência como Venda Nova do Imigrante/ES, Luiz Alves/SC e Paranaíta/MT lideram o ranking).
+  - Atualização dos Quality Gates em `pipeline/validate/quality_gates.py` para validação matemática de todos os escores consolidados e registro criptográfico no manifesto SHA-256.
+
+### Modificado
+- **Interface e Experiência do Usuário (UI/UX)**:
+  - **Redução drástica da barra superior**: Altura do cabeçalho enxugada para maximizar a área útil do mapa na tela.
+  - **Remoção do banner gigante de aviso**: O aviso de interpretação da Seção 10 foi transferido para um modal dedicado, acessado através do novo botão `"ℹ️ Info"` no cabeçalho.
+  - **Rankings Consolidados Multi-dimensionais**: Modal de rankings atualizado com abas para alternar entre "🌟 Nota Geral", "D1: Mortalidade", "D2: Primária" e "D3: Estrutura", exibindo os escores de todas as dimensões em cada linha.
+  - **Tooltips do Mapa Coroplético**: Exibição da Nota Geral (0–100) sempre acompanhada do trio D1, D2, D3, além das posições nacional, estadual e no grupo de pares.
+  - **Página de Downloads**: Adição de cards em destaque para download direto da base consolidada em `.CSV` e `.Parquet`.
+
+---
+
 ## [v0.2.0-fase2] - 2026-10-23
 
 ### Adicionado

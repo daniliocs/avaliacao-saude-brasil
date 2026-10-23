@@ -23,6 +23,18 @@ export function renderDownloadsView(metaBuild) {
             <section class="content-section">
                 <h2 class="section-title">Artefatos da Última Release</h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                    <div style="border: 2px solid var(--color-primary); border-radius: var(--radius-sm); padding: 1rem; background: var(--color-surface); grid-column: 1 / -1;">
+                        <span class="badge badge--quality-high" style="float: right;">Consolidado Oficial</span>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--color-text-main);">Índice de Saúde Municipal Consolidado (D1, D2, D3)</h3>
+                        <p style="font-size: 0.84rem; color: var(--color-text-muted); margin: 0.4rem 0 1rem 0;">
+                            Tabela completa dos 5.570 municípios com Nota Geral, dimensões D1, D2 e D3, posições nacional, estadual e por grupo de pares, além de todos os indicadores componentes com taxas brutas e suavizadas.
+                        </p>
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                            <a href="data/processed/indice_saude_municipal.csv" download class="badge badge--quality-high" style="text-decoration: none; padding: 0.5rem 1rem; font-size: 0.84rem;">📥 Download Tabela (.CSV)</a>
+                            <a href="data/processed/indice_saude_municipal.parquet" download class="badge badge--quality-high" style="text-decoration: none; padding: 0.5rem 1rem; font-size: 0.84rem;">📥 Microdados (.Parquet)</a>
+                        </div>
+                    </div>
+
                     <div style="border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 1rem; background: var(--color-bg);">
                         <h3 style="font-size: 1rem; font-weight: 700;">Dimensão Municipal (CSV)</h3>
                         <p style="font-size: 0.8125rem; color: var(--color-text-muted); margin: 0.35rem 0 0.85rem 0;">
