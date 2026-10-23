@@ -1,0 +1,736 @@
+{
+  "build_timestamp": "2026-10-23T15:50:03.569131+00:00",
+  "versao_metodologia": "v0.1.0-draft",
+  "status_metodologia": "Rascunho Técnico (Fase 0)",
+  "regras_inegociaveis": [
+    "Proibido inventar dados numéricos ou limites",
+    "Todo número exige rastreabilidade (fonte, vintage, coleta, versão, IC 95% e selo)",
+    "A Nota Geral nunca aparece sem as dimensões D1, D2 e D3 e faixa de sensibilidade",
+    "Recálculo integral de séries históricas em nova versão"
+  ],
+  "fontes": [
+    {
+      "id": "sim_do",
+      "nome": "Sistema de Informações sobre Mortalidade (SIM) — Declaração de Óbito",
+      "orgao": "Ministério da Saúde / DATASUS",
+      "url_documentacao": "A_VALIDAR",
+      "url_dados": "A_VALIDAR",
+      "formato": "dbc",
+      "periodicidade_publicacao": "A_VALIDAR",
+      "defasagem_tipica": "A_VALIDAR",
+      "licenca_termos_uso": "A_VALIDAR",
+      "ultima_verificacao": null,
+      "ultimo_periodo_disponivel": null,
+      "status": "em_revisao",
+      "pendencia_id": "PEND-004"
+    },
+    {
+      "id": "sinasc_nv",
+      "nome": "Sistema de Informações sobre Nascidos Vivos (SINASC) — Declaração de Nascido Vivo",
+      "orgao": "Ministério da Saúde / DATASUS",
+      "url_documentacao": "A_VALIDAR",
+      "url_dados": "A_VALIDAR",
+      "formato": "dbc",
+      "periodicidade_publicacao": "A_VALIDAR",
+      "defasagem_tipica": "A_VALIDAR",
+      "licenca_termos_uso": "A_VALIDAR",
+      "ultima_verificacao": null,
+      "ultimo_periodo_disponivel": null,
+      "status": "em_revisao",
+      "pendencia_id": "PEND-005"
+    },
+    {
+      "id": "sih_rd",
+      "nome": "Sistema de Informações Hospitalares do SUS (SIH/SUS) — Reduzida de AIH",
+      "orgao": "Ministério da Saúde / DATASUS",
+      "url_documentacao": "A_VALIDAR",
+      "url_dados": "A_VALIDAR",
+      "formato": "dbc",
+      "periodicidade_publicacao": "A_VALIDAR",
+      "defasagem_tipica": "A_VALIDAR",
+      "licenca_termos_uso": "A_VALIDAR",
+      "ultima_verificacao": null,
+      "ultimo_periodo_disponivel": null,
+      "status": "em_revisao",
+      "pendencia_id": "PEND-006"
+    },
+    {
+      "id": "sia_sus",
+      "nome": "Sistema de Informações Ambulatoriais do SUS (SIA/SUS)",
+      "orgao": "Ministério da Saúde / DATASUS",
+      "url_documentacao": "A_VALIDAR",
+      "url_dados": "A_VALIDAR",
+      "formato": "dbc",
+      "periodicidade_publicacao": "A_VALIDAR",
+      "defasagem_tipica": "A_VALIDAR",
+      "licenca_termos_uso": "A_VALIDAR",
+      "ultima_verificacao": null,
+      "ultimo_periodo_disponivel": null,
+      "status": "em_revisao",
+      "pendencia_id": "PEND-007"
+    },
+    {
+      "id": "cnes",
+      "nome": "Cadastro Nacional de Estabelecimentos de Saúde (CNES) — Estabelecimentos, Leitos e Profissionais",
+      "orgao": "Ministério da Saúde / DATASUS",
+      "url_documentacao": "A_VALIDAR",
+      "url_dados": "A_VALIDAR",
+      "formato": "dbc",
+      "periodicidade_publicacao": "A_VALIDAR",
+      "defasagem_tipica": "A_VALIDAR",
+      "licenca_termos_uso": "A_VALIDAR",
+      "ultima_verificacao": null,
+      "ultimo_periodo_disponivel": null,
+      "status": "em_revisao",
+      "pendencia_id": "PEND-008"
+    },
+    {
+      "id": "si_pni",
+      "nome": "Sistema de Informação do Programa Nacional de Imunizações (SI-PNI / RNDS)",
+      "orgao": "Ministério da Saúde / CGPNI",
+      "url_documentacao": "A_VALIDAR",
+      "url_dados": "A_VALIDAR",
+      "formato": "api",
+      "periodicidade_publicacao": "A_VALIDAR",
+      "defasagem_tipica": "A_VALIDAR",
+      "licenca_termos_uso": "A_VALIDAR",
+      "ultima_verificacao": null,
+      "ultimo_periodo_disponivel": null,
+      "status": "em_revisao",
+      "pendencia_id": "PEND-009"
+    },
+    {
+      "id": "sisab",
+      "nome": "Sistema de Informação em Saúde para a Atenção Básica (SISAB / e-Gestor AB)",
+      "orgao": "Ministério da Saúde / SAPS",
+      "url_documentacao": "A_VALIDAR",
+      "url_dados": "A_VALIDAR",
+      "formato": "csv",
+      "periodicidade_publicacao": "A_VALIDAR",
+      "defasagem_tipica": "A_VALIDAR",
+      "licenca_termos_uso": "A_VALIDAR",
+      "ultima_verificacao": null,
+      "ultimo_periodo_disponivel": null,
+      "status": "em_revisao",
+      "pendencia_id": "PEND-010"
+    },
+    {
+      "id": "ibge_pop",
+      "nome": "Instituto Brasileiro de Geografia e Estatística — Estimativas Populacionais, Censo e Malha Municipal",
+      "orgao": "IBGE",
+      "url_documentacao": "https://www.ibge.gov.br",
+      "url_dados": "https://servicodados.ibge.gov.br/api/v1/localidades/municipios",
+      "formato": "api",
+      "periodicidade_publicacao": "A_VALIDAR",
+      "defasagem_tipica": "A_VALIDAR",
+      "licenca_termos_uso": "Creative Commons Atribuição (CC BY) / Dados Abertos Brasil",
+      "ultima_verificacao": null,
+      "ultimo_periodo_disponivel": null,
+      "status": "ativo",
+      "pendencia_id": "PEND-011"
+    },
+    {
+      "id": "siops",
+      "nome": "Sistema de Informações sobre Orçamentos Públicos em Saúde (SIOPS)",
+      "orgao": "Ministério da Saúde",
+      "url_documentacao": "A_VALIDAR",
+      "url_dados": "A_VALIDAR",
+      "formato": "csv",
+      "periodicidade_publicacao": "A_VALIDAR",
+      "defasagem_tipica": "A_VALIDAR",
+      "licenca_termos_uso": "A_VALIDAR",
+      "ultima_verificacao": null,
+      "ultimo_periodo_disponivel": null,
+      "status": "em_revisao",
+      "pendencia_id": "PEND-012"
+    },
+    {
+      "id": "ans",
+      "nome": "Agência Nacional de Saúde Suplementar (ANS) — Caderno de Informações da Saúde Suplementar",
+      "orgao": "ANS / Ministério da Saúde",
+      "url_documentacao": "A_VALIDAR",
+      "url_dados": "A_VALIDAR",
+      "formato": "csv",
+      "periodicidade_publicacao": "A_VALIDAR",
+      "defasagem_tipica": "A_VALIDAR",
+      "licenca_termos_uso": "A_VALIDAR",
+      "ultima_verificacao": null,
+      "ultimo_periodo_disponivel": null,
+      "status": "em_revisao",
+      "pendencia_id": "PEND-013"
+    },
+    {
+      "id": "ieps_data",
+      "nome": "IEPS Data — Base de Indicadores de Saúde e Atenção Primária",
+      "orgao": "Instituto de Estudos para Políticas de Saúde (IEPS)",
+      "url_documentacao": "https://iepsdata.org.br",
+      "url_dados": "A_VALIDAR",
+      "formato": "csv",
+      "periodicidade_publicacao": "A_VALIDAR",
+      "defasagem_tipica": "A_VALIDAR",
+      "licenca_termos_uso": "A_VALIDAR",
+      "ultima_verificacao": null,
+      "ultimo_periodo_disponivel": null,
+      "status": "em_revisao",
+      "pendencia_id": "PEND-014"
+    },
+    {
+      "id": "ips_brasil",
+      "nome": "Índice de Progresso Social do Brasil (IPS Brasil)",
+      "orgao": "Rede IPS Brasil / Imazon",
+      "url_documentacao": "https://ipsbrasil.org.br",
+      "url_dados": "A_VALIDAR",
+      "formato": "csv",
+      "periodicidade_publicacao": "A_VALIDAR",
+      "defasagem_tipica": "A_VALIDAR",
+      "licenca_termos_uso": "A_VALIDAR",
+      "ultima_verificacao": null,
+      "ultimo_periodo_disponivel": null,
+      "status": "em_revisao",
+      "pendencia_id": "PEND-015"
+    }
+  ],
+  "dimensoes": {
+    "D1": {
+      "nome": "Resultados em Saúde",
+      "descricao": "Medição de desfechos em saúde (mortalidade infantil, materna, prematura por DCNT e causas evitáveis)",
+      "nivel_agregacao": "Município de residência",
+      "peso_padrao": 0.3333333333333333
+    },
+    "D2": {
+      "nome": "Atenção Primária",
+      "descricao": "Processos assistenciais e cobertura da atenção primária como ordenadora da rede do SUS",
+      "nivel_agregacao": "Município de residência",
+      "peso_padrao": 0.3333333333333333
+    },
+    "D3": {
+      "nome": "Acesso e Estrutura",
+      "descricao": "Capacidade instalada da rede pública de saúde (leitos na Região de Saúde, médicos e equipes)",
+      "nivel_agregacao": "Região de Saúde / Município",
+      "peso_padrao": 0.3333333333333333
+    },
+    "D4": {
+      "nome": "Contexto Municipal",
+      "descricao": "Gastos e aspectos socioeconômicos — FORA DA NOTA PRINCIPAL (DEC-001)",
+      "nivel_agregacao": "Município de residência",
+      "peso_padrao": 0.0
+    },
+    "PRIVADA": {
+      "nome": "Camada Privada",
+      "descricao": "Cobertura de saúde suplementar e oferta privada não-SUS — FORA DA NOTA PRINCIPAL (DEC-001)",
+      "nivel_agregacao": "Município de residência",
+      "peso_padrao": 0.0
+    }
+  },
+  "indicadores": [
+    {
+      "id": "D1.1",
+      "dimensao": "D1",
+      "nome": "Mortalidade Infantil",
+      "descricao": "Taxa de mortalidade infantil (óbitos em menores de 1 ano por 1.000 nascidos vivos)",
+      "sentido": "menor_melhor",
+      "unidade": "óbitos por 1.000 NV",
+      "fontes": [
+        "sim_do",
+        "sinasc_nv"
+      ],
+      "janela_anos": 3,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": true,
+      "requer_suavizacao_bayesiana": true,
+      "calcula_ic_poisson": true,
+      "pendencia_id": "PEND-028"
+    },
+    {
+      "id": "D1.2",
+      "dimensao": "D1",
+      "nome": "Razão de Mortalidade Materna",
+      "descricao": "Óbitos maternos por causas obstétricas diretas e indiretas por 100.000 nascidos vivos",
+      "sentido": "menor_melhor",
+      "unidade": "óbitos por 100.000 NV",
+      "fontes": [
+        "sim_do",
+        "sinasc_nv"
+      ],
+      "janela_anos": 5,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": true,
+      "requer_suavizacao_bayesiana": true,
+      "calcula_ic_poisson": true,
+      "pendencia_id": "PEND-016"
+    },
+    {
+      "id": "D1.3",
+      "dimensao": "D1",
+      "nome": "Mortalidade Prematura por DCNT Padronizada",
+      "descricao": "Taxa de mortalidade prematura (30 a 69 anos) por Doenças Crônicas Não Transmissíveis padronizada por idade",
+      "sentido": "menor_melhor",
+      "unidade": "óbitos por 100.000 hab",
+      "fontes": [
+        "sim_do",
+        "ibge_pop"
+      ],
+      "janela_anos": 3,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": true,
+      "requer_suavizacao_bayesiana": true,
+      "calcula_ic_poisson": true,
+      "pendencia_id": "PEND-017"
+    },
+    {
+      "id": "D1.4",
+      "dimensao": "D1",
+      "nome": "Mortalidade por Causas Evitáveis pelo SUS",
+      "descricao": "Taxa de mortalidade por causas evitáveis por intervenções do Sistema Único de Saúde",
+      "sentido": "menor_melhor",
+      "unidade": "óbitos por 100.000 hab",
+      "fontes": [
+        "sim_do",
+        "ibge_pop"
+      ],
+      "janela_anos": 3,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": true,
+      "requer_suavizacao_bayesiana": true,
+      "calcula_ic_poisson": true,
+      "pendencia_id": "PEND-018"
+    },
+    {
+      "id": "D2.1",
+      "dimensao": "D2",
+      "nome": "Internações por Condições Sensíveis à APS (ICSAP)",
+      "descricao": "Taxa de internações hospitalares no SUS por condições sensíveis à atenção primária por 10.000 habitantes",
+      "sentido": "menor_melhor",
+      "unidade": "internações por 10.000 hab",
+      "fontes": [
+        "sih_rd",
+        "ibge_pop"
+      ],
+      "janela_anos": 3,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": true,
+      "requer_suavizacao_bayesiana": true,
+      "calcula_ic_poisson": true,
+      "pendencia_id": "PEND-019"
+    },
+    {
+      "id": "D2.2",
+      "dimensao": "D2",
+      "nome": "Pré-natal Adequado (7+ Consultas)",
+      "descricao": "Proporção de nascidos vivos cujas mães realizaram 7 ou mais consultas de pré-natal",
+      "sentido": "maior_melhor",
+      "unidade": "%",
+      "fontes": [
+        "sinasc_nv"
+      ],
+      "janela_anos": 3,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": true,
+      "requer_suavizacao_bayesiana": false,
+      "calcula_ic_poisson": true,
+      "pendencia_id": "PEND-020"
+    },
+    {
+      "id": "D2.3",
+      "dimensao": "D2",
+      "nome": "Cobertura Vacinal Infantil",
+      "descricao": "Cobertura média das vacinas essenciais do calendário infantil de imunização",
+      "sentido": "maior_melhor",
+      "unidade": "%",
+      "fontes": [
+        "si_pni",
+        "sinasc_nv",
+        "ibge_pop"
+      ],
+      "janela_anos": 1,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": true,
+      "requer_suavizacao_bayesiana": false,
+      "calcula_ic_poisson": false,
+      "pendencia_id": "PEND-021"
+    },
+    {
+      "id": "D2.4",
+      "dimensao": "D2",
+      "nome": "Desempenho da Qualidade no Cofinanciamento da APS",
+      "descricao": "Escore dos 15 indicadores de qualidade da atenção primária (metodologia de cofinanciamento 2024)",
+      "sentido": "maior_melhor",
+      "unidade": "pontos (0-100)",
+      "fontes": [
+        "sisab"
+      ],
+      "janela_anos": 1,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": false,
+      "requer_suavizacao_bayesiana": false,
+      "calcula_ic_poisson": false,
+      "pendencia_id": "PEND-022"
+    },
+    {
+      "id": "D3.1",
+      "dimensao": "D3",
+      "nome": "Leitos SUS por Mil Habitantes (Região de Saúde)",
+      "descricao": "Razão de leitos hospitalares operacionais disponíveis ao SUS por 1.000 habitantes na Região de Saúde",
+      "sentido": "maior_melhor",
+      "unidade": "leitos por 1.000 hab",
+      "fontes": [
+        "cnes",
+        "ibge_pop"
+      ],
+      "janela_anos": 1,
+      "nivel_agregacao": "regiao_saude",
+      "entra_na_nota": true,
+      "requer_suavizacao_bayesiana": false,
+      "calcula_ic_poisson": false,
+      "pendencia_id": "PEND-023"
+    },
+    {
+      "id": "D3.2",
+      "dimensao": "D3",
+      "nome": "Médicos e Enfermeiros SUS por Mil Habitantes",
+      "descricao": "Número de profissionais médicos e enfermeiros únicos com vínculo ativo no SUS por 1.000 habitantes",
+      "sentido": "maior_melhor",
+      "unidade": "profissionais por 1.000 hab",
+      "fontes": [
+        "cnes",
+        "ibge_pop"
+      ],
+      "janela_anos": 1,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": true,
+      "requer_suavizacao_bayesiana": false,
+      "calcula_ic_poisson": false,
+      "pendencia_id": "PEND-024"
+    },
+    {
+      "id": "D3.3",
+      "dimensao": "D3",
+      "nome": "Cobertura de Equipes de Saúde da Família (eSF)",
+      "descricao": "Percentual estimado da população coberta por Equipes de Saúde da Família no município",
+      "sentido": "maior_melhor",
+      "unidade": "%",
+      "fontes": [
+        "sisab",
+        "cnes",
+        "ibge_pop"
+      ],
+      "janela_anos": 1,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": true,
+      "requer_suavizacao_bayesiana": false,
+      "calcula_ic_poisson": false,
+      "pendencia_id": "PEND-025"
+    },
+    {
+      "id": "D3.4",
+      "dimensao": "D3",
+      "nome": "Internações de Residentes no Próprio Município",
+      "descricao": "Proporção de internações SUS de munícipes realizadas nos estabelecimentos do próprio município",
+      "sentido": "informativo",
+      "unidade": "%",
+      "fontes": [
+        "sih_rd"
+      ],
+      "janela_anos": 1,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": false,
+      "requer_suavizacao_bayesiana": false,
+      "calcula_ic_poisson": false,
+      "pendencia_id": "PEND-026"
+    },
+    {
+      "id": "D4.1",
+      "dimensao": "D4",
+      "nome": "Gasto Per Capita em Saúde (SIOPS)",
+      "descricao": "Despesa total liquidada em ações e serviços públicos de saúde por habitante",
+      "sentido": "contexto",
+      "unidade": "R$/hab/ano",
+      "fontes": [
+        "siops",
+        "ibge_pop"
+      ],
+      "janela_anos": 1,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": false,
+      "requer_suavizacao_bayesiana": false,
+      "calcula_ic_poisson": false,
+      "pendencia_id": "PEND-027"
+    },
+    {
+      "id": "D4.2",
+      "dimensao": "D4",
+      "nome": "Aplicação de Receita Própria em Saúde (% EC 29)",
+      "descricao": "Percentual da receita de impostos e transferências constitucionais aplicada em saúde",
+      "sentido": "contexto",
+      "unidade": "%",
+      "fontes": [
+        "siops"
+      ],
+      "janela_anos": 1,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": false,
+      "requer_suavizacao_bayesiana": false,
+      "calcula_ic_poisson": false,
+      "pendencia_id": "PEND-027"
+    },
+    {
+      "id": "PRIV.1",
+      "dimensao": "PRIVADA",
+      "nome": "Taxa de Cobertura de Planos Privados de Saúde",
+      "descricao": "Proporção de residentes municipais com plano de assistência médica privada",
+      "sentido": "contexto",
+      "unidade": "%",
+      "fontes": [
+        "ans",
+        "ibge_pop"
+      ],
+      "janela_anos": 1,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": false,
+      "requer_suavizacao_bayesiana": false,
+      "calcula_ic_poisson": false,
+      "pendencia_id": "PEND-032"
+    },
+    {
+      "id": "PRIV.2",
+      "dimensao": "PRIVADA",
+      "nome": "Leitos Hospitalares Privados Não-SUS",
+      "descricao": "Número de leitos hospitalares privados não conveniados ao SUS por 1.000 habitantes",
+      "sentido": "contexto",
+      "unidade": "leitos por 1.000 hab",
+      "fontes": [
+        "cnes",
+        "ibge_pop"
+      ],
+      "janela_anos": 1,
+      "nivel_agregacao": "residencia",
+      "entra_na_nota": false,
+      "requer_suavizacao_bayesiana": false,
+      "calcula_ic_poisson": false,
+      "pendencia_id": "PEND-032"
+    }
+  ],
+  "pesos": {
+    "versao_esquema": "v0.1.0-draft",
+    "status_decisao": "A_DECIDIR",
+    "pendencia_id": "PEND-034",
+    "esquema_padrao": "pesos_iguais",
+    "esquemas": {
+      "pesos_iguais": {
+        "descricao": "Pesos equivalentes entre as dimensões D1, D2 e D3 (33,33% cada) e pesos iguais entre os indicadores de cada dimensão",
+        "dimensoes": {
+          "D1": 0.3333333333333333,
+          "D2": 0.3333333333333333,
+          "D3": 0.3333333333333333,
+          "D4": 0.0,
+          "PRIVADA": 0.0
+        },
+        "indicadores": {
+          "D1.1": 0.25,
+          "D1.2": 0.25,
+          "D1.3": 0.25,
+          "D1.4": 0.25,
+          "D2.1": 0.3333333333333333,
+          "D2.2": 0.3333333333333333,
+          "D2.3": 0.3333333333333333,
+          "D2.4": 0.0,
+          "D3.1": 0.3333333333333333,
+          "D3.2": 0.3333333333333333,
+          "D3.3": 0.3333333333333333,
+          "D3.4": 0.0
+        }
+      },
+      "foco_resultados": {
+        "descricao": "Maior ênfase na Dimensão de Resultados Epidemiológicos (D1=50%, D2=30%, D3=20%)",
+        "dimensoes": {
+          "D1": 0.5,
+          "D2": 0.3,
+          "D3": 0.2,
+          "D4": 0.0,
+          "PRIVADA": 0.0
+        },
+        "indicadores": {
+          "D1.1": 0.3,
+          "D1.2": 0.3,
+          "D1.3": 0.2,
+          "D1.4": 0.2,
+          "D2.1": 0.3333333333333333,
+          "D2.2": 0.3333333333333333,
+          "D2.3": 0.3333333333333333,
+          "D2.4": 0.0,
+          "D3.1": 0.3333333333333333,
+          "D3.2": 0.3333333333333333,
+          "D3.3": 0.3333333333333333,
+          "D3.4": 0.0
+        }
+      },
+      "foco_atencao_primaria": {
+        "descricao": "Maior ênfase na Atenção Primária à Saúde como ordenadora do cuidado (D1=30%, D2=50%, D3=20%)",
+        "dimensoes": {
+          "D1": 0.3,
+          "D2": 0.5,
+          "D3": 0.2,
+          "D4": 0.0,
+          "PRIVADA": 0.0
+        },
+        "indicadores": {
+          "D1.1": 0.25,
+          "D1.2": 0.25,
+          "D1.3": 0.25,
+          "D1.4": 0.25,
+          "D2.1": 0.4,
+          "D2.2": 0.3,
+          "D2.3": 0.3,
+          "D2.4": 0.0,
+          "D3.1": 0.3333333333333333,
+          "D3.2": 0.3333333333333333,
+          "D3.3": 0.3333333333333333,
+          "D3.4": 0.0
+        }
+      },
+      "pca_estatistico": {
+        "descricao": "Pesos derivados empiricamente por Análise de Componentes Principais (PCA)",
+        "status": "A_VALIDAR",
+        "dimensoes": null,
+        "indicadores": null
+      }
+    }
+  },
+  "limites_referencia": {
+    "versao_limites": "v0.1.0-draft",
+    "status_geral": "A_VALIDAR",
+    "metodo_normalizacao": "min_max_fixo",
+    "limites": {
+      "D1.1": {
+        "indicador": "Mortalidade Infantil",
+        "sentido": "menor_melhor",
+        "limite_pior": null,
+        "limite_melhor": null,
+        "fonte_referencia": "A_VALIDAR (Meta ODS 3.2 / RIPSA)",
+        "status": "A_VALIDAR",
+        "pendencia_id": "PEND-033"
+      },
+      "D1.2": {
+        "indicador": "Razão de Mortalidade Materna",
+        "sentido": "menor_melhor",
+        "limite_pior": null,
+        "limite_melhor": null,
+        "fonte_referencia": "A_VALIDAR (Meta ODS 3.1 / MS)",
+        "status": "A_VALIDAR",
+        "pendencia_id": "PEND-033"
+      },
+      "D1.3": {
+        "indicador": "Mortalidade Prematura por DCNT",
+        "sentido": "menor_melhor",
+        "limite_pior": null,
+        "limite_melhor": null,
+        "fonte_referencia": "A_VALIDAR (Meta ODS 3.4 / OMS)",
+        "status": "A_VALIDAR",
+        "pendencia_id": "PEND-033"
+      },
+      "D1.4": {
+        "indicador": "Mortalidade por Causas Evitáveis pelo SUS",
+        "sentido": "menor_melhor",
+        "limite_pior": null,
+        "limite_melhor": null,
+        "fonte_referencia": "A_VALIDAR (Lista Brasileira de Evitabilidade / MS)",
+        "status": "A_VALIDAR",
+        "pendencia_id": "PEND-033"
+      },
+      "D2.1": {
+        "indicador": "Internações por Condições Sensíveis à APS (ICSAP)",
+        "sentido": "menor_melhor",
+        "limite_pior": null,
+        "limite_melhor": null,
+        "fonte_referencia": "A_VALIDAR (Portaria SAS/MS nº 221/2008)",
+        "status": "A_VALIDAR",
+        "pendencia_id": "PEND-033"
+      },
+      "D2.2": {
+        "indicador": "Pré-natal Adequado (7+ Consultas)",
+        "sentido": "maior_melhor",
+        "limite_pior": null,
+        "limite_melhor": null,
+        "fonte_referencia": "A_VALIDAR (Parâmetros da Rede Cegonha / Atenção Básica MS)",
+        "status": "A_VALIDAR",
+        "pendencia_id": "PEND-033"
+      },
+      "D2.3": {
+        "indicador": "Cobertura Vacinal Infantil",
+        "sentido": "maior_melhor",
+        "limite_pior": null,
+        "limite_melhor": null,
+        "fonte_referencia": "A_VALIDAR (CGPNI / Ministério da Saúde)",
+        "status": "A_VALIDAR",
+        "pendencia_id": "PEND-033"
+      },
+      "D2.4": {
+        "indicador": "Desempenho da Qualidade no Cofinanciamento da APS",
+        "sentido": "maior_melhor",
+        "limite_pior": null,
+        "limite_melhor": null,
+        "fonte_referencia": "A_VALIDAR (Portarias SAPS/MS 2024)",
+        "status": "A_VALIDAR",
+        "pendencia_id": "PEND-022"
+      },
+      "D3.1": {
+        "indicador": "Leitos SUS por Mil Habitantes",
+        "sentido": "maior_melhor",
+        "limite_pior": null,
+        "limite_melhor": null,
+        "fonte_referencia": "A_VALIDAR (Parâmetros de Planejamento da Atenção Hospitalar / MS)",
+        "status": "A_VALIDAR",
+        "pendencia_id": "PEND-033"
+      },
+      "D3.2": {
+        "indicador": "Médicos e Enfermeiros SUS por Mil Habitantes",
+        "sentido": "maior_melhor",
+        "limite_pior": null,
+        "limite_melhor": null,
+        "fonte_referencia": "A_VALIDAR (Relatório Demografia Médica / OMS)",
+        "status": "A_VALIDAR",
+        "pendencia_id": "PEND-033"
+      },
+      "D3.3": {
+        "indicador": "Cobertura de Equipes de Saúde da Família (eSF)",
+        "sentido": "maior_melhor",
+        "limite_pior": 0.0,
+        "limite_melhor": 100.0,
+        "fonte_referencia": "A_VALIDAR (PNAB / Ministério da Saúde)",
+        "status": "A_VALIDAR",
+        "pendencia_id": "PEND-033"
+      },
+      "D3.4": {
+        "indicador": "Internações no Próprio Município",
+        "sentido": "informativo",
+        "limite_pior": null,
+        "limite_melhor": null,
+        "fonte_referencia": "A_VALIDAR",
+        "status": "A_VALIDAR",
+        "pendencia_id": "PEND-026"
+      }
+    }
+  },
+  "manifesto_hashes": {
+    "config/indicadores.yaml": {
+      "sha256": "d050d5d50ec128c94eb68e9bcde1843d3b670ee8d41bc77300d1b9cd6a69e0c2",
+      "bytes": 8261
+    },
+    "config/pesos.yaml": {
+      "sha256": "90dfb913843b07ec99bd21aeb7fdf2f8bc040b5288f9d8e7b2d6ff3d19c1b2a2",
+      "bytes": 2601
+    },
+    "config/limites_referencia.yaml": {
+      "sha256": "45f5b1b771a26b30eb34ebd1d3acdea5d2c8332975101f2144cd674bbd39b375",
+      "bytes": 3965
+    },
+    "sources/registry.yaml": {
+      "sha256": "1153a70d104665beb71d896fb88f7069b2cc4042d61f169c03ff6673431e1210",
+      "bytes": 6102
+    },
+    "data/processed/dim_municipio.parquet": {
+      "sha256": "9ec82eaac4ab075a79eb5f1e5d8fc723098b5cd014ecbd76a8492a06cf1296c1",
+      "bytes": 168143
+    }
+  }
+}

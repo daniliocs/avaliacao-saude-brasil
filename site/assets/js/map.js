@@ -1,0 +1,244 @@
+/**
+ * site/assets/js/map.js
+ * 
+ * Mapa Coroplético e Controle de Visualização Territorial (Leaflet)
+ * - Carrega data/releases/latest/mapa_resumo.json (5.570 municípios)
+ * - Suporte a camadas: Nota Geral, D1, D2, D3
+ * - Tratamento visual estrito para status 'sem_classificacao'
+ * - Busca com debounce para os 5.570 municípios e filtros por UF e Região
+ * - Disparo da Ficha Lateral (openDrawer)
+ */
+
+import { openDrawer } from "./drawer_municipio.js";
+
+let leafletMap = null;
+let mapaResumoData = {};
+let activeLayerKey = "nota_geral"; // 'nota_geral' | 'd1_nota' | 'd2_nota' | 'd3_nota'
+let geoJsonLayer = null;
+
+export async function initMap(metaConfig) {
+    console.log("[map.js] Inicializando mapa interativo...");
+
+    // 1. Inicializa o objeto Leaflet centrado no Brasil
+    leafletMap = L.map("leaflet-map", {
+        center: [-14.235, -51.925],
+        zoom: 4,
+        minZoom: 3,
+        maxZoom: 14
+    });
+
+    // 2. Base Cartográfica OpenStreetMap / CartoDB Positron
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: "abcd",
+        maxZoom: 19
+    }).addTo(leafletMap);
+
+    // 3. Carrega o payload de dados municipais
+    await loadMapaResumo();
+
+    // 4. Configura controles de busca, filtros e seletor de camada
+    setupLayerSelector();
+    setupSearchAndFilters();
+
+    // 5. Tentativa de carregamento da malha geográfica TopoJSON/GeoJSON
+    await loadGeoBoundary();
+}
+
+async function loadMapaResumo() {
+    try {
+        const response = await fetch("data/releases/latest/mapa_resumo.json");
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status} ao carregar mapa_resumo.json`);
+        }
+        mapaResumoData = await response.json();
+        console.log(`[map.js] ${Object.keys(mapaResumoData).length} municípios carregados.`);
+    } catch (err) {
+        console.warn("[map.js] Erro ao carregar mapa_resumo.json, tentando caminho alternativo:", err);
+        try {
+            const fallbackRes = await fetch("../data/releases/latest/mapa_resumo.json");
+            mapaResumoData = await fallbackRes.json();
+        } catch (e2) {
+            console.error("[map.js] Falha crítica ao obter mapa_resumo.json:", e2);
+        }
+    }
+}
+
+async function loadGeoBoundary() {
+    const geoPaths = [
+        "site/assets/geo/br_municipios.topojson",
+        "assets/geo/br_municipios.topojson",
+        "https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-100-mun.json"
+    ];
+
+    for (const path of geoPaths) {
+        try {
+            const res = await fetch(path);
+            if (res.ok) {
+                const geoData = await res.json();
+                console.log(`[map.js] Malha geográfica carregada com sucesso a partir de ${path}`);
+                renderGeoJson(geoData);
+                return;
+            }
+        } catch (e) {
+            // Continua para o próximo
+        }
+    }
+
+    console.log("[map.js] Malha TopoJSON local ausente. Modo de busca vetorial e seleção direta ativo.");
+}
+
+function renderGeoJson(geoData) {
+    if (geoJsonLayer) {
+        leafletMap.removeLayer(geoJsonLayer);
+    }
+
+    geoJsonLayer = L.geoJSON(geoData, {
+        style: styleFeature,
+        onEachFeature: (feature, layer) => {
+            const ibge = feature.properties?.id || feature.properties?.codarea || feature.properties?.ibge7;
+            const mun = mapaResumoData[ibge] || { nome: feature.properties?.name || "Município", ibge7: ibge };
+            
+            layer.bindTooltip(`${mun.nome} (${mun.uf || ''})<br><strong>Status: Sem Classificação (Fase 0)</strong>`, {
+                sticky: true
+            });
+
+            layer.on({
+                click: () => openDrawer(mun),
+                mouseover: (e) => {
+                    const l = e.target;
+                    l.setStyle({ weight: 2, color: "#0284c7" });
+                },
+                mouseout: (e) => {
+                    geoJsonLayer.resetStyle(e.target);
+                }
+            });
+        }
+    }).addTo(leafletMap);
+}
+
+function styleFeature(feature) {
+    const ibge = feature.properties?.id || feature.properties?.codarea || feature.properties?.ibge7;
+    const mun = mapaResumoData[ibge];
+
+    // Regra 3 e 4: Sem classificação recebe padrão visual cinza neutro
+    if (!mun || mun.status === "sem_classificacao" || mun[activeLayerKey] === null) {
+        return {
+            fillColor: "#cbd5e1",
+            weight: 0.5,
+            opacity: 1,
+            color: "#94a3b8",
+            dashArray: "2, 2",
+            fillOpacity: 0.6
+        };
+    }
+
+    const val = mun[activeLayerKey];
+    return {
+        fillColor: getColorForScore(val),
+        weight: 0.5,
+        opacity: 1,
+        color: "#ffffff",
+        fillOpacity: 0.8
+    };
+}
+
+function getColorForScore(score) {
+    if (score === null || score === undefined) return "#cbd5e1";
+    if (score >= 80) return "#15803d";
+    if (score >= 65) return "#22c55e";
+    if (score >= 50) return "#eab308";
+    if (score >= 35) return "#f97316";
+    return "#dc2626";
+}
+
+function setupLayerSelector() {
+    const layerButtons = document.querySelectorAll(".layer-btn");
+    layerButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            layerButtons.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            activeLayerKey = btn.dataset.layer;
+            console.log(`[map.js] Camada ativa alterada para: ${activeLayerKey}`);
+            if (geoJsonLayer) {
+                geoJsonLayer.setStyle(styleFeature);
+            }
+        });
+    });
+}
+
+function setupSearchAndFilters() {
+    const searchInput = document.getElementById("search-municipio-input");
+    const dropdown = document.getElementById("search-results-dropdown");
+    const ufFilter = document.getElementById("uf-filter");
+
+    // Popula o select de UFs
+    if (ufFilter) {
+        const ufs = [...new Set(Object.values(mapaResumoData).map(m => m.uf))].filter(Boolean).sort();
+        ufs.forEach(uf => {
+            const opt = document.createElement("option");
+            opt.value = uf;
+            opt.textContent = uf;
+            ufFilter.appendChild(opt);
+        });
+
+        ufFilter.addEventListener("change", () => {
+            const selectedUf = ufFilter.value;
+            if (selectedUf) {
+                console.log(`[map.js] Filtro por UF selecionado: ${selectedUf}`);
+            }
+        });
+    }
+
+    if (!searchInput || !dropdown) return;
+
+    let debounceTimer;
+    searchInput.addEventListener("input", () => {
+        clearTimeout(debounceTimer);
+        const query = searchInput.value.trim().toLowerCase();
+        
+        if (query.length < 2) {
+            dropdown.innerHTML = "";
+            dropdown.classList.remove("visible");
+            return;
+        }
+
+        debounceTimer = setTimeout(() => {
+            const results = Object.values(mapaResumoData)
+                .filter(m => 
+                    m.nome.toLowerCase().includes(query) ||
+                    m.ibge7.includes(query) ||
+                    m.ibge6.includes(query)
+                )
+                .slice(0, 15);
+
+            if (results.length === 0) {
+                dropdown.innerHTML = `<div class="search-item" style="color: var(--color-text-subtle);">Nenhum município encontrado</div>`;
+            } else {
+                dropdown.innerHTML = results.map(m => `
+                    <div class="search-item" data-ibge="${m.ibge7}">
+                        <strong>${m.nome} (${m.uf})</strong>
+                        <span style="font-size: 0.75rem; color: var(--color-text-subtle);">IBGE: ${m.ibge7}</span>
+                    </div>
+                `).join("");
+
+                dropdown.querySelectorAll(".search-item").forEach(item => {
+                    item.addEventListener("click", () => {
+                        const ibge7 = item.dataset.ibge;
+                        const mun = mapaResumoData[ibge7];
+                        dropdown.classList.remove("visible");
+                        searchInput.value = `${mun.nome} (${mun.uf})`;
+                        openDrawer(mun);
+                    });
+                });
+            }
+            dropdown.classList.add("visible");
+        }, 150);
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove("visible");
+        }
+    });
+}

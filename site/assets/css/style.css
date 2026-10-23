@@ -1,0 +1,910 @@
+/* ==========================================================================
+   Índice de Saúde Municipal do Brasil — Design System & Estilos
+   CSS3 Moderno: Custom Properties, CSS Grid, Flexbox, Mobile-First
+   ========================================================================== */
+
+:root {
+  /* Paleta Neutra */
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f1f5f9;
+  --color-surface-elevated: #ffffff;
+  --color-border: #e2e8f0;
+  --color-border-subtle: #cbd5e1;
+  --color-text-main: #0f172a;
+  --color-text-muted: #475569;
+  --color-text-subtle: #64748b;
+
+  /* Paleta Semântica da Saúde */
+  --color-primary: #0284c7;        /* Azul SUS institucional */
+  --color-primary-dark: #0369a1;
+  --color-primary-light: #e0f2fe;
+  
+  --color-success: #16a34a;        /* Desempenho alto */
+  --color-success-light: #dcfce7;
+  --color-warning: #d97706;        /* Alerta / atenção */
+  --color-warning-light: #fef3c7;
+  --color-danger: #dc2626;         /* Crítico */
+  --color-danger-light: #fee2e2;
+  
+  /* Cor e estilo estrito para Municípios sem Classificação / Pendentes */
+  --color-unclassified: #94a3b8;
+  --color-unclassified-bg: #f1f5f9;
+  --color-unclassified-border: #cbd5e1;
+
+  /* Camadas e Dimensões */
+  --color-d1: #0284c7;             /* D1: Resultados */
+  --color-d2: #0d9488;             /* D2: Atenção Primária */
+  --color-d3: #6366f1;             /* D3: Acesso e Estrutura */
+  --color-d4: #8b5cf6;             /* D4: Contexto (Fora da nota) */
+  --color-priv: #ec4899;           /* Camada Privada (Fora da nota) */
+
+  /* Tipografia */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Espaçamento e Bordas */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Transições */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset Básico */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   Header Institucional e Aviso Obrigatório de Interpretação (Seção 10)
+   ========================================================================== */
+
+.app-header {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  letter-spacing: -0.02em;
+}
+
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+/* Navegação Principal */
+.main-nav {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.nav-tab {
+  background: none;
+  border: none;
+  padding: 0.6rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.nav-tab:hover {
+  color: var(--color-text-main);
+  background-color: var(--color-surface-hover);
+}
+
+.nav-tab.active {
+  color: var(--color-primary-dark);
+  background-color: var(--color-primary-light);
+}
+
+/* Banner de Aviso de Interpretação Obrigatório */
+.interpretation-banner {
+  background: #fefce8;
+  border-bottom: 1px solid #fef08a;
+  color: #713f12;
+  font-size: 0.8125rem;
+  padding: 0.6rem 1.25rem;
+}
+
+.interpretation-banner-content {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.banner-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Layout Principal e Vistas
+   ========================================================================== */
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.view-panel {
+  display: none;
+  flex: 1;
+}
+
+.view-panel.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Vista 1: Mapa & Ficha */
+.map-view-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Barra de Controles e Filtros */
+.map-toolbar {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  z-index: 10;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+  max-width: 400px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.55rem 0.85rem 0.55rem 2.2rem;
+  font-size: 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.search-input:focus {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface);
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-subtle);
+  pointer-events: none;
+}
+
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 1100;
+  display: none;
+}
+
+.search-results-dropdown.visible {
+  display: block;
+}
+
+.search-item {
+  padding: 0.6rem 0.85rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+}
+
+.search-item:hover {
+  background-color: var(--color-surface-hover);
+}
+
+/* Filtros Adicionais */
+.filters-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text-main);
+  outline: none;
+}
+
+/* Seletor de Camada do Mapa */
+.layer-selector {
+  display: flex;
+  background-color: var(--color-bg);
+  padding: 0.25rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  gap: 0.25rem;
+}
+
+.layer-btn {
+  border: none;
+  background: none;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.layer-btn.active {
+  background-color: var(--color-surface);
+  color: var(--color-text-main);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Container do Mapa Leaflet */
+#leaflet-map {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  background-color: #e5e7eb;
+}
+
+/* Legenda do Mapa */
+.map-legend {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  z-index: 900;
+  font-size: 0.75rem;
+}
+
+.legend-title {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-main);
+}
+
+.legend-scale {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-swatch {
+  width: 18px;
+  height: 12px;
+  border-radius: 2px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.legend-swatch--unclassified {
+  background-color: var(--color-unclassified-bg);
+  border: 1px dashed var(--color-unclassified);
+}
+
+/* ==========================================================================
+   Gaveta Lateral do Município (Drawer)
+   Regra 4: A Nota Geral NUNCA aparece sozinha!
+   ========================================================================== */
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 1200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+.drawer-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.municipio-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 580px;
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-xl);
+  z-index: 1250;
+  transform: translateX(100%);
+  transition: transform var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.municipio-drawer.active {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background-color: var(--color-bg);
+}
+
+.drawer-mun-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  line-height: 1.2;
+}
+
+.drawer-mun-meta {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+.btn-close-drawer {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-text-subtle);
+  padding: 0.25rem;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.btn-close-drawer:hover {
+  color: var(--color-text-main);
+  background-color: var(--color-surface-hover);
+}
+
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Bloco Obrigatório da Nota Geral e Dimensões (Regra 4) */
+.mandatory-score-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.15rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.score-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.score-card-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.score-main-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.nota-geral-badge {
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--color-primary-dark);
+}
+
+.nota-geral-badge--unclassified {
+  font-size: 1.15rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+/* Dimensões D1, D2, D3 sempre no mesmo bloco */
+.dimensions-trio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.dim-item-box {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem;
+  text-align: center;
+}
+
+.dim-item-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.dim-item-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-top: 0.15rem;
+}
+
+/* Faixa de Posição Plausível (Sensibilidade) */
+.plausible-range-box {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+  font-size: 0.8125rem;
+  color: #166534;
+}
+
+.plausible-range-box strong {
+  font-weight: 700;
+}
+
+/* Posições Comparativas */
+.rankings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  background-color: var(--color-bg);
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.rank-val {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  display: block;
+}
+
+/* Acordeões de Indicadores */
+.section-heading {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.indicator-accordion-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+details.dim-accordion {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-surface);
+}
+
+summary.dim-summary {
+  padding: 0.85rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background-color: var(--color-bg);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  list-style: none;
+}
+
+summary.dim-summary::-webkit-details-marker {
+  display: none;
+}
+
+summary.dim-summary::after {
+  content: '▼';
+  font-size: 0.7rem;
+  transition: transform var(--transition-fast);
+}
+
+details.dim-accordion[open] summary.dim-summary::after {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Cards de Auditoria de Indicadores (Audit Badge) */
+.audit-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.audit-card--unclassified {
+  background-color: var(--color-unclassified-bg);
+  border-color: var(--color-unclassified-border);
+}
+
+.audit-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.audit-card__title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge--pending {
+  background-color: var(--color-warning-light);
+  color: #92400e;
+}
+
+.badge--quality-high {
+  background-color: var(--color-success-light);
+  color: #14532d;
+}
+
+.badge--quality-warning {
+  background-color: var(--color-danger-light);
+  color: #991b1b;
+}
+
+.audit-unclassified-notice {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.audit-subtext {
+  font-size: 0.75rem;
+  color: var(--color-text-subtle);
+  margin-top: 0.2rem;
+}
+
+.audit-card__metrics {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 0.5rem;
+  background-color: var(--color-bg);
+  padding: 0.55rem;
+  border-radius: var(--radius-sm);
+}
+
+.metric-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-label {
+  font-size: 0.6875rem;
+  color: var(--color-text-subtle);
+  font-weight: 600;
+}
+
+.metric-value {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.metric-block--main .metric-value {
+  color: var(--color-primary-dark);
+}
+
+.audit-card__provenance {
+  font-size: 0.6875rem;
+  color: var(--color-text-subtle);
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.4rem;
+}
+
+.provenance-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.25rem 0.5rem;
+}
+
+.provenance-val {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.audit-card__footer {
+  font-size: 0.6875rem;
+  color: var(--color-text-subtle);
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.4rem;
+}
+
+/* Blocos Informativos Separados (D4 e Camada Privada) */
+.separated-layer-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.15rem;
+  background-color: #faf5ff; /* Roxo suave para D4 */
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.separated-layer-card--priv {
+  background-color: #fdf2f8; /* Rosa suave para Privada */
+}
+
+.separated-layer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.separated-tag {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background-color: #f3e8ff;
+  color: #6b21a8;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.separated-tag--priv {
+  background-color: #fce7f3;
+  color: #9d174d;
+}
+
+/* ==========================================================================
+   Vistas de Texto / Conteúdo: Metodologia, Fontes, Downloads
+   ========================================================================== */
+
+.page-container {
+  max-width: 1040px;
+  margin: 2rem auto;
+  padding: 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.page-header {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1.25rem;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  letter-spacing: -0.02em;
+}
+
+.page-lead {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  margin-top: 0.5rem;
+}
+
+.content-section {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
+}
+
+/* Tabela de Fontes */
+.sources-table-wrapper {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.data-table th, .data-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.data-table th {
+  background-color: var(--color-bg);
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.data-table tr:hover {
+  background-color: var(--color-surface-hover);
+}
+
+/* Responsividade Mobile-First */
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .main-nav {
+    justify-content: flex-start;
+  }
+
+  .map-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    max-width: 100%;
+  }
+
+  .municipio-drawer {
+    max-width: 100%;
+  }
+
+  .dimensions-trio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .audit-card__metrics {
+    grid-template-columns: 1fr;
+  }
+}

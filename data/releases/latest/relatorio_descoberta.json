@@ -1,0 +1,73 @@
+{
+  "timestamp": "2026-10-23T15:38:40.759265+00:00",
+  "total_fontes_registradas": 12,
+  "total_apontamentos": 11,
+  "apontamentos": [
+    {
+      "tipo": "FONTE_EM_REVISAO",
+      "fonte_id": "sim_do",
+      "nome": "Sistema de Informações sobre Mortalidade (SIM) — Declaração de Óbito",
+      "mensagem": "Fonte cadastrada aguarda validação de URLs oficiais e defasagem (Pendência: PEND-004)."
+    },
+    {
+      "tipo": "FONTE_EM_REVISAO",
+      "fonte_id": "sinasc_nv",
+      "nome": "Sistema de Informações sobre Nascidos Vivos (SINASC) — Declaração de Nascido Vivo",
+      "mensagem": "Fonte cadastrada aguarda validação de URLs oficiais e defasagem (Pendência: PEND-005)."
+    },
+    {
+      "tipo": "FONTE_EM_REVISAO",
+      "fonte_id": "sih_rd",
+      "nome": "Sistema de Informações Hospitalares do SUS (SIH/SUS) — Reduzida de AIH",
+      "mensagem": "Fonte cadastrada aguarda validação de URLs oficiais e defasagem (Pendência: PEND-006)."
+    },
+    {
+      "tipo": "FONTE_EM_REVISAO",
+      "fonte_id": "sia_sus",
+      "nome": "Sistema de Informações Ambulatoriais do SUS (SIA/SUS)",
+      "mensagem": "Fonte cadastrada aguarda validação de URLs oficiais e defasagem (Pendência: PEND-007)."
+    },
+    {
+      "tipo": "FONTE_EM_REVISAO",
+      "fonte_id": "cnes",
+      "nome": "Cadastro Nacional de Estabelecimentos de Saúde (CNES) — Estabelecimentos, Leitos e Profissionais",
+      "mensagem": "Fonte cadastrada aguarda validação de URLs oficiais e defasagem (Pendência: PEND-008)."
+    },
+    {
+      "tipo": "FONTE_EM_REVISAO",
+      "fonte_id": "si_pni",
+      "nome": "Sistema de Informação do Programa Nacional de Imunizações (SI-PNI / RNDS)",
+      "mensagem": "Fonte cadastrada aguarda validação de URLs oficiais e defasagem (Pendência: PEND-009)."
+    },
+    {
+      "tipo": "FONTE_EM_REVISAO",
+      "fonte_id": "sisab",
+      "nome": "Sistema de Informação em Saúde para a Atenção Básica (SISAB / e-Gestor AB)",
+      "mensagem": "Fonte cadastrada aguarda validação de URLs oficiais e defasagem (Pendência: PEND-010)."
+    },
+    {
+      "tipo": "FONTE_EM_REVISAO",
+      "fonte_id": "siops",
+      "nome": "Sistema de Informações sobre Orçamentos Públicos em Saúde (SIOPS)",
+      "mensagem": "Fonte cadastrada aguarda validação de URLs oficiais e defasagem (Pendência: PEND-012)."
+    },
+    {
+      "tipo": "FONTE_EM_REVISAO",
+      "fonte_id": "ans",
+      "nome": "Agência Nacional de Saúde Suplementar (ANS) — Caderno de Informações da Saúde Suplementar",
+      "mensagem": "Fonte cadastrada aguarda validação de URLs oficiais e defasagem (Pendência: PEND-013)."
+    },
+    {
+      "tipo": "FONTE_EM_REVISAO",
+      "fonte_id": "ieps_data",
+      "nome": "IEPS Data — Base de Indicadores de Saúde e Atenção Primária",
+      "mensagem": "Fonte cadastrada aguarda validação de URLs oficiais e defasagem (Pendência: PEND-014)."
+    },
+    {
+      "tipo": "FONTE_EM_REVISAO",
+      "fonte_id": "ips_brasil",
+      "nome": "Índice de Progresso Social do Brasil (IPS Brasil)",
+      "mensagem": "Fonte cadastrada aguarda validação de URLs oficiais e defasagem (Pendência: PEND-015)."
+    }
+  ]
+}

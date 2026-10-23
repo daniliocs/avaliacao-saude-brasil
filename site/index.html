@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Índice de Saúde Municipal do Brasil — Medição sintética e transparente da qualidade da saúde pública (SUS) no território dos 5.570 municípios.">
+  <title>Índice de Saúde Municipal do Brasil</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Estilos da Aplicação -->
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- CABEÇALHO INSTITUCIONAL -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-block">
+        <h1 class="brand-title">Índice de Saúde Municipal</h1>
+        <span class="brand-badge version-display">v0.1.0-draft</span>
+      </div>
+
+      <nav class="main-nav" aria-label="Navegação Principal">
+        <button class="nav-tab active" data-view="mapa">Mapa & Ficha Municipal</button>
+        <button class="nav-tab" data-view="metodologia">Como é Calculado</button>
+        <button class="nav-tab" data-view="fontes">Fontes & Proveniência</button>
+        <button class="nav-tab" data-view="downloads">Downloads & Dicionário</button>
+      </nav>
+    </div>
+
+    <!-- AVISO DE INTERPRETAÇÃO OBRIGATÓRIO (SEÇÃO 10) -->
+    <aside class="interpretation-banner" role="alert">
+      <div class="interpretation-banner-content">
+        <span class="banner-icon" aria-hidden="true">ℹ️</span>
+        <p>
+          <strong>Aviso de Interpretação (Seção 10):</strong> 
+          Pequenas diferenças de pontuação entre municípios não representam necessariamente diferenças reais na atenção à saúde. O índice descreve as condições públicas do SUS no <em>território municipal como um todo</em>, e não a avaliação de equipes, profissionais ou unidades hospitalares individuais.
+        </p>
+      </div>
+    </aside>
+  </header>
+
+  <!-- ÁREA DE CONTEÚDO PRINCIPAL (VISTAS) -->
+  <main class="main-content">
+
+    <!-- VISTA 1: MAPA & FICHA MUNICIPAL -->
+    <section id="view-mapa" class="view-panel active">
+      <div class="map-view-container">
+        
+        <!-- Barra de Ferramentas / Busca / Filtros -->
+        <div class="map-toolbar">
+          <div class="search-box">
+            <span class="search-icon" aria-hidden="true">🔍</span>
+            <input 
+              type="text" 
+              id="search-municipio-input" 
+              class="search-input" 
+              placeholder="Buscar por nome do município ou código IBGE..."
+              aria-label="Buscar município"
+              autocomplete="off"
+            >
+            <div id="search-results-dropdown" class="search-results-dropdown"></div>
+          </div>
+
+          <div class="filters-group">
+            <select id="uf-filter" class="filter-select" aria-label="Filtrar por Estado">
+              <option value="">Todos os Estados (UFs)</option>
+            </select>
+
+            <!-- Seletor de Camada do Índice -->
+            <div class="layer-selector" role="group" aria-label="Selecionar Camada Visualizada">
+              <button class="layer-btn active" data-layer="nota_geral">Nota Geral</button>
+              <button class="layer-btn" data-layer="d1_nota">D1: Resultados</button>
+              <button class="layer-btn" data-layer="d2_nota">D2: Primária</button>
+              <button class="layer-btn" data-layer="d3_nota">D3: Estrutura</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas do Mapa Leaflet -->
+        <div id="leaflet-map" aria-label="Mapa Coroplético do Brasil"></div>
+
+        <!-- Legenda Fixa no Mapa -->
+        <div class="map-legend" aria-hidden="true">
+          <div class="legend-title">Escala de Desempenho (0–100)</div>
+          <div class="legend-scale">
+            <div class="legend-item"><span class="legend-swatch" style="background:#15803d;"></span> 80 – 100 (Muito Alto)</div>
+            <div class="legend-item"><span class="legend-swatch" style="background:#22c55e;"></span> 65 – 79.9 (Alto)</div>
+            <div class="legend-item"><span class="legend-swatch" style="background:#eab308;"></span> 50 – 64.9 (Médio)</div>
+            <div class="legend-item"><span class="legend-swatch" style="background:#f97316;"></span> 35 – 49.9 (Baixo)</div>
+            <div class="legend-item"><span class="legend-swatch" style="background:#dc2626;"></span> 0 – 34.9 (Muito Baixo)</div>
+            <div class="legend-item"><span class="legend-swatch legend-swatch--unclassified"></span> Sem classificação (Fase 0)</div>
+          </div>
+        </div>
+
+        <!-- GAVETA LATERAL DO MUNICÍPIO (DRAWER) -->
+        <div id="drawer-backdrop" class="drawer-backdrop"></div>
+        <aside id="municipio-drawer" class="municipio-drawer" aria-labelledby="drawer-mun-title" role="dialog" aria-modal="true">
+          <div class="drawer-header">
+            <div>
+              <h2 id="drawer-mun-title" class="drawer-mun-title">Selecione um Município</h2>
+              <div id="drawer-mun-meta" class="drawer-mun-meta">—</div>
+            </div>
+            <button id="btn-close-drawer" class="btn-close-drawer" aria-label="Fechar painel municipal">&times;</button>
+          </div>
+          <div id="drawer-body" class="drawer-body">
+            <!-- Preenchido dinamicamente por drawer_municipio.js -->
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- VISTA 2: COMO É CALCULADO -->
+    <section id="view-metodologia" class="view-panel">
+      <div id="methodology-container"></div>
+    </section>
+
+    <!-- VISTA 3: FONTES & PROVENIÊNCIA -->
+    <section id="view-fontes" class="view-panel">
+      <div id="sources-container"></div>
+    </section>
+
+    <!-- VISTA 4: DOWNLOADS & DICIONÁRIO -->
+    <section id="view-downloads" class="view-panel">
+      <div id="downloads-container"></div>
+    </section>
+
+  </main>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- Script Principal da Aplicação -->
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

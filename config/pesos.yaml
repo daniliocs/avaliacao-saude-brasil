@@ -1,0 +1,87 @@
+# Configuração de Esquemas de Ponderação do Índice de Saúde Municipal
+# Versão: v0.1.0-draft
+# Status: A_DECIDIR (Conforme Seção 7 da especificação e PEND-034)
+
+versao_esquema: "v0.1.0-draft"
+status_decisao: "A_DECIDIR"
+pendencia_id: "PEND-034"
+
+# Esquema de referência (Proposta inicial: Pesos iguais entre as 3 dimensões de qualidade pública)
+esquema_padrao: "pesos_iguais"
+
+esquemas:
+  pesos_iguais:
+    descricao: "Pesos equivalentes entre as dimensões D1, D2 e D3 (33,33% cada) e pesos iguais entre os indicadores de cada dimensão"
+    dimensoes:
+      D1: 0.3333333333333333
+      D2: 0.3333333333333333
+      D3: 0.3333333333333333
+      D4: 0.0 # Contexto: FORA DA NOTA (DEC-001)
+      PRIVADA: 0.0 # Camada Privada: FORA DA NOTA (DEC-001)
+    indicadores:
+      # Dimensão 1 (4 indicadores ativos = 25% cada)
+      D1.1: 0.25
+      D1.2: 0.25
+      D1.3: 0.25
+      D1.4: 0.25
+      # Dimensão 2 (3 indicadores ativos no cálculo = 33,33% cada; D2.4 fora até consolidação)
+      D2.1: 0.3333333333333333
+      D2.2: 0.3333333333333333
+      D2.3: 0.3333333333333333
+      D2.4: 0.0
+      # Dimensão 3 (3 indicadores ativos no cálculo = 33,33% cada; D3.4 informativo)
+      D3.1: 0.3333333333333333
+      D3.2: 0.3333333333333333
+      D3.3: 0.3333333333333333
+      D3.4: 0.0
+
+  # Esquemas alternativos para a Análise de Sensibilidade Obrigatória (Cálculo da Faixa Plausível)
+  foco_resultados:
+    descricao: "Maior ênfase na Dimensão de Resultados Epidemiológicos (D1=50%, D2=30%, D3=20%)"
+    dimensoes:
+      D1: 0.50
+      D2: 0.30
+      D3: 0.20
+      D4: 0.0
+      PRIVADA: 0.0
+    indicadores:
+      D1.1: 0.30
+      D1.2: 0.30
+      D1.3: 0.20
+      D1.4: 0.20
+      D2.1: 0.3333333333333333
+      D2.2: 0.3333333333333333
+      D2.3: 0.3333333333333333
+      D2.4: 0.0
+      D3.1: 0.3333333333333333
+      D3.2: 0.3333333333333333
+      D3.3: 0.3333333333333333
+      D3.4: 0.0
+
+  foco_atencao_primaria:
+    descricao: "Maior ênfase na Atenção Primária à Saúde como ordenadora do cuidado (D1=30%, D2=50%, D3=20%)"
+    dimensoes:
+      D1: 0.30
+      D2: 0.50
+      D3: 0.20
+      D4: 0.0
+      PRIVADA: 0.0
+    indicadores:
+      D1.1: 0.25
+      D1.2: 0.25
+      D1.3: 0.25
+      D1.4: 0.25
+      D2.1: 0.40
+      D2.2: 0.30
+      D2.3: 0.30
+      D2.4: 0.0
+      D3.1: 0.3333333333333333
+      D3.2: 0.3333333333333333
+      D3.3: 0.3333333333333333
+      D3.4: 0.0
+
+  pca_estatistico:
+    descricao: "Pesos derivados empiricamente por Análise de Componentes Principais (PCA)"
+    status: "A_VALIDAR"
+    dimensoes: null
+    indicadores: null

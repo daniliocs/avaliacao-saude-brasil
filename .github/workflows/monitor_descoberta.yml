@@ -1,0 +1,49 @@
+name: Monitor de Descoberta de Fontes e Dados
+
+on:
+  schedule:
+    # Execução quinzenal (1º e 15º dia do mês às 03:00 UTC)
+    - cron: '0 3 1,15 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  discovery_monitor:
+    name: Varredura de Catálogos e Descoberta de Fontes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do Repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Instalar Dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Executar Monitor de Descoberta
+        id: run_monitor
+        run: |
+          python pipeline/monitor_descoberta.py
+
+      - name: Avaliar e Abrir Issue para Triagem Humana
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -f "data/releases/latest/relatorio_descoberta.json" ]; then
+            APONTAMENTOS=$(jq '.total_apontamentos' data/releases/latest/relatorio_descoberta.json)
+            if [ "$APONTAMENTOS" -gt 0 ]; then
+              gh issue create \
+                --title "🔍 [DESCOBERTA] Novos apontamentos ou revisões pendentes identificadas nas fontes" \
+                --body "O monitor de descoberta identificou $APONTAMENTOS apontamento(s) requerendo validação humana (fontes em revisão, novos períodos ou mudanças de lista oficial). Conforme a Seção 8, candidatos a novos indicadores ou versões exigem aprovação técnica antes de entrar no código." \
+                --label "descoberta,governanca,triagem"
+            fi
+          fi

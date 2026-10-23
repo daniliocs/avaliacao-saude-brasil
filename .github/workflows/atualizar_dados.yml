@@ -1,0 +1,68 @@
+name: Atualização de Dados e Quality Gates
+
+on:
+  schedule:
+    # Execução semanal (todo domingo à meia-noite UTC)
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Forçar reconstrução integral dos indicadores'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  pipeline_and_gates:
+    name: Execução do Pipeline e Travas de Qualidade
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do Repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Instalar Dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Etapa 1 - Construir e Validar Dimensão Municipal
+        id: step_dim
+        run: |
+          python pipeline/01_build_dim_municipio.py
+
+      - name: Etapa 2 - Executar Travas de Qualidade (Quality Gates)
+        id: step_gates
+        run: |
+          python pipeline/validate/quality_gates.py
+
+      - name: Notificar Falha de Trava de Qualidade (Abertura de Issue)
+        if: failure() && (steps.step_dim.outcome == 'failure' || steps.step_gates.outcome == 'failure')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "🚨 [ALERTA DE QUALIDADE] Falha nas travas do pipeline de saúde municipal" \
+            --body "O workflow automático detectou uma violação das travas de qualidade (Seção 8 da especificação). A publicação automática foi imediatamente suspensa e a versão anterior foi preservada intacta. Verifique os logs da execução para detalhes." \
+            --label "bug,qualidade-dados,prioridade-alta"
+
+      - name: Etapa 3 - Exportar Payloads do Site
+        if: success()
+        run: |
+          python pipeline/export_site_payloads.py
+
+      - name: Etapa 4 - Commit e Publicação de Dados Válidos
+        if: success()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/releases/latest/ data/processed/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(data): atualização automática de dados [skip ci]" && git push)

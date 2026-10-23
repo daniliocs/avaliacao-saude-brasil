@@ -1,0 +1,22 @@
+{
+  "config/indicadores.yaml": {
+    "sha256": "d050d5d50ec128c94eb68e9bcde1843d3b670ee8d41bc77300d1b9cd6a69e0c2",
+    "bytes": 8261
+  },
+  "config/pesos.yaml": {
+    "sha256": "90dfb913843b07ec99bd21aeb7fdf2f8bc040b5288f9d8e7b2d6ff3d19c1b2a2",
+    "bytes": 2601
+  },
+  "config/limites_referencia.yaml": {
+    "sha256": "45f5b1b771a26b30eb34ebd1d3acdea5d2c8332975101f2144cd674bbd39b375",
+    "bytes": 3965
+  },
+  "sources/registry.yaml": {
+    "sha256": "1153a70d104665beb71d896fb88f7069b2cc4042d61f169c03ff6673431e1210",
+    "bytes": 6102
+  },
+  "data/processed/dim_municipio.parquet": {
+    "sha256": "9ec82eaac4ab075a79eb5f1e5d8fc723098b5cd014ecbd76a8492a06cf1296c1",
+    "bytes": 168143
+  }
+}

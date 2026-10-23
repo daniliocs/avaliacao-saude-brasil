@@ -1,0 +1,172 @@
+# Registro Oficial de Fontes de Dados
+# Regra inegociável: Apenas fontes cadastradas neste arquivo podem ser consumidas pelo pipeline.
+# Campos não confirmados devem permanecer como "A_VALIDAR" ou null.
+
+fontes:
+  - id: sim_do
+    nome: "Sistema de Informações sobre Mortalidade (SIM) — Declaração de Óbito"
+    orgao: "Ministério da Saúde / DATASUS"
+    url_documentacao: "A_VALIDAR"
+    url_dados: "A_VALIDAR"
+    formato: "dbc" # A_VALIDAR: possibilidade de migração para CSV/OpenDataSUS
+    periodicidade_publicacao: "A_VALIDAR"
+    defasagem_tipica: "A_VALIDAR" # Medir empiricamente no pipeline
+    licenca_termos_uso: "A_VALIDAR"
+    ultima_verificacao: null
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    pendencia_id: "PEND-004"
+
+  - id: sinasc_nv
+    nome: "Sistema de Informações sobre Nascidos Vivos (SINASC) — Declaração de Nascido Vivo"
+    orgao: "Ministério da Saúde / DATASUS"
+    url_documentacao: "A_VALIDAR"
+    url_dados: "A_VALIDAR"
+    formato: "dbc" # A_VALIDAR
+    periodicidade_publicacao: "A_VALIDAR"
+    defasagem_tipica: "A_VALIDAR"
+    licenca_termos_uso: "A_VALIDAR"
+    ultima_verificacao: null
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    pendencia_id: "PEND-005"
+
+  - id: sih_rd
+    nome: "Sistema de Informações Hospitalares do SUS (SIH/SUS) — Reduzida de AIH"
+    orgao: "Ministério da Saúde / DATASUS"
+    url_documentacao: "A_VALIDAR"
+    url_dados: "A_VALIDAR"
+    formato: "dbc" # A_VALIDAR
+    periodicidade_publicacao: "A_VALIDAR"
+    defasagem_tipica: "A_VALIDAR"
+    licenca_termos_uso: "A_VALIDAR"
+    ultima_verificacao: null
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    pendencia_id: "PEND-006"
+
+  - id: sia_sus
+    nome: "Sistema de Informações Ambulatoriais do SUS (SIA/SUS)"
+    orgao: "Ministério da Saúde / DATASUS"
+    url_documentacao: "A_VALIDAR"
+    url_dados: "A_VALIDAR"
+    formato: "dbc" # A_VALIDAR
+    periodicidade_publicacao: "A_VALIDAR"
+    defasagem_tipica: "A_VALIDAR"
+    licenca_termos_uso: "A_VALIDAR"
+    ultima_verificacao: null
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    pendencia_id: "PEND-007"
+
+  - id: cnes
+    nome: "Cadastro Nacional de Estabelecimentos de Saúde (CNES) — Estabelecimentos, Leitos e Profissionais"
+    orgao: "Ministério da Saúde / DATASUS"
+    url_documentacao: "A_VALIDAR"
+    url_dados: "A_VALIDAR"
+    formato: "dbc" # A_VALIDAR
+    periodicidade_publicacao: "A_VALIDAR"
+    defasagem_tipica: "A_VALIDAR"
+    licenca_termos_uso: "A_VALIDAR"
+    ultima_verificacao: null
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    pendencia_id: "PEND-008"
+
+  - id: si_pni
+    nome: "Sistema de Informação do Programa Nacional de Imunizações (SI-PNI / RNDS)"
+    orgao: "Ministério da Saúde / CGPNI"
+    url_documentacao: "A_VALIDAR"
+    url_dados: "A_VALIDAR"
+    formato: "api" # A_VALIDAR: migração SI-PNI para RNDS
+    periodicidade_publicacao: "A_VALIDAR"
+    defasagem_tipica: "A_VALIDAR"
+    licenca_termos_uso: "A_VALIDAR"
+    ultima_verificacao: null
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    pendencia_id: "PEND-009"
+
+  - id: sisab
+    nome: "Sistema de Informação em Saúde para a Atenção Básica (SISAB / e-Gestor AB)"
+    orgao: "Ministério da Saúde / SAPS"
+    url_documentacao: "A_VALIDAR"
+    url_dados: "A_VALIDAR"
+    formato: "csv" # A_VALIDAR
+    periodicidade_publicacao: "A_VALIDAR"
+    defasagem_tipica: "A_VALIDAR"
+    licenca_termos_uso: "A_VALIDAR"
+    ultima_verificacao: null
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    pendencia_id: "PEND-010"
+
+  - id: ibge_pop
+    nome: "Instituto Brasileiro de Geografia e Estatística — Estimativas Populacionais, Censo e Malha Municipal"
+    orgao: "IBGE"
+    url_documentacao: "https://www.ibge.gov.br"
+    url_dados: "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
+    formato: "api"
+    periodicidade_publicacao: "A_VALIDAR"
+    defasagem_tipica: "A_VALIDAR"
+    licenca_termos_uso: "Creative Commons Atribuição (CC BY) / Dados Abertos Brasil"
+    ultima_verificacao: null
+    ultimo_periodo_disponivel: null
+    status: "ativo"
+    pendencia_id: "PEND-011"
+
+  - id: siops
+    nome: "Sistema de Informações sobre Orçamentos Públicos em Saúde (SIOPS)"
+    orgao: "Ministério da Saúde"
+    url_documentacao: "A_VALIDAR"
+    url_dados: "A_VALIDAR"
+    formato: "csv" # A_VALIDAR
+    periodicidade_publicacao: "A_VALIDAR"
+    defasagem_tipica: "A_VALIDAR"
+    licenca_termos_uso: "A_VALIDAR"
+    ultima_verificacao: null
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    pendencia_id: "PEND-012"
+
+  - id: ans
+    nome: "Agência Nacional de Saúde Suplementar (ANS) — Caderno de Informações da Saúde Suplementar"
+    orgao: "ANS / Ministério da Saúde"
+    url_documentacao: "A_VALIDAR"
+    url_dados: "A_VALIDAR"
+    formato: "csv" # A_VALIDAR
+    periodicidade_publicacao: "A_VALIDAR"
+    defasagem_tipica: "A_VALIDAR"
+    licenca_termos_uso: "A_VALIDAR"
+    ultima_verificacao: null
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    pendencia_id: "PEND-013"
+
+  - id: ieps_data
+    nome: "IEPS Data — Base de Indicadores de Saúde e Atenção Primária"
+    orgao: "Instituto de Estudos para Políticas de Saúde (IEPS)"
+    url_documentacao: "https://iepsdata.org.br"
+    url_dados: "A_VALIDAR"
+    formato: "csv"
+    periodicidade_publicacao: "A_VALIDAR"
+    defasagem_tipica: "A_VALIDAR"
+    licenca_termos_uso: "A_VALIDAR"
+    ultima_verificacao: null
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    pendencia_id: "PEND-014"
+
+  - id: ips_brasil
+    nome: "Índice de Progresso Social do Brasil (IPS Brasil)"
+    orgao: "Rede IPS Brasil / Imazon"
+    url_documentacao: "https://ipsbrasil.org.br"
+    url_dados: "A_VALIDAR"
+    formato: "csv"
+    periodicidade_publicacao: "A_VALIDAR"
+    defasagem_tipica: "A_VALIDAR"
+    licenca_termos_uso: "A_VALIDAR"
+    ultima_verificacao: null
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    pendencia_id: "PEND-015"
