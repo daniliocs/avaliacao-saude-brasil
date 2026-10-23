@@ -441,6 +441,47 @@ body {
   background-color: #e5e7eb;
 }
 
+/* Indicador de Carregamento Territorial */
+.map-loading-overlay {
+  position: absolute;
+  top: 4.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  padding: 0.55rem 1.15rem;
+  border-radius: 9999px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.map-loading-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.map-loading-spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spinLoader 0.7s linear infinite;
+}
+
+@keyframes spinLoader {
+  to { transform: rotate(360deg); }
+}
+
 /* Legenda do Mapa */
 .map-legend {
   position: absolute;

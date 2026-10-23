@@ -9,7 +9,7 @@
  * - Disparo da Ficha Lateral (openDrawer)
  */
 
-import { openDrawer } from "./drawer_municipio.js";
+import { openDrawer } from "./drawer_municipio.js?v=0.2.0";
 
 let leafletMap = null;
 let mapaResumoData = {};
@@ -31,6 +31,23 @@ const UF_CENTERS = {
 
 export async function initMap(metaConfig) {
     console.log("[map.js] Inicializando mapa interativo...");
+
+    if (typeof L === "undefined") {
+        console.error("[map.js] Leaflet (L) não está definido.");
+        return;
+    }
+
+    const mapElement = document.getElementById("leaflet-map");
+    if (!mapElement) {
+        console.error("[map.js] Contêiner #leaflet-map ausente.");
+        return;
+    }
+
+    // Se já havia uma instância anterior, remove para evitar erro de re-inicialização
+    if (leafletMap) {
+        leafletMap.remove();
+        leafletMap = null;
+    }
 
     // 1. Inicializa o objeto Leaflet centrado no Brasil com aceleração via Canvas
     leafletMap = L.map("leaflet-map", {
@@ -89,63 +106,106 @@ export async function initMap(metaConfig) {
     };
     L.control.layers(baseMaps, null, { position: "topright" }).addTo(leafletMap);
 
-    // 3. Carrega o payload de dados municipais e rankings
-    await loadMapaResumo();
-    await loadRankings();
+    // Garante que o Leaflet calcule as dimensões imediatamente
+    setTimeout(() => {
+        if (leafletMap) leafletMap.invalidateSize();
+    }, 150);
 
-    // 4. Configura controles de busca, filtros, seletor de camada e ranking
+    // 3. Configura controles de busca, filtros, seletor de camada e ranking IMEDIATAMENTE
     setupLayerSelector();
     setupSearchAndFilters();
     setupRankingsModal();
 
-    // 5. Tentativa de carregamento da malha geográfica TopoJSON/GeoJSON
-    await loadGeoBoundary();
+    // 4. Carrega os dados e malha de forma assíncrona
+    loadMapaResumo().then(() => {
+        setupSearchAndFilters(); // Atualiza dropdown e busca com mapaResumoData
+        return loadGeoBoundary();
+    }).catch(err => {
+        console.error("[map.js] Erro ao carregar dados territoriais:", err);
+    });
+
+    loadRankings().catch(err => {
+        console.warn("[map.js] Rankings não disponíveis:", err);
+    });
 }
 
 async function loadRankings() {
-    try {
-        const response = await fetch("data/releases/latest/rankings_resumo.json");
-        if (response.ok) {
-            rankingsData = await response.json();
-            console.log("[map.js] rankings_resumo.json carregado com sucesso.");
-        }
-    } catch (e) {
+    const candidatePaths = [
+        "data/releases/latest/rankings_resumo.json",
+        "./data/releases/latest/rankings_resumo.json",
+        "../data/releases/latest/rankings_resumo.json"
+    ];
+
+    for (const path of candidatePaths) {
         try {
-            const fallbackRes = await fetch("../data/releases/latest/rankings_resumo.json");
-            rankingsData = await fallbackRes.json();
-        } catch (e2) {
-            console.warn("[map.js] Rankings não disponíveis no momento.");
+            const response = await fetch(path);
+            if (response.ok) {
+                rankingsData = await response.json();
+                console.log(`[map.js] rankings_resumo.json carregado com sucesso (${path}).`);
+                return;
+            }
+        } catch (e) {
+            // Continua para o próximo
         }
     }
+    console.warn("[map.js] Rankings não disponíveis no momento.");
 }
 
 async function loadMapaResumo() {
-    try {
-        const response = await fetch("data/releases/latest/mapa_resumo.json");
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status} ao carregar mapa_resumo.json`);
-        }
-        mapaResumoData = await response.json();
-        console.log(`[map.js] ${Object.keys(mapaResumoData).length} municípios carregados.`);
-    } catch (err) {
-        console.warn("[map.js] Erro ao carregar mapa_resumo.json, tentando caminho alternativo:", err);
+    const candidatePaths = [
+        "data/releases/latest/mapa_resumo.json",
+        "./data/releases/latest/mapa_resumo.json",
+        "../data/releases/latest/mapa_resumo.json"
+    ];
+
+    for (const path of candidatePaths) {
         try {
-            const fallbackRes = await fetch("../data/releases/latest/mapa_resumo.json");
-            mapaResumoData = await fallbackRes.json();
-        } catch (e2) {
-            console.error("[map.js] Falha crítica ao obter mapa_resumo.json:", e2);
+            const response = await fetch(path);
+            if (response.ok) {
+                mapaResumoData = await response.json();
+                console.log(`[map.js] ${Object.keys(mapaResumoData).length} municípios carregados (${path}).`);
+                return;
+            }
+        } catch (err) {
+            // Continua para o próximo
         }
     }
+    console.error("[map.js] Falha crítica ao obter mapa_resumo.json em todos os caminhos.");
 }
 
 async function loadGeoBoundary() {
     const geoPaths = [
         "assets/geo/br_municipios.json",
+        "./assets/geo/br_municipios.json",
         "site/assets/geo/br_municipios.json",
-        "site/assets/geo/br_municipios.topojson",
-        "assets/geo/br_municipios.topojson",
         "https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-100-mun.json"
     ];
+
+    for (const path of geoPaths) {
+        try {
+            console.log(`[map.js] Buscando malha vetorial: ${path}...`);
+            const res = await fetch(path);
+            if (res.ok) {
+                const geoData = await res.json();
+                console.log(`[map.js] Malha geográfica carregada com sucesso a partir de ${path}`);
+                renderGeoJson(geoData);
+                const loader = document.getElementById("map-loading");
+                if (loader) loader.classList.add("hidden");
+                return;
+            }
+        } catch (e) {
+            console.warn(`[map.js] Erro ao carregar malha de ${path}:`, e);
+        }
+    }
+
+    console.log("[map.js] Malha local indisponível. Busca vetorial e ficha direta operando.");
+    const loader = document.getElementById("map-loading");
+    if (loader) {
+        const text = document.getElementById("map-loading-text");
+        if (text) text.textContent = "Busca de municípios e Rankings prontos!";
+        setTimeout(() => loader.classList.add("hidden"), 2500);
+    }
+}
 
     for (const path of geoPaths) {
         try {
@@ -275,9 +335,9 @@ function setupSearchAndFilters() {
     const dropdown = document.getElementById("search-results-dropdown");
     const ufFilter = document.getElementById("uf-filter");
 
-    // Popula o select de UFs e trata zoom automático
-    if (ufFilter) {
-        const ufs = [...new Set(Object.values(mapaResumoData).map(m => m.uf))].filter(Boolean).sort();
+    // Popula o select de UFs imediatamente com os 27 estados
+    if (ufFilter && ufFilter.options.length <= 1) {
+        const ufs = Object.keys(UF_CENTERS).sort();
         ufs.forEach(uf => {
             const opt = document.createElement("option");
             opt.value = uf;
@@ -293,13 +353,16 @@ function setupSearchAndFilters() {
                 if (centerCfg && leafletMap) {
                     leafletMap.setView([centerCfg[0], centerCfg[1]], centerCfg[2]);
                 }
-                // Atualiza painel de rankings se aberto
                 renderRankingsContent(selectedUf);
+            } else if (leafletMap) {
+                leafletMap.setView([-14.235, -51.925], 4);
+                renderRankingsContent("");
             }
         });
     }
 
-    if (!searchInput || !dropdown) return;
+    if (!searchInput || !dropdown || searchInput.dataset.initialized === "true") return;
+    searchInput.dataset.initialized = "true";
 
     let debounceTimer;
     searchInput.addEventListener("input", () => {
@@ -315,9 +378,11 @@ function setupSearchAndFilters() {
         debounceTimer = setTimeout(() => {
             const results = Object.values(mapaResumoData)
                 .filter(m => 
-                    m.nome.toLowerCase().includes(query) ||
-                    m.ibge7.includes(query) ||
-                    m.ibge6.includes(query)
+                    m.nome && (
+                        m.nome.toLowerCase().includes(query) ||
+                        m.ibge7.includes(query) ||
+                        (m.ibge6 && m.ibge6.includes(query))
+                    )
                 )
                 .slice(0, 15);
 

@@ -7,17 +7,18 @@
  * - Inicializa o Mapa Leaflet, a Gaveta Municipal e as Vistas Dinâmicas
  */
 
-import { initMap } from "./map.js?v=0.1.3";
-import { initDrawer } from "./drawer_municipio.js?v=0.1.3";
-import { renderMethodologyView } from "./methodology_view.js?v=0.1.3";
-import { renderSourcesView } from "./sources_view.js?v=0.1.3";
-import { renderDownloadsView } from "./downloads_view.js?v=0.1.3";
+import { initMap } from "./map.js?v=0.2.0";
+import { initDrawer } from "./drawer_municipio.js?v=0.2.0";
+import { renderMethodologyView } from "./methodology_view.js?v=0.2.0";
+import { renderSourcesView } from "./sources_view.js?v=0.2.0";
+import { renderDownloadsView } from "./downloads_view.js?v=0.2.0";
 
 let metaBuild = null;
 
 async function fetchMetaBuild() {
     const candidatePaths = [
         "data/releases/latest/meta_build.json",
+        "./data/releases/latest/meta_build.json",
         "../data/releases/latest/meta_build.json",
         "/data/releases/latest/meta_build.json"
     ];
@@ -71,31 +72,47 @@ function setupNavigation() {
 async function init() {
     console.log("[app.js] Iniciando aplicação Índice de Saúde Municipal...");
 
-    metaBuild = await fetchMetaBuild();
+    // 1. Configura a navegação por abas imediatamente
+    setupNavigation();
 
-    // Atualiza badges de versão no cabeçalho
-    if (metaBuild?.versao_metodologia) {
-        const versionBadges = document.querySelectorAll(".version-display");
-        versionBadges.forEach(badge => {
-            badge.textContent = metaBuild.versao_metodologia;
-        });
+    // 2. Carrega metadados de build do pipeline
+    try {
+        metaBuild = await fetchMetaBuild();
+
+        // Atualiza badges de versão no cabeçalho
+        if (metaBuild?.versao_metodologia) {
+            const versionBadges = document.querySelectorAll(".version-display");
+            versionBadges.forEach(badge => {
+                badge.textContent = metaBuild.versao_metodologia;
+            });
+        }
+
+        // Inicializa a gaveta municipal
+        initDrawer(metaBuild);
+
+        // Renderiza as vistas dinâmicas baseadas no meta_build.json
+        renderMethodologyView(metaBuild);
+        renderSourcesView(metaBuild);
+        renderDownloadsView(metaBuild);
+    } catch (e) {
+        console.warn("[app.js] Erro ao carregar metadados complementares:", e);
     }
 
-    // Inicializa a gaveta municipal
-    initDrawer(metaBuild);
-
-    // Inicializa o mapa interativo
-    await initMap(metaBuild);
-
-    // Renderiza as vistas dinâmicas baseadas no meta_build.json
-    renderMethodologyView(metaBuild);
-    renderSourcesView(metaBuild);
-    renderDownloadsView(metaBuild);
-
-    // Configura o roteamento de abas
-    setupNavigation();
+    // 3. Inicializa o mapa interativo
+    try {
+        await initMap(metaBuild);
+    } catch (e) {
+        console.error("[app.js] Erro ao inicializar o mapa interativo:", e);
+    }
 
     console.log("[app.js] Aplicação inicializada com sucesso.");
 }
 
-document.addEventListener("DOMContentLoaded", init);
+// Inicialização resiliente ao ciclo de vida de ES Modules
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+        init().catch(err => console.error("[app.js] Erro crítico:", err));
+    });
+} else {
+    init().catch(err => console.error("[app.js] Erro crítico:", err));
+}
