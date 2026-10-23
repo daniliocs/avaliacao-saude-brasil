@@ -7,11 +7,11 @@
  * - Inicializa o Mapa Leaflet, a Gaveta Municipal e as Vistas Dinâmicas
  */
 
-import { initMap } from "./map.js?v=0.1.2";
-import { initDrawer } from "./drawer_municipio.js?v=0.1.2";
-import { renderMethodologyView } from "./methodology_view.js?v=0.1.2";
-import { renderSourcesView } from "./sources_view.js?v=0.1.2";
-import { renderDownloadsView } from "./downloads_view.js?v=0.1.2";
+import { initMap } from "./map.js?v=0.1.3";
+import { initDrawer } from "./drawer_municipio.js?v=0.1.3";
+import { renderMethodologyView } from "./methodology_view.js?v=0.1.3";
+import { renderSourcesView } from "./sources_view.js?v=0.1.3";
+import { renderDownloadsView } from "./downloads_view.js?v=0.1.3";
 
 let metaBuild = null;
 

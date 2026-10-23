@@ -6,6 +6,31 @@ O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [v0.2.0-fase2] - 2026-10-23
+
+### Adicionado
+- **Fase 2: Ingestão e Cálculo do Indicador D1.1 (Mortalidade Infantil)**:
+  - Ingestão oficial de dados 2022 via API SIDRA do IBGE: Tabela 2654 (óbitos menores de 1 ano por residência) e Tabela 2609 (nascidos vivos por residência da mãe) cobrindo todos os 5.570 municípios.
+  - Implementação do script de cálculo epidemiológico `pipeline/indicators/d1_resultados.py`:
+    - Taxa bruta por 1.000 nascidos vivos;
+    - Intervalo de confiança exato de Poisson a 95% (`scipy.stats.chi2`);
+    - Suavização Bayesiana Empírica (Marshall 1991) agrupada por UF para correção de flutuação em pequenos municípios;
+    - Normalização para escala 0–100 baseada em padrão internacional e meta ODS 3.2 (melhor: <= 5,0 óbitos/mil NV; pior: >= 30,0 óbitos/mil NV);
+    - Rankings nacionais, estaduais e por grupo de porte populacional com faixa de posição plausível baseada nos ICs.
+  - Geração dos artefatos processados em formato aberto: `data/processed/indicador_d1_1.parquet` e `indicador_d1_1.csv` (espelhados para download no site).
+  - Geração de `data/releases/latest/rankings_resumo.json` contendo os 10 melhores e piores municípios do Brasil e de cada UF.
+  - Otimização do payload `data/releases/latest/mapa_resumo.json` (redução de 18,8 MB para 4,2 MB, 77% mais leve).
+  - Malha geográfica vetorial compacta `site/assets/geo/br_municipios.json` (5,5 MB) com polígonos simplificados (Douglas-Peucker 0.005) para Leaflet com preferCanvas.
+- **Melhorias de Interface (Fase 2 / Fase 5)**:
+  - Adição de camadas base Google Maps (Padrão, Relevo, Satélite) e OpenStreetMap sem dependência de chaves de API restritas.
+  - Modal interativo "🏆 Top 10 Rankings" no topo do mapa com alternância automática entre Top 10 Brasil e Top 10 do estado selecionado.
+  - Tooltips ricos com Nota 0–100, taxa TMI, posição nacional e estadual ao passar o mouse.
+  - Links diretos na página "Downloads & Dicionário" para os novos artefatos do Indicador D1.1 e Rankings.
+- **Governança e Travas de Qualidade**:
+  - `pipeline/validate/quality_gates.py` atualizado para checagem estrita de plausibilidade biológica das taxas e escores de D1.1 e inclusão no manifesto de hashes SHA-256.
+
+---
+
 ## [v0.1.0-draft] - 2026-10-23
 
 ### Adicionado

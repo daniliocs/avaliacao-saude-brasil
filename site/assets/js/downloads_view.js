@@ -48,6 +48,30 @@ export function renderDownloadsView(metaBuild) {
                     </div>
 
                     <div style="border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 1rem; background: var(--color-bg);">
+                        <h3 style="font-size: 1rem; font-weight: 700;">Indicador D1.1 — Mortalidade Infantil (CSV)</h3>
+                        <p style="font-size: 0.8125rem; color: var(--color-text-muted); margin: 0.35rem 0 0.85rem 0;">
+                            Taxa bruta, IC 95% Poisson, suavização Bayes empírica e escore (5.570 municípios).
+                        </p>
+                        <a href="data/processed/indicador_d1_1.csv" download class="badge badge--quality-high" style="text-decoration: none; padding: 0.4rem 0.8rem; display: inline-block;">Download .CSV</a>
+                    </div>
+
+                    <div style="border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 1rem; background: var(--color-bg);">
+                        <h3 style="font-size: 1rem; font-weight: 700;">Indicador D1.1 — Mortalidade Infantil (Parquet)</h3>
+                        <p style="font-size: 0.8125rem; color: var(--color-text-muted); margin: 0.35rem 0 0.85rem 0;">
+                            Microdados colunares otimizados com sensibilidade e rankings para data science.
+                        </p>
+                        <a href="data/processed/indicador_d1_1.parquet" download class="badge badge--quality-high" style="text-decoration: none; padding: 0.4rem 0.8rem; display: inline-block;">Download .Parquet</a>
+                    </div>
+
+                    <div style="border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 1rem; background: var(--color-bg);">
+                        <h3 style="font-size: 1rem; font-weight: 700;">Rankings Top 10 Brasil e UFs (JSON)</h3>
+                        <p style="font-size: 0.8125rem; color: var(--color-text-muted); margin: 0.35rem 0 0.85rem 0;">
+                            Tabelas consolidadas dos melhores e piores colocados nacionais e estaduais.
+                        </p>
+                        <a href="data/releases/latest/rankings_resumo.json" download class="badge badge--quality-high" style="text-decoration: none; padding: 0.4rem 0.8rem; display: inline-block;">Download .JSON</a>
+                    </div>
+
+                    <div style="border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 1rem; background: var(--color-bg);">
                         <h3 style="font-size: 1rem; font-weight: 700;">Manifesto de Proveniência (SHA-256)</h3>
                         <p style="font-size: 0.8125rem; color: var(--color-text-muted); margin: 0.35rem 0 0.85rem 0;">
                             Hashes criptográficos de todos os insumos para reprodução auditável.

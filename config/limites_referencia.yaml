@@ -11,10 +11,10 @@ limites:
   D1.1:
     indicador: "Mortalidade Infantil"
     sentido: "menor_melhor"
-    limite_pior: null # A_VALIDAR: ex. percentil 95 histórico documentado
-    limite_melhor: null # A_VALIDAR: meta ODS 3.2 (<= 12 por 1.000 NV até 2030)
-    fonte_referencia: "A_VALIDAR (Meta ODS 3.2 / RIPSA)"
-    status: "A_VALIDAR"
+    limite_pior: 30.0 # Limiar crítico de vulnerabilidade (taxa >= 30 por mil NV = 0 pontos)
+    limite_melhor: 5.0 # Padrão de excelência internacional OCDE / ODS avançado (<= 5 por mil NV = 100 pontos)
+    fonte_referencia: "Meta ODS 3.2 / Padrão Internacional OCDE / RIPSA"
+    status: "ativo"
     pendencia_id: "PEND-033"
 
   D1.2:

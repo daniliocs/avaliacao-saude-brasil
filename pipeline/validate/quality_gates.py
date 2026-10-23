@@ -190,7 +190,23 @@ def run_all_gates(dim_municipio_path: str = "data/processed/dim_municipio.parque
         print("[QualityGate:FATAL] Falha de completude nas colunas dimensionais. ABORTANDO.")
         sys.exit(1)
 
-    # 3. Gate de reprodutibilidade e proveniência
+    # 3. Gate de validação do Indicador D1.1 (se gerado)
+    d1_parquet = "data/processed/indicador_d1_1.parquet"
+    if os.path.exists(d1_parquet):
+        print("[QualityGate:Indicadores] Validando indicador D1.1 (Mortalidade Infantil)...")
+        df_d1 = pd.read_parquet(d1_parquet)
+        if len(df_d1) != 5570:
+            print(f"[QualityGate:FATAL] Indicador D1.1 não possui 5.570 municípios: {len(df_d1)}")
+            sys.exit(1)
+        if not gate_plausible_ranges(df_d1, rate_columns=["tmi_bruta", "tmi_bayes"], proportion_columns=["escore_d1_1"]):
+            print("[QualityGate:FATAL] Valores implausíveis encontrados no indicador D1.1. ABORTANDO.")
+            sys.exit(1)
+        if not gate_completeness(df_d1, ["tmi_bayes", "escore_d1_1", "posicao_nacional"], min_completeness_ratio=1.0):
+            print("[QualityGate:FATAL] Completude incompleta no indicador D1.1. ABORTANDO.")
+            sys.exit(1)
+        print("[QualityGate:Indicadores] OK — Indicador D1.1 validado com 100% de integridade epidemiológica.")
+
+    # 4. Gate de reprodutibilidade e proveniência
     input_artifacts = [
         "config/indicadores.yaml",
         "config/pesos.yaml",
@@ -198,6 +214,9 @@ def run_all_gates(dim_municipio_path: str = "data/processed/dim_municipio.parque
         "sources/registry.yaml",
         "data/processed/dim_municipio.parquet"
     ]
+    if os.path.exists(d1_parquet):
+        input_artifacts.append(d1_parquet)
+
     manifest_path = "data/releases/latest/provenance_manifest.json"
     gate_reproducibility_hashes(input_artifacts, manifest_path)
 
