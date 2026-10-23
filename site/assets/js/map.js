@@ -9,7 +9,7 @@
  * - Disparo da Ficha Lateral (openDrawer)
  */
 
-import { openDrawer } from "./drawer_municipio.js?v=0.2.0";
+import { openDrawer } from "./drawer_municipio.js?v=0.2.1";
 
 let leafletMap = null;
 let mapaResumoData = {};
@@ -207,23 +207,6 @@ async function loadGeoBoundary() {
     }
 }
 
-    for (const path of geoPaths) {
-        try {
-            const res = await fetch(path);
-            if (res.ok) {
-                const geoData = await res.json();
-                console.log(`[map.js] Malha geográfica carregada com sucesso a partir de ${path}`);
-                renderGeoJson(geoData);
-                return;
-            }
-        } catch (e) {
-            // Continua para o próximo
-        }
-    }
-
-    console.log("[map.js] Malha TopoJSON local ausente. Modo de busca vetorial e seleção direta ativo.");
-}
-
 function renderGeoJson(geoData) {
     if (geoJsonLayer) {
         leafletMap.removeLayer(geoJsonLayer);
@@ -236,7 +219,8 @@ function renderGeoJson(geoData) {
             const mun = mapaResumoData[ibge] || { nome: feature.properties?.name || "Município", ibge7: ibge };
             const popFmt = mun.populacao ? mun.populacao.toLocaleString("pt-BR") + " hab." : "População em validação";
             const escoreFmt = mun.nota_geral !== null && mun.nota_geral !== undefined ? mun.nota_geral.toFixed(1) : null;
-            const tmiFmt = mun.indicadores?.D1.1?.valor !== null && mun.indicadores?.D1.1?.valor !== undefined ? mun.indicadores.D1.1.valor.toFixed(1) + " por 1.000 NV" : null;
+            const d1Valor = mun.indicadores?.["D1.1"]?.valor;
+            const tmiFmt = d1Valor !== null && d1Valor !== undefined ? d1Valor.toFixed(1) + " por 1.000 NV" : null;
             const corNota = getColorForScore(mun.nota_geral);
 
             let statusBlock = "";
