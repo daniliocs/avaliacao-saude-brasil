@@ -55,8 +55,31 @@ def fetch_raw_data() -> list:
     return data
 
 
+POP_CACHE_PATH = os.path.join("data", "raw", "ibge_censo2022_pop.json")
+
+def load_populacao_censo2022() -> dict:
+    """Carrega dados oficiais do Censo Demográfico 2022 do IBGE."""
+    if os.path.exists(POP_CACHE_PATH):
+        with open(POP_CACHE_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+def classificar_porte(pop: int) -> str:
+    if pop is None or pop <= 0:
+        return "Não informado"
+    if pop <= 20000:
+        return "Pequeno porte I (até 20 mil hab.)"
+    if pop <= 50000:
+        return "Pequeno porte II (20 a 50 mil hab.)"
+    if pop <= 100000:
+        return "Médio porte (50 a 100 mil hab.)"
+    if pop <= 500000:
+        return "Grande porte (100 a 500 mil hab.)"
+    return "Metrópole (> 500 mil hab.)"
+
 def process_dim_municipio(raw_data: list) -> pd.DataFrame:
     """Processa e formata a dimensão de municípios garantindo as regras da especificação."""
+    pop_map = load_populacao_censo2022()
     records = []
     for item in raw_data:
         ibge7_int = item["id"]
@@ -80,6 +103,9 @@ def process_dim_municipio(raw_data: list) -> pd.DataFrame:
         regiao_info = uf_info.get("regiao") or {}
         regiao_nome = regiao_info.get("nome", "")
 
+        pop_2022 = pop_map.get(ibge7_str)
+        porte = classificar_porte(pop_2022)
+
         records.append({
             "ibge7": ibge7_str,
             "ibge6": ibge6_str,
@@ -91,7 +117,9 @@ def process_dim_municipio(raw_data: list) -> pd.DataFrame:
             "regiao_imediata_id": str(reg_imediata.get("id", "")),
             "regiao_imediata_nome": reg_imediata.get("nome", ""),
             "regiao_intermediaria_id": str(reg_intermediaria.get("id", "")),
-            "regiao_intermediaria_nome": reg_intermediaria.get("nome", "")
+            "regiao_intermediaria_nome": reg_intermediaria.get("nome", ""),
+            "populacao_censo_2022": pop_2022,
+            "porte_populacional": porte
         })
 
     df = pd.DataFrame(records)

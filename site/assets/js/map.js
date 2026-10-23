@@ -140,8 +140,18 @@ function renderGeoJson(geoData) {
         onEachFeature: (feature, layer) => {
             const ibge = feature.properties?.id || feature.properties?.codarea || feature.properties?.ibge7;
             const mun = mapaResumoData[ibge] || { nome: feature.properties?.name || "Município", ibge7: ibge };
+            const popFmt = mun.populacao ? mun.populacao.toLocaleString("pt-BR") + " hab. (Censo 2022)" : "População em validação";
+            const porteFmt = mun.porte || "—";
             
-            layer.bindTooltip(`${mun.nome} (${mun.uf || ''})<br><strong>Status: Sem Classificação (Fase 0)</strong>`, {
+            layer.bindTooltip(`
+                <div style="font-size:0.8125rem; line-height:1.4; padding:2px;">
+                    <strong style="font-size:0.95rem; color:#0f172a;">${mun.nome} (${mun.uf || ''})</strong><br>
+                    <span style="color:#334155;">👥 <strong>${popFmt}</strong></span><br>
+                    <span style="color:#475569;">🏷️ Porte: ${porteFmt}</span><br>
+                    <span style="color:#d97706; font-weight:700;">Status: Sem Classificação (Fase 0)</span><br>
+                    <span style="color:#0284c7; font-size:0.75rem; font-weight:600;">👉 Clique para abrir a ficha técnica</span>
+                </div>
+            `, {
                 sticky: true
             });
 
@@ -149,7 +159,7 @@ function renderGeoJson(geoData) {
                 click: () => openDrawer(mun),
                 mouseover: (e) => {
                     const l = e.target;
-                    l.setStyle({ weight: 2, color: "#0284c7" });
+                    l.setStyle({ weight: 2.5, color: "#0284c7", fillOpacity: 0.6 });
                 },
                 mouseout: (e) => {
                     geoJsonLayer.resetStyle(e.target);

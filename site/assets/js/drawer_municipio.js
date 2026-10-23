@@ -43,8 +43,9 @@ export function openDrawer(municipioData) {
     if (!drawer || !drawerBody) return;
 
     // Cabeçalho do Município
+    const popFmt = municipioData.populacao ? `${municipioData.populacao.toLocaleString("pt-BR")} habitantes (Censo 2022)` : "População em validação";
     drawerTitle.textContent = `${municipioData.nome} — ${municipioData.uf}`;
-    drawerMeta.textContent = `Código IBGE: ${municipioData.ibge7} (DATASUS: ${municipioData.ibge6}) | Região: ${municipioData.regiao} | Região de Saúde: ${municipioData.regiao_saude || "A validar"}`;
+    drawerMeta.textContent = `Código IBGE: ${municipioData.ibge7} (DATASUS: ${municipioData.ibge6}) | População: ${popFmt} | Porte: ${municipioData.porte || "A validar"} | Região: ${municipioData.regiao} | Região de Saúde: ${municipioData.regiao_saude || "A validar"}`;
 
     // Montagem do corpo da gaveta
     drawerBody.innerHTML = `

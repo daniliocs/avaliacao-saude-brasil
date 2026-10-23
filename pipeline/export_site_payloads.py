@@ -135,13 +135,16 @@ def build_mapa_resumo_payload():
     municipios_payload = {}
     for _, row in df.iterrows():
         ibge7 = row["ibge7"]
+        pop_val = int(row["populacao_censo_2022"]) if "populacao_censo_2022" in row and pd.notna(row["populacao_censo_2022"]) else None
+        porte_val = row.get("porte_populacional", "A_VALIDAR")
         municipios_payload[ibge7] = {
             "ibge7": ibge7,
             "ibge6": row["ibge6"],
             "nome": row["nome_municipio"],
             "uf": row["uf_sigla"],
             "regiao": row["regiao_macro"],
-            "porte": "A_VALIDAR", # Definido após consolidação do Censo
+            "populacao": pop_val,
+            "porte": porte_val,
             "regiao_saude": row.get("regiao_imediata_nome", "A_VALIDAR"),
             # Campos do Índice (Regras 1 e 3: Não inventar valores; aguardando validação)
             "status": "sem_classificacao",

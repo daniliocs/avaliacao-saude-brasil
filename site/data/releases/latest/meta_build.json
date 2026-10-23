@@ -1,5 +1,5 @@
 {
-  "build_timestamp": "2026-10-23T15:50:03.569131+00:00",
+  "build_timestamp": "2026-10-23T16:24:13.715526+00:00",
   "versao_metodologia": "v0.1.0-draft",
   "status_metodologia": "Rascunho Técnico (Fase 0)",
   "regras_inegociaveis": [
@@ -729,8 +729,8 @@
       "bytes": 6102
     },
     "data/processed/dim_municipio.parquet": {
-      "sha256": "9ec82eaac4ab075a79eb5f1e5d8fc723098b5cd014ecbd76a8492a06cf1296c1",
-      "bytes": 168143
+      "sha256": "e0d492ed7dbca5d56355f8b6c7be0ea42b54514c394f6631df8ded433bfb87fd",
+      "bytes": 202659
     }
   }
 }
