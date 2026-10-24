@@ -39,6 +39,9 @@ data/raw/datasus/*
 !data/raw/ieps/
 data/raw/ieps/*
 !data/raw/ieps/manifest_ieps.json
+!data/raw/demas_urgencia/
+data/raw/demas_urgencia/*
+!data/raw/demas_urgencia/manifest_demas_urgencia.json
 
 # Pytest cache
 .pytest_cache/

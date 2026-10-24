@@ -1,0 +1,82 @@
+{
+  "samuppc": {
+    "url": "https://demas-dados-abertos.s3.amazonaws.com/csv/samuppc.csv.zip",
+    "sha256_zip": "33d586c9d3e35ce6c9c1d288fc4c8146d19df213c0b8e1967089ca3379eebb25",
+    "arquivo_csv": "samuppc.csv",
+    "linhas_totais": 61273,
+    "competencia_recente": 202608,
+    "competencias_disponiveis": [
+      201612,
+      201712,
+      201812,
+      201912,
+      202012,
+      202112,
+      202212,
+      202312,
+      202412,
+      202512,
+      202608
+    ]
+  },
+  "samunab": {
+    "url": "https://demas-dados-abertos.s3.amazonaws.com/csv/samunab.csv.zip",
+    "sha256_zip": "50050e5d9a9ecfb3d871f4d85f87061e05b174b240c98a19e703ba680bca475d",
+    "arquivo_csv": "samunab.csv",
+    "linhas_totais": 61273,
+    "competencia_recente": 202608,
+    "competencias_disponiveis": [
+      201612,
+      201712,
+      201812,
+      201912,
+      202012,
+      202112,
+      202212,
+      202312,
+      202412,
+      202512,
+      202608
+    ]
+  },
+  "samunaa": {
+    "url": "https://demas-dados-abertos.s3.amazonaws.com/csv/samunaa.csv.zip",
+    "sha256_zip": "306385031e36c5c67894ebf52bdf440de6e9b362242b7d292752c2fec1271b72",
+    "arquivo_csv": "samunaa.csv",
+    "linhas_totais": 61273,
+    "competencia_recente": 202608,
+    "competencias_disponiveis": [
+      201612,
+      201712,
+      201812,
+      201912,
+      202012,
+      202112,
+      202212,
+      202312,
+      202412,
+      202512,
+      202608
+    ]
+  },
+  "upa": {
+    "url": "https://demas-dados-abertos.s3.amazonaws.com/csv/upa.csv.zip",
+    "sha256_zip": "2d9554ffa0b5f41db0f3ffff7b69536c03e811a5072ff05cb1e33d9147b0443b",
+    "arquivo_csv": "upa.csv",
+    "linhas_totais": 61273,
+    "competencia_recente": 202608,
+    "competencias_disponiveis": [
+      201612,
+      201712,
+      201812,
+      201912,
+      202012,
+      202112,
+      202212,
+      202312,
+      202412,
+      202512,
+      202608
+    ]
+  }
+}
