@@ -9,8 +9,8 @@
  * - Modal de Rankings com 4 escopos separados: Top 100 Brasil, Por Estado (isolado), 27 Estados e 27 Capitais
  */
 
-import { openDrawer } from "./drawer_municipio.js?v=0.5.4";
-import { updateCompareData } from "./compare_view.js?v=0.5.4";
+import { openDrawer } from "./drawer_municipio.js?v=0.5.5";
+import { updateCompareData } from "./compare_view.js?v=0.5.5";
 
 let leafletMap = null;
 let canvasRenderer = null;
@@ -882,7 +882,7 @@ function renderRankingsContent(selectedUf = "") {
     const activeLabel = dimLabelMap[activeRankDim] || "Nota Geral Consolidada";
     const allMun = Object.values(mapaResumoData);
 
-    const renderMunicipalityList = (items, isPiores = false) => {
+    const renderMunicipalityList = (items, isPiores = false, scope = activeRankScope) => {
         if (!items || items.length === 0) {
             return "<p style='color:var(--color-text-subtle);'>Nenhum município listado.</p>";
         }
@@ -896,22 +896,44 @@ function renderRankingsContent(selectedUf = "") {
                     const score = typeof m[activeRankDim] === "number" ? m[activeRankDim] : (typeof m.escore === "number" ? m.escore : m.nota_geral);
                     const scoreFmt = typeof score === "number" ? score.toFixed(1) : "—";
 
-                    const posDisplay = isPiores
-                        ? (activeRankDim === "nota_geral" && m.posicao_nacional
-                            ? `<span style="font-weight:700; color:#dc2626; margin-right:4px;">#${m.posicao_nacional}º</span><span style="font-size:0.72rem; color:#dc2626; font-weight:600; margin-right:4px;">(${idx + 1}º menor)</span>`
-                            : `<span style="font-weight:700; color:#dc2626; margin-right:4px;">#${idx + 1}º menor</span>`)
-                        : (activeRankDim === "nota_geral" && m.posicao_nacional
-                            ? `<span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${m.posicao_nacional}</span>`
-                            : (activeRankDim === "nota_com_urgencia" && m.posicao_nacional_urgencia
-                                ? `<span style="font-weight:700; color:#0369a1; margin-right:4px;">#${m.posicao_nacional_urgencia}</span>`
-                                : `<span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${idx + 1}</span>`));
+                    // Posição no país para sinalização adicional
+                    const nacPos = (activeRankDim === "nota_com_urgencia" && m.posicao_nacional_urgencia)
+                        ? m.posicao_nacional_urgencia
+                        : m.posicao_nacional;
+
+                    let posPrefix = "";
+                    let posSuffix = "";
+
+                    if (scope === "uf") {
+                        // Ranking por Estado: Inicia em 1º para o melhor do estado
+                        posPrefix = `<span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${idx + 1}º</span>`;
+                        if (nacPos) {
+                            posSuffix = `<span style="font-size:0.75rem; color:var(--color-text-muted); font-weight:600; margin-left:6px;">(#${nacPos.toLocaleString('pt-BR')}º no país)</span>`;
+                        }
+                    } else if (scope === "capitais") {
+                        // Ranking de Capitais: Inicia em 1ª para a melhor capital
+                        posPrefix = `<span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${idx + 1}ª</span>`;
+                        if (nacPos) {
+                            posSuffix = `<span style="font-size:0.75rem; color:var(--color-text-muted); font-weight:600; margin-left:6px;">(#${nacPos.toLocaleString('pt-BR')}º no país)</span>`;
+                        }
+                    } else if (scope === "brasil_piores" || isPiores) {
+                        // 100 Piores do Brasil
+                        posPrefix = `<span style="font-weight:700; color:#dc2626; margin-right:4px;">#${idx + 1}º menor</span>`;
+                        if (nacPos) {
+                            posSuffix = `<span style="font-size:0.72rem; color:var(--color-text-muted); font-weight:600; margin-left:6px;">(#${nacPos.toLocaleString('pt-BR')}º no país)</span>`;
+                        }
+                    } else {
+                        // Top 100 Brasil (Melhores)
+                        posPrefix = `<span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${idx + 1}º</span>`;
+                    }
 
                     return `
                         <div class="ranking-row-item" data-ibge="${m.ibge7}" style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0.65rem; border:1px solid var(--color-border); border-radius:6px; background:var(--color-surface); cursor:pointer;">
                             <div>
-                                ${posDisplay}
+                                ${posPrefix}
                                 <strong>${m.nome} (${m.uf})</strong>
                                 ${m.eh_capital ? `<span class="badge badge--quality-high" style="margin-left:4px;">Capital</span>` : ""}
+                                ${posSuffix}
                                 <div style="font-size:0.75rem; color:var(--color-text-subtle); margin-top:1px;">
                                     ${m.populacao ? m.populacao.toLocaleString('pt-BR') + ' hab.' : ''} &bull; 
                                     <span>D1: <strong>${d1}</strong></span> | 
@@ -947,7 +969,7 @@ function renderRankingsContent(selectedUf = "") {
                 <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:0.65rem; color:#1e293b;">
                     🇧🇷 Top 100 Municípios do Brasil (Melhores Notas) — ${activeLabel}
                 </h4>
-                ${renderMunicipalityList(brasilTop100, false)}
+                ${renderMunicipalityList(brasilTop100, false, "brasil")}
             </div>
         `;
     }
@@ -968,7 +990,7 @@ function renderRankingsContent(selectedUf = "") {
                 <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:0.65rem; color:#dc2626;">
                     ⚠️ 100 Municípios com Menores Notas do Brasil — ${activeLabel}
                 </h4>
-                ${renderMunicipalityList(pioresTop100, true)}
+                ${renderMunicipalityList(pioresTop100, true, "brasil_piores")}
             </div>
         `;
     }
@@ -1003,7 +1025,7 @@ function renderRankingsContent(selectedUf = "") {
                         </span>
                     </div>
                 </div>
-                ${renderMunicipalityList(ufList)}
+                ${renderMunicipalityList(ufList, false, "uf")}
             </div>
         `;
     }
@@ -1100,7 +1122,7 @@ function renderRankingsContent(selectedUf = "") {
                         📍 Destacar Notas das 27 Capitais no Mapa
                     </button>
                 </div>
-                ${renderMunicipalityList(caps)}
+                ${renderMunicipalityList(caps, false, "capitais")}
             </div>
         `;
 
