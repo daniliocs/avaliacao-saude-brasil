@@ -8,7 +8,7 @@
  * - D4 (Contexto) e Camada Privada exibidos em blocos separados fora da nota (DEC-001).
  */
 
-import { renderAuditBadge } from "./audit_badge.js";
+import { renderAuditBadge } from "./audit_badge.js?v=0.5.0";
 
 let metaConfigCache = null;
 
@@ -154,8 +154,8 @@ export function openDrawer(municipioData) {
                 })}
                 ${renderAuditBadge(municipioData.camada_privada?.leitos_privados, {
                     id: "PRIV.2",
-                    nome: "Leitos Privados Não-SUS por Mil Habitantes",
-                    unidade: "leitos/mil hab",
+                    nome: "Leitos Privados Não-SUS por 100 Mil Habitantes",
+                    unidade: "leitos/100k hab",
                     pendencia_id: "PEND-032"
                 })}
             </div>

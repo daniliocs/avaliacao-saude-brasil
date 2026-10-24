@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   
   <!-- Estilos da Aplicação -->
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=0.5.0">
 </head>
 <body>
 
@@ -19,17 +19,18 @@
     <div class="header-container">
       <div class="brand-block">
         <h1 class="brand-title">Índice de Saúde Municipal</h1>
-        <span class="brand-badge version-display">v0.4.0-draft</span>
+        <span class="brand-badge version-display">v0.5.0-draft</span>
         <button id="btn-info" class="btn-info-pill" aria-label="Aviso e Metodologia" title="Clique para ver o Aviso de Interpretação e Metodologia">
           ℹ️ Info
         </button>
       </div>
 
       <nav class="main-nav" aria-label="Navegação Principal">
-        <button class="nav-tab active" data-view="mapa">Mapa & Ficha</button>
-        <button class="nav-tab" data-view="metodologia">Como é Calculado</button>
-        <button class="nav-tab" data-view="fontes">Fontes & Proveniência</button>
-        <button class="nav-tab" data-view="downloads">Downloads & Dicionário</button>
+        <button class="nav-tab active" data-view="mapa">🗺️ Mapa & Ficha</button>
+        <button class="nav-tab" data-view="comparar">⚖️ Comparar Cidades / Estados</button>
+        <button class="nav-tab" data-view="metodologia">📐 Como é Calculado</button>
+        <button class="nav-tab" data-view="fontes">🏛️ Fontes & Proveniência</button>
+        <button class="nav-tab" data-view="downloads">📥 Downloads & Dicionário</button>
       </nav>
     </div>
   </header>
@@ -69,9 +70,16 @@
               <button class="layer-btn" data-layer="d3_nota">D3: Estrutura</button>
             </div>
 
-            <!-- Botão de Rankings Top 10 -->
+            <!-- Seletor de Marcadores Numéricos no Mapa (Estados / Capitais) -->
+            <div class="layer-selector marker-mode-selector" role="group" aria-label="Exibir Notas no Mapa">
+              <button class="marker-mode-btn active" data-marker-mode="none" title="Apenas malha municipal">Sem Rótulos</button>
+              <button class="marker-mode-btn" data-marker-mode="estados" title="Exibir nota média numérica de cada Estado no mapa">📊 Notas Estados</button>
+              <button class="marker-mode-btn" data-marker-mode="capitais" title="Exibir nota numérica de cada Capital no mapa">🏙️ Notas Capitais</button>
+            </div>
+
+            <!-- Botão de Rankings Top 100 -->
             <button id="btn-toggle-ranking" class="btn-ranking-toggle" aria-label="Abrir Painel de Rankings">
-              🏆 Top 10 Rankings
+              🏆 Top 100 &amp; Rankings
             </button>
           </div>
         </div>
@@ -85,23 +93,39 @@
           <span id="map-loading-text">Carregando mapa e dados de saúde dos 5.570 municípios...</span>
         </div>
 
-        <!-- MODAL DE RANKINGS (TOP 10 BRASIL E ESTADUAL) -->
+        <!-- MODAL DE RANKINGS (TOP 100 BRASIL, POR ESTADO, 27 ESTADOS E 27 CAPITAIS) -->
         <div id="rankings-modal" class="rankings-modal" role="dialog" aria-labelledby="rankings-modal-title" aria-modal="true">
           <div class="rankings-modal-content">
             <div class="rankings-modal-header">
               <div>
-                <h3 id="rankings-modal-title" class="rankings-modal-title">🏆 Rankings Consolidados de Saúde Municipal</h3>
-                <p class="rankings-modal-subtitle">Índice Sintético Consolidado de Saúde Pública (D1, D2, D3 — Triênio 2021–2023 / SIM &amp; SINASC DATASUS)</p>
+                <h3 id="rankings-modal-title" class="rankings-modal-title">🏆 Rankings de Desempenho da Saúde Pública</h3>
+                <p class="rankings-modal-subtitle">Índice Sintético Consolidado (D1, D2, D3 — Triênio 2021–2023 / SIM, SINASC, SIH, SI-PNI, CNES, SISAB)</p>
               </div>
               <button id="btn-close-ranking" class="btn-close-modal" aria-label="Fechar painel de rankings">&times;</button>
             </div>
-            <!-- Filtro de Dimensões do Ranking -->
-            <div class="ranking-dimension-filter" role="group" aria-label="Filtrar Dimensão do Ranking">
-              <button class="rank-dim-btn active" data-rank-dim="nota_geral">🌟 Nota Geral</button>
-              <button class="rank-dim-btn" data-rank-dim="d1_nota">D1: Mortalidade</button>
-              <button class="rank-dim-btn" data-rank-dim="d2_nota">D2: Atenção Primária</button>
-              <button class="rank-dim-btn" data-rank-dim="d3_nota">D3: Estrutura</button>
+
+            <!-- Abas de Escopo do Ranking (Brasil Top 100 | Por Estado | Estados | Capitais) -->
+            <div class="ranking-scope-tabs" role="tablist" aria-label="Escopo do Ranking">
+              <button class="rank-scope-btn active" data-rank-scope="brasil">🇧🇷 Top 100 Brasil</button>
+              <button class="rank-scope-btn" data-rank-scope="uf">🏛️ Ranking por Estado</button>
+              <button class="rank-scope-btn" data-rank-scope="estados">📊 Média por Estado (27 UFs)</button>
+              <button class="rank-scope-btn" data-rank-scope="capitais">🏙️ Ranking Capitais (27)</button>
             </div>
+
+            <!-- Filtro de Dimensões do Ranking + Seletor de UF quando na aba Estadual -->
+            <div class="ranking-dimension-filter" role="group" aria-label="Filtrar Dimensão do Ranking">
+              <div class="rank-dim-buttons-group">
+                <button class="rank-dim-btn active" data-rank-dim="nota_geral">🌟 Nota Geral</button>
+                <button class="rank-dim-btn" data-rank-dim="d1_nota">D1: Resultados</button>
+                <button class="rank-dim-btn" data-rank-dim="d2_nota">D2: Atenção Primária</button>
+                <button class="rank-dim-btn" data-rank-dim="d3_nota">D3: Estrutura</button>
+              </div>
+              <div id="modal-uf-selector-wrap" class="modal-uf-selector-wrap" style="display:none;">
+                <label for="modal-uf-select" style="font-size:0.75rem; font-weight:700; color:var(--color-text-muted);">UF:</label>
+                <select id="modal-uf-select" class="filter-select" style="padding:0.3rem 0.6rem; font-weight:700;"></select>
+              </div>
+            </div>
+
             <div id="rankings-modal-body" class="rankings-modal-body">
               <!-- Preenchido dinamicamente por map.js -->
             </div>
@@ -114,29 +138,29 @@
             <div class="info-modal-header">
               <div style="display: flex; align-items: center; gap: 0.5rem;">
                 <span style="font-size: 1.25rem;">ℹ️</span>
-                <h3 id="info-modal-title" style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--color-text-main);">Aviso de Interpretação & Metodologia</h3>
+                <h3 id="info-modal-title" style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--color-text-main);">Aviso de Interpretação &amp; Metodologia</h3>
               </div>
               <button id="btn-close-info" class="btn-close-modal" aria-label="Fechar modal de informações">&times;</button>
             </div>
             <div class="info-modal-body">
               <div class="info-alert-box">
                 <strong>Aviso Obrigatório de Interpretação (Seção 10):</strong>
-                <p>Pequenas diferenças de pontuação entre municípios não representam necessariamente diferenças reais na atenção à saúde. O índice descreve as condições públicas do SUS no <em>território municipal como um todo</em>, e não a avaliação de equipes, profissionais ou unidades hospitalares individuais.</p>
+                <p>Pequenas diferenças de pontuação entre municípios não representam necessariamente diferenças reais na atenção à saúde. O índice é analítico e experimental (<code>v0.5.0-draft</code>) e descreve as condições públicas do SUS no <em>território municipal e regional</em>, e não a avaliação isolada de equipes ou unidades hospitalares.</p>
               </div>
 
               <div class="info-structure-box">
-                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 700; color: #1e293b;">Composição do Índice Sintético Consolidado (v0.4.0-draft):</h4>
+                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 700; color: #1e293b;">Composição do Índice Sintético Consolidado (v0.5.0-draft):</h4>
                 <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.84rem; line-height: 1.6; color: #334155;">
-                  <li><strong>D1 — Resultados em Saúde (33,3%):</strong> Mortalidade Infantil no triênio 2021–2023 suavizada por Bayes Empírico a partir dos microdados primários por residência do SIM e SINASC (DATASUS FTP). Mortalidade Materna (2019–2023) exibida como informativa.</li>
-                  <li><strong>D2 — Atenção Primária (33,3%):</strong> Pré-Natal Adequado (7+ consultas no SINASC 2021–2023) e Cobertura Vacinal contra Poliomielite (média 2021–2023 via IEPS Data / SI-PNI).</li>
-                  <li><strong>D3 — Acesso e Estrutura (33,3%):</strong> Leitos SUS por 100k hab., Médicos por 1.000 hab. e Cobertura da Estratégia Saúde da Família - ESF (média 2021–2023 via IEPS Data / CNES / SISAB).</li>
-                  <li><strong>Normalização Relativa (P5–P95):</strong> Sem metas arbitrárias — os indicadores são normalizados pelos percentis empíricos P5 e P95 da distribuição nacional observada, com análise de sensibilidade completa.</li>
-                  <li><strong>Dimensão 4 (Financiamento SIOPS) e Camada Privada (ANS/CNES):</strong> Exibidas separadamente e estritamente fora da nota para garantir equidade federativa.</li>
+                  <li><strong>D1 — Resultados em Saúde da População (33,3%):</strong> Mortalidade Infantil suavizada (40%), Mortalidade Prematura 30–69a por DCNT suavizada (30%) e Mortalidade por Causas Evitáveis pelo SUS (30%) no triênio 2021–2023 por residência (SIM / SINASC / Censo 2022). Razão de Mortalidade Materna (2019–2023) exibida como informativa.</li>
+                  <li><strong>D2 — Atenção Primária e Prevenção (33,3%):</strong> Internações por Condições Sensíveis à APS — ICSAP (33,3%), Pré-Natal Adequado 7+ consultas no SINASC (33,3%) e Cobertura Vacinal Infantil Composta (Poliomielite, Pentavalente e Tríplice Viral D1 — 33,3%) no triênio 2021–2023.</li>
+                  <li><strong>D3 — Acesso e Capacidade Assistencial (33,3%):</strong> Leitos SUS regionalizados na Região de Saúde - CIR (33,3%), Médicos + Enfermeiros padronizados por carga horária de 40h/sem (33,3%) e Cobertura da Estratégia Saúde da Família - eSF (33,3%) no triênio 2021–2023.</li>
+                  <li><strong>Normalização Relativa (P5–P95):</strong> Indicadores normalizados pelos percentis empíricos P5 e P95 da distribuição nacional observada, com análise de sensibilidade completa.</li>
+                  <li><strong>Dimensão 4 (Financiamento SIOPS deflacionado) e Camada Privada (ANS/CNES):</strong> Populados para os 5.570 municípios e exibidos separadamente fora da nota principal.</li>
                 </ul>
               </div>
 
               <p style="font-size: 0.8125rem; color: var(--color-text-muted); margin: 0;">
-                Para detalhes minuciosos de fórmulas, limites de referência, proveniência e reprodução dos cálculos, consulte as abas <strong>"Como é Calculado"</strong> e <strong>"Fontes & Proveniência"</strong>.
+                Use a aba <strong>"⚖️ Comparar Cidades / Estados"</strong> para confrontar lado a lado quaisquer dois municípios ou estados brasileiros.
               </p>
             </div>
           </div>
@@ -151,7 +175,7 @@
             <div class="legend-item"><span class="legend-swatch" style="background:#eab308;"></span> 50 – 64.9 (Médio)</div>
             <div class="legend-item"><span class="legend-swatch" style="background:#f97316;"></span> 35 – 49.9 (Baixo)</div>
             <div class="legend-item"><span class="legend-swatch" style="background:#dc2626;"></span> 0 – 34.9 (Muito Baixo)</div>
-            <div class="legend-item"><span class="legend-swatch legend-swatch--unclassified"></span> Sem classificação (Fase 0)</div>
+            <div class="legend-item"><span class="legend-swatch legend-swatch--unclassified"></span> Sem classificação</div>
           </div>
         </div>
 
@@ -171,6 +195,11 @@
         </aside>
 
       </div>
+    </section>
+
+    <!-- VISTA NOVA: COMPARADOR LADO A LADO (2 CIDADES OU 2 ESTADOS) -->
+    <section id="view-comparar" class="view-panel">
+      <div id="compare-container"></div>
     </section>
 
     <!-- VISTA 2: COMO É CALCULADO -->
@@ -194,6 +223,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   
   <!-- Script Principal da Aplicação com Cache-Buster -->
-  <script type="module" src="assets/js/app.js?v=0.4.0"></script>
+  <script type="module" src="assets/js/app.js?v=0.5.0"></script>
 </body>
 </html>

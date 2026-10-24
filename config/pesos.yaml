@@ -1,11 +1,11 @@
 # Configuração de Esquemas de Ponderação do Índice de Saúde Municipal
-# Versão: v0.4.0
+# Versão: v0.5.0-draft
 # Status: A_DECIDIR (Seção 7 da especificação e PEND-034)
 #
 # Apenas indicadores COM PIPELINE ativo recebem peso > 0. Os demais permanecem em 0 até validação.
 # Dentro de cada dimensão, o peso é renormalizado entre os componentes disponíveis do município.
 
-versao_esquema: "v0.4.0"
+versao_esquema: "v0.5.0-draft"
 status_decisao: "A_DECIDIR"
 pendencia_id: "PEND-034"
 
@@ -13,11 +13,9 @@ esquema_padrao: "pesos_iguais"
 
 # Nº mínimo de componentes disponíveis para que a dimensão tenha nota (sem imputação)
 min_componentes_por_dimensao:
-  D1: 1
-  D2: 1
+  D1: 2
+  D2: 2
   D3: 2
-
-# Componentes que entram na nota têm peso > 0 em esquemas.pesos_iguais.indicadores
 
 esquemas:
   pesos_iguais:
@@ -29,18 +27,18 @@ esquemas:
       D4: 0.0        # Contexto: FORA DA NOTA (DEC-001)
       PRIVADA: 0.0   # Camada Privada: FORA DA NOTA (DEC-001)
     indicadores:
-      D1.1: 1.0
-      D1.2: 0.0   # INFORMATIVO (PEND-038): evento raro; após suavização reflete sobretudo a UF. Exibido na ficha, fora da nota.
-      D1.3: 0.0   # sem pipeline (PEND)
-      D1.4: 0.0   # sem pipeline (PEND)
-      D2.1: 0.0   # sem pipeline (ICSAP/SIH — PEND)
-      D2.2: 0.5
-      D2.3: 0.5
-      D2.4: 0.0
-      D3.1: 0.3333333333333333
-      D3.2: 0.3333333333333333
-      D3.3: 0.3333333333333333
-      D3.4: 0.0
+      D1.1: 0.40  # Mortalidade Infantil (SIM + SINASC)
+      D1.2: 0.0   # INFORMATIVO (PEND-038): evento raro em nível municipal
+      D1.3: 0.30  # Mortalidade Prematura (30-69a) por DCNT (SIM + Censo 2022)
+      D1.4: 0.30  # Mortalidade por Causas Evitáveis (SIM / MS)
+      D2.1: 0.3333333333333333  # ICSAP (SIH/SUS)
+      D2.2: 0.3333333333333333  # Pré-natal 7+ consultas (SINASC)
+      D2.3: 0.3333333333333334  # Cobertura Vacinal Composta (Pólio, Penta, Tríplice Viral)
+      D2.4: 0.0   # Desempenho APS 2024 (pendente série histórica)
+      D3.1: 0.3333333333333333  # Leitos SUS na Região de Saúde (CNES)
+      D3.2: 0.3333333333333333  # Médicos + Enfermeiros padronizados por CH (CNES)
+      D3.3: 0.3333333333333334  # Cobertura de Equipes de Saúde da Família - eSF (SISAB)
+      D3.4: 0.0   # Informativo
 
   # Esquemas alternativos para a Análise de Sensibilidade (faixa de posição plausível)
   foco_resultados:

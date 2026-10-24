@@ -2,11 +2,11 @@
 """
 pipeline/indicators/build_composite_index.py
 
-Índice de Saúde Municipal — consolidação (v0.4.0).
+Índice de Saúde Municipal — consolidação (v0.5.0-draft).
 
 Entradas:
-  data/processed/indicadores_sim_sinasc.parquet   (D1.1, D1.2, D2.2 — microdados primários DATASUS)
-  data/raw/ieps/ieps_{ano}.csv                    (D2.3, D3.1, D3.2, D3.3, PRIV.2 — via IEPS Data)
+  data/processed/indicadores_sim_sinasc.parquet   (D1.1, D1.2, D1.3, D2.2 — microdados primários DATASUS)
+  data/raw/ieps/ieps_{ano}.csv                    (D1.4, D2.1, D2.3, D3.1, D3.2, D3.3, D4.1, D4.2, PRIV.1, PRIV.2)
   config/limites_referencia.yaml, config/pesos.yaml, config/janelas.yaml, config/qualidade.yaml
 
 Regras:
@@ -21,7 +21,7 @@ Regras:
 
 from __future__ import annotations
 
-import hashlib
+import io
 import json
 import os
 import sys
@@ -54,11 +54,33 @@ SITE_PROCESSED = os.path.join("site", "data", "processed")
 IEPS_COLUNAS = {
     "cob_esf": r"^Cobertura ESF",
     "cob_vac_polio": r"^Cob\. Vacinal Poliomielite",
+    "cob_vac_penta": r"^Cob\. Vacinal Pentavalente",
+    "cob_vac_tvd1": r"^Cob\. Vacinal Tr.plice Viral D1",
+    "tx_hosp_csap": r"^Hospitaliza..es CSAP",
+    "tx_mort_evit": r"^Mortalidade Bruta Causas Evit.veis",
     "tx_leito_sus": r"^Leitos SUS",
-    "tx_med": r"^M.dicos",
+    "tx_med": r"^M.dicos \(Por 1\.000",
+    "tx_enf": r"^Enfermeiros \(Por 1\.000",
+    "tx_med_ch": r"^M.dicos \(Por C\.H\.",
+    "tx_enf_ch": r"^Enfermeiros \(Por C\.H\.",
     "tx_leito_nsus": r"^Leitos N.o-SUS",
+    "cob_priv": r"^Cobertura de Planos de Sa.de",
+    "pct_desp_recp_saude_mun": r"^% da Receita Pr.pria Municipal",
+    "desp_tot_saude_pc_mun_def": r"^Despesa Total do Munic.pio com Sa.de",
 }
-IND_PARA_IEPS = {"D2.3": "cob_vac_polio", "D3.1": "tx_leito_sus", "D3.2": "tx_med", "D3.3": "cob_esf", "PRIV.2": "tx_leito_nsus"}
+
+IND_PARA_IEPS = {
+    "D1.4": "tx_mort_evit",
+    "D2.1": "icsap_10k",
+    "D2.3": "cob_vac_composta",
+    "D3.1": "tx_leito_sus",
+    "D3.2": "tx_prof_ch",
+    "D3.3": "cob_esf",
+    "D4.1": "desp_tot_saude_pc_mun_def",
+    "D4.2": "pct_desp_recp_saude_mun",
+    "PRIV.1": "cob_priv",
+    "PRIV.2": "tx_leito_nsus",
+}
 
 
 def carregar_yaml(caminho: str) -> dict:
@@ -79,7 +101,6 @@ def ler_csv_codificacao_robusta(caminho: str) -> pd.DataFrame:
         texto = blob.decode("utf-8-sig")
     except UnicodeDecodeError:
         texto = blob.decode("latin1")
-    import io
     return pd.read_csv(io.StringIO(texto))
 
 
@@ -97,18 +118,44 @@ def ler_ieps_ano(ano: int) -> pd.DataFrame:
     cod = [c for c in raw.columns if c.startswith("C") and "IBGE" in c]
     if len(cod) != 1:
         raise ValueError(f"IEPS {ano}: coluna de código IBGE ambígua: {cod}")
-    out = raw[[cod[0]] + list(ren)].rename(columns={cod[0]: "ibge6", **ren})
+
+    # Extrai também Região de Saúde (IBGE) e Nome da Região de Saúde
+    reg_id_cols = [c for c in raw.columns if "Regi" in c and "Sa" in c and "IBGE" in c and "Macro" not in c]
+    reg_nm_cols = [c for c in raw.columns if "Regi" in c and "Sa" in c and "IBGE" not in c and "Macro" not in c]
+    extra_cols = []
+    if reg_id_cols and reg_nm_cols:
+        ren[reg_id_cols[0]] = "regiao_saude_id_ieps"
+        ren[reg_nm_cols[0]] = "regiao_saude_nome_ieps"
+        extra_cols = [reg_id_cols[0], reg_nm_cols[0]]
+
+    out = raw[[cod[0]] + list(ren.keys())].rename(columns={cod[0]: "ibge6", **ren})
     out["ibge6"] = out["ibge6"].astype(str).str.replace(r"\.0$", "", regex=True).str.zfill(6)
+    # Filtra apenas linhas municipais (6 dígitos numéricos válidos)
+    out = out[out["ibge6"].str.match(r"^\d{6}$")].copy()
     out["ano"] = ano
+
+    # Derivadas anuais sem imputação
+    out["cob_vac_composta"] = out[["cob_vac_polio", "cob_vac_penta", "cob_vac_tvd1"]].mean(axis=1, skipna=False)
+    out["icsap_10k"] = out["tx_hosp_csap"] / 10.0
+    out["tx_prof_ch"] = out["tx_med_ch"] + out["tx_enf_ch"]
+    out["tx_prof_bruto"] = out["tx_med"] + out["tx_enf"]
     return out
 
 
-def agregar_ieps(janelas: dict) -> tuple[pd.DataFrame, dict]:
+def agregar_ieps(janelas: dict, dim_pop: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     """Média da janela por indicador, exigindo min_anos_validos (sem imputação)."""
     anos = sorted({a for k in IND_PARA_IEPS for a in janelas[k]["anos"]})
     longo = pd.concat([ler_ieps_ano(a) for a in anos], ignore_index=True)
     saida = pd.DataFrame({"ibge6": sorted(longo["ibge6"].unique())}).set_index("ibge6")
+
+    # Mapeamento de Região de Saúde a partir do último ano disponível
+    ult = longo.sort_values("ano").groupby("ibge6").last()
+    if "regiao_saude_id_ieps" in ult.columns:
+        saida["regiao_saude_id_ieps"] = ult["regiao_saude_id_ieps"].astype(str).str.replace(r"\.0$", "", regex=True)
+        saida["regiao_saude_nome_ieps"] = ult["regiao_saude_nome_ieps"].astype(str)
+
     meta = {}
+    cols_extras = ["cob_vac_polio", "cob_vac_penta", "cob_vac_tvd1", "tx_med", "tx_enf", "tx_med_ch", "tx_enf_ch", "tx_prof_bruto"]
     for ind, col in IND_PARA_IEPS.items():
         j = janelas[ind]
         sub = longo[longo["ano"].isin(j["anos"])]
@@ -119,7 +166,29 @@ def agregar_ieps(janelas: dict) -> tuple[pd.DataFrame, dict]:
         saida[col] = media
         saida[f"{col}_n_anos"] = n_validos.reindex(saida.index).fillna(0).astype(int)
         meta[ind] = {"anos": j["anos"], "min_anos_validos": j.get("min_anos_validos", 1)}
-    return saida.reset_index(), meta
+
+    # Médias informativas auxiliares do triênio 2021-2023
+    sub_tri = longo[longo["ano"].isin([2021, 2022, 2023])]
+    for c in cols_extras:
+        if c not in saida.columns:
+            saida[c] = sub_tri.groupby("ibge6")[c].mean()
+
+    saida_df = saida.reset_index()
+
+    # Calcula taxa regionalizada de Leitos SUS por Região de Saúde (média ponderada pela população Censo 2022 da CIR)
+    tmp = saida_df.merge(dim_pop[["ibge6", "populacao_censo_2022"]], on="ibge6", how="left")
+    tmp["leitos_abs_est"] = tmp["tx_leito_sus"] * tmp["populacao_censo_2022"] / 1e5
+    por_reg = tmp.groupby("regiao_saude_id_ieps", dropna=False).agg(
+        leitos_reg=("leitos_abs_est", "sum"),
+        pop_reg=("populacao_censo_2022", "sum"),
+    )
+    por_reg["tx_leito_sus_reg"] = np.where(por_reg["pop_reg"] > 0, por_reg["leitos_reg"] / por_reg["pop_reg"] * 1e5, np.nan)
+    saida_df = saida_df.merge(por_reg[["tx_leito_sus_reg"]], left_on="regiao_saude_id_ieps", right_index=True, how="left")
+    # Se o município não tiver leitos SUS válidos no período, mantém NaN
+    saida_df.loc[saida_df["tx_leito_sus"].isna(), "tx_leito_sus_reg"] = np.nan
+    saida_df["tx_leito_sus_reg_n_anos"] = saida_df["tx_leito_sus_n_anos"]
+
+    return saida_df, meta
 
 
 def obter_limites(df: pd.DataFrame, cfg_lim: dict, versao: str) -> dict:
@@ -127,7 +196,7 @@ def obter_limites(df: pd.DataFrame, cfg_lim: dict, versao: str) -> dict:
     if os.path.exists(LIMITES_CONGELADOS):
         with open(LIMITES_CONGELADOS, encoding="utf-8") as f:
             conj = json.load(f)
-        if conj.get("versao") == versao:
+        if conj.get("versao") == versao and set(conj.get("limites", {}).keys()) == set(cfg_lim["indicadores"].keys()):
             return conj["limites"]
         print(f"[composite] Limites congelados são da versão {conj.get('versao')} != {versao}: recalculando (nova versão).")
     p_inf, p_sup = cfg_lim["percentil_inferior"], cfg_lim["percentil_superior"]
@@ -152,7 +221,6 @@ def escores_componentes(df: pd.DataFrame, limites: dict) -> pd.DataFrame:
 
 def nota_dimensoes(df: pd.DataFrame, cfg_lim: dict, pesos: dict) -> pd.DataFrame:
     pi = pesos["esquemas"]["pesos_iguais"]["indicadores"]
-    # Somente componentes COM PESO entram na nota (e contam para o mínimo); os de peso 0 são informativos.
     ativos = {d: [i for i, v in cfg_lim["indicadores"].items() if v["dimensao"] == d and pi.get(i, 0) > 0] for d in ("D1", "D2", "D3")}
     minimos = pesos["min_componentes_por_dimensao"]
     for dim, inds in ativos.items():
@@ -220,6 +288,7 @@ def selo_qualidade(df: pd.DataFrame, cfg_q: dict) -> pd.DataFrame:
 
     df["qualidade_D1_1"] = por_eventos(df["d1_1_obitos"], q["eventos_taxa"]["D1.1"])
     df["qualidade_D1_2"] = por_eventos(df["d1_2_obitos"], q["eventos_taxa"]["D1.2"])
+    df["qualidade_D1_3"] = por_eventos(df["d1_3_obitos"], q["eventos_taxa"]["D1.3"])
     p = q["proporcao_base"]["D2.2"]
     s = np.where(df["d2_2_validas"] >= p["alta_min"], "alta", np.where(df["d2_2_validas"] >= p["media_min"], "media", "baixa"))
     df["qualidade_D2_2"] = np.where(df["pre7_pct_ignorado"] > q["ignorado_max_pct"], "alerta", s)
@@ -230,7 +299,7 @@ def selo_qualidade(df: pd.DataFrame, cfg_q: dict) -> pd.DataFrame:
 
 
 def construir() -> pd.DataFrame:
-    print("[composite] Carregando insumos...")
+    print("[composite] Carregando insumos (v0.5.0-draft)...")
     versao = versao_metodologia()
     cfg_lim = carregar_yaml(LIMITES_CFG)
     pesos = carregar_yaml(PESOS_CFG)
@@ -244,10 +313,16 @@ def construir() -> pd.DataFrame:
 
     dim = pd.read_parquet(DIM_PATH)
     sim = pd.read_parquet(SIM_PATH).drop(columns=["ibge7", "uf_sigla"])
-    ieps, meta_ieps = agregar_ieps(janelas)
+    ieps, meta_ieps = agregar_ieps(janelas, dim)
 
     df = dim.merge(sim, on="ibge6", how="left").merge(ieps, on="ibge6", how="left")
     assert len(df) == 5570 and df["ibge7"].is_unique, "Cardinalidade/unicidade violada após junções"
+
+    # Preenche regiao_saude_id e regiao_saude_nome reais (438 Regiões de Saúde do SUS)
+    if "regiao_saude_id_ieps" in df.columns:
+        df["regiao_saude_id"] = df["regiao_saude_id_ieps"].fillna(df.get("regiao_saude_id", "A_VALIDAR"))
+        df["regiao_saude_nome"] = df["regiao_saude_nome_ieps"].fillna(df.get("regiao_saude_nome", "A_VALIDAR"))
+        df = df.drop(columns=["regiao_saude_id_ieps", "regiao_saude_nome_ieps"])
 
     # Mal definidos SIM na janela D1.1 (informativo, qualidade do registro de óbitos)
     serie = pd.read_parquet(SERIE_PATH)
@@ -291,10 +366,12 @@ def construir() -> pd.DataFrame:
               "rank_d1", "rank_d2", "rank_d3"):
         df[c] = df[c].astype("Int64")
 
-    # Camada privada (fora da nota)
+    # Camada privada e Contexto D4 (fora da nota)
     df["leitos_priv_val"] = df["tx_leito_nsus"].round(1)
+    df["cob_priv_val"] = df["cob_priv"].round(1)
+    df["gasto_pc_def_val"] = df["desp_tot_saude_pc_mun_def"].round(2)
+    df["pct_rec_propria_val"] = df["pct_desp_recp_saude_mun"].round(1)
 
-    # Metadados de build / proveniência
     def manifesto(caminho):
         if os.path.exists(caminho):
             with open(caminho, encoding="utf-8") as f:

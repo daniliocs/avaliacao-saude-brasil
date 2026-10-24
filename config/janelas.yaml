@@ -1,14 +1,6 @@
 # Janelas temporais por indicador (Seção 5 da especificação: janelas móveis de 3 a 5 anos).
-# Parâmetros de MÉTODO (decisão DEC-011), não fatos de saúde. Alterar exige nova versão metodológica.
-#
-# Racional:
-#  - D1.1 (mortalidade infantil): triênio, padrão usual de monitoramento municipal, reduz a
-#    flutuação estocástica sem diluir tendências recentes.
-#  - D1.2 (mortalidade materna): quinquênio, pois o evento é raro em nível municipal.
-#  - D2.2 (pré-natal): triênio.
-#  - Indicadores do IEPS (D2.3, D3.1–D3.3): média do triênio, exigindo >= min_anos_validos
-#    (sem imputação quando faltam anos).
-versao: "v0.4.0"
+# Parâmetros de MÉTODO (decisão DEC-002 / PEND-035). Alterar exige nova versão metodológica.
+versao: "v0.5.0-draft"
 status: "A_DECIDIR"   # PEND-035: validar janelas com especialista em epidemiologia/bioestatística
 
 janelas:
@@ -18,26 +10,49 @@ janelas:
   D1.2:
     fonte: "SIM + SINASC (DATASUS, microdados por residência)"
     anos: [2019, 2020, 2021, 2022, 2023]
+  D1.3:
+    fonte: "SIM (DATASUS, microdados por residência) + Censo 2022 IBGE"
+    anos: [2021, 2022, 2023]
+  D1.4:
+    fonte: "SIM / Ministério da Saúde via IEPS Data"
+    anos: [2021, 2022, 2023]
+    min_anos_validos: 2
+  D2.1:
+    fonte: "SIH/SUS (Portaria SAS/MS 221/2008) via IEPS Data"
+    anos: [2021, 2022, 2023]
+    min_anos_validos: 2
   D2.2:
     fonte: "SINASC (DATASUS, microdados por residência da mãe)"
     anos: [2021, 2022, 2023]
   D2.3:
-    fonte: "SI-PNI via IEPS Data"
+    fonte: "SI-PNI (Poliomielite, Pentavalente e Tríplice Viral D1) via IEPS Data"
     anos: [2021, 2022, 2023]
     min_anos_validos: 2
   D3.1:
-    fonte: "CNES via IEPS Data"
+    fonte: "CNES (agregado por Região de Saúde e local) via IEPS Data"
     anos: [2021, 2022, 2023]
     min_anos_validos: 2
   D3.2:
-    fonte: "CNES via IEPS Data"
+    fonte: "CNES (Médicos e Enfermeiros padronizados por CH) via IEPS Data"
     anos: [2021, 2022, 2023]
     min_anos_validos: 2
   D3.3:
     fonte: "e-Gestor AB / SAPS via IEPS Data"
     anos: [2021, 2022, 2023]
     min_anos_validos: 2
+  D4.1:
+    fonte: "SIOPS (Despesa total per capita deflacionada) via IEPS Data"
+    anos: [2021, 2022, 2023]
+    min_anos_validos: 2
+  D4.2:
+    fonte: "SIOPS (% receita própria aplicada em saúde - EC 29/LC 141) via IEPS Data"
+    anos: [2021, 2022, 2023]
+    min_anos_validos: 2
+  PRIV.1:
+    fonte: "ANS (Cobertura de planos privados) via IEPS Data"
+    anos: [2021, 2022, 2023]
+    min_anos_validos: 2
   PRIV.2:
-    fonte: "CNES via IEPS Data"
+    fonte: "CNES (Leitos privados não-SUS) via IEPS Data"
     anos: [2021, 2022, 2023]
     min_anos_validos: 2

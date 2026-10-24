@@ -23,15 +23,15 @@ def _df(valores: dict):
     return pd.DataFrame(d)
 
 
-TODOS = ["D1.1", "D1.2", "D2.2", "D2.3", "D3.1", "D3.2", "D3.3"]
+TODOS = ["D1.1", "D1.2", "D1.3", "D1.4", "D2.1", "D2.2", "D2.3", "D3.1", "D3.2", "D3.3"]
 
 
 def test_dimensao_media_ponderada_entre_componentes_disponiveis(cfgs):
     lim, pes = cfgs
     df = _df({k: 80.0 for k in TODOS})
-    df["escore_D2_3"] = 40.0
+    df["escore_D2_3"] = 20.0
     r = bci.nota_dimensoes(df, lim, pes)
-    assert r["d2_nota"].iloc[0] == 60.0   # (80+40)/2 com pesos 0,5/0,5
+    assert r["d2_nota"].iloc[0] == 60.0   # (80+80+20)/3 com pesos 1/3 cada
     assert r["d3_nota"].iloc[0] == 80.0
 
 

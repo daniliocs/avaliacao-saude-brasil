@@ -78,7 +78,12 @@ def test_posicoes_consistentes_com_classificados(df):
 
 
 def test_sem_imputacao_componente_ausente_gera_nan_no_escore(df):
-    for col, esc in [("cob_vac_polio", "escore_D2_3"), ("tx_med", "escore_D3_2"), ("cob_esf", "escore_D3_3"), ("tx_leito_sus", "escore_D3_1")]:
+    for col, esc in [
+        ("cob_vac_composta", "escore_D2_3"),
+        ("tx_prof_ch", "escore_D3_2"),
+        ("cob_esf", "escore_D3_3"),
+        ("tx_leito_sus_reg", "escore_D3_1"),
+    ]:
         assert df.loc[df[col].isna(), esc].isna().all(), f"{esc} foi preenchido apesar de {col} ausente"
 
 
@@ -154,3 +159,17 @@ def test_d4_e_camada_privada_fora_da_nota(mapa):
     m = next(m for m in mapa.values() if m["status"] == "classificado")
     assert "d4_contexto" in m and "camada_privada" in m
     assert not any(k.startswith("PRIV") or k.startswith("D4") for k in m["indicadores"])
+
+
+def test_rankings_top100_estados_e_capitais():
+    if not os.path.exists(RANK):
+        pytest.skip("rankings_resumo.json não gerado")
+    with open(RANK, encoding="utf-8") as f:
+        r = json.load(f)
+    assert len(r.get("top100_brasil_melhores", [])) == 100
+    assert len(r.get("ranking_estados", [])) == 27
+    assert len(r.get("ranking_capitais", [])) == 27
+    for est in r["ranking_estados"]:
+        assert "lat" in est and "lng" in est and est["media_escore_uf"] is not None
+    for cap in r["ranking_capitais"]:
+        assert "lat" in cap and "lng" in cap and cap["escore"] is not None

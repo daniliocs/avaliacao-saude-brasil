@@ -4,19 +4,23 @@
  * Mapa Coroplético e Controle de Visualização Territorial (Leaflet)
  * - Carrega data/releases/latest/mapa_resumo.json (5.570 municípios)
  * - Suporte a camadas: Nota Geral, D1, D2, D3
- * - Tratamento visual estrito para status 'sem_classificacao'
- * - Busca com debounce para os 5.570 municípios e filtros por UF e Região
- * - Disparo da Ficha Lateral (openDrawer)
+ * - Botões de zoom no canto inferior direito (bottomright)
+ * - Marcadores numéricos visíveis no mapa para os 27 Estados (UFs) e as 27 Capitais
+ * - Modal de Rankings com 4 escopos separados: Top 100 Brasil, Por Estado (isolado), 27 Estados e 27 Capitais
  */
 
-import { openDrawer } from "./drawer_municipio.js?v=0.4.0";
+import { openDrawer } from "./drawer_municipio.js?v=0.5.0";
+import { updateCompareData } from "./compare_view.js?v=0.5.0";
 
 let leafletMap = null;
 let mapaResumoData = {};
 let rankingsData = {};
 let activeLayerKey = "nota_geral"; // 'nota_geral' | 'd1_nota' | 'd2_nota' | 'd3_nota'
 let activeRankDim = "nota_geral";  // 'nota_geral' | 'd1_nota' | 'd2_nota' | 'd3_nota'
+let activeRankScope = "brasil";    // 'brasil' | 'uf' | 'estados' | 'capitais'
+let activeMarkerMode = "none";     // 'none' | 'estados' | 'capitais'
 let geoJsonLayer = null;
+let overlayMarkersLayer = null;
 
 const UF_CENTERS = {
     "AC": [-9.02, -70.81, 7], "AL": [-9.57, -36.78, 8], "AM": [-3.41, -65.85, 6],
@@ -44,22 +48,25 @@ export async function initMap(metaConfig) {
         return;
     }
 
-    // Se já havia uma instância anterior, remove para evitar erro de re-inicialização
     if (leafletMap) {
         leafletMap.remove();
         leafletMap = null;
     }
 
-    // 1. Inicializa o objeto Leaflet centrado no Brasil com aceleração via Canvas
+    // 1. Inicializa o objeto Leaflet centrado no Brasil com botões de zoom no canto inferior direito
     leafletMap = L.map("leaflet-map", {
         center: [-14.235, -51.925],
         zoom: 4,
         minZoom: 3,
         maxZoom: 18,
+        zoomControl: false,
         preferCanvas: true
     });
 
-    // 2. Camadas de Mapa Base (Google Maps e alternativas sem restrição de API Key)
+    L.control.zoom({ position: "bottomright" }).addTo(leafletMap);
+    overlayMarkersLayer = L.layerGroup().addTo(leafletMap);
+
+    // 2. Camadas de Mapa Base
     const googlePadrao = L.tileLayer(
         "https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=pt-BR",
         {
@@ -95,10 +102,8 @@ export async function initMap(metaConfig) {
         }
     );
 
-    // Google Maps Padrão ativado por padrão
     googlePadrao.addTo(leafletMap);
 
-    // Controle de seleção de mapa base estilo Google Maps
     const baseMaps = {
         "Google Maps (Padrão)": googlePadrao,
         "Google Maps (Relevo)": googleTerreno,
@@ -107,27 +112,25 @@ export async function initMap(metaConfig) {
     };
     L.control.layers(baseMaps, null, { position: "topright" }).addTo(leafletMap);
 
-    // Garante que o Leaflet calcule as dimensões imediatamente
     setTimeout(() => {
         if (leafletMap) leafletMap.invalidateSize();
     }, 150);
 
-    // 3. Configura controles de busca, filtros, seletor de camada, rankings e modal de info
+    // 3. Configura controles de busca, filtros, seletor de camada, marcadores, rankings e modal de info
     setupLayerSelector();
+    setupMarkerModeSelector();
     setupSearchAndFilters();
     setupRankingsModal();
     setupInfoModal();
 
     // 4. Carrega os dados e malha de forma assíncrona
-    loadMapaResumo().then(() => {
-        setupSearchAndFilters(); // Atualiza dropdown e busca com mapaResumoData
+    Promise.all([loadMapaResumo(), loadRankings()]).then(() => {
+        setupSearchAndFilters();
+        updateCompareData(mapaResumoData, rankingsData);
+        renderMapOverlayMarkers();
         return loadGeoBoundary();
     }).catch(err => {
         console.error("[map.js] Erro ao carregar dados territoriais:", err);
-    });
-
-    loadRankings().catch(err => {
-        console.warn("[map.js] Rankings não disponíveis:", err);
     });
 }
 
@@ -200,7 +203,6 @@ async function loadGeoBoundary() {
         }
     }
 
-    console.log("[map.js] Malha local indisponível. Busca vetorial e ficha direta operando.");
     const loader = document.getElementById("map-loading");
     if (loader) {
         const text = document.getElementById("map-loading-text");
@@ -221,8 +223,6 @@ function renderGeoJson(geoData) {
             const mun = mapaResumoData[ibge] || { nome: feature.properties?.name || "Município", ibge7: ibge };
             const popFmt = mun.populacao ? mun.populacao.toLocaleString("pt-BR") + " hab." : "População em validação";
             const escoreFmt = mun.nota_geral !== null && mun.nota_geral !== undefined ? mun.nota_geral.toFixed(1) : null;
-            const d1Valor = mun.indicadores?.["D1.1"]?.valor;
-            const tmiFmt = d1Valor !== null && d1Valor !== undefined ? d1Valor.toFixed(1) + " por 1.000 NV" : null;
             const corNota = getColorForScore(mun.nota_geral);
 
             let statusBlock = "";
@@ -250,15 +250,15 @@ function renderGeoJson(geoData) {
                     <div style="font-size:0.78rem; line-height:1.45; color:#334155;">
                         <span>🏆 Ranking Nacional: <strong>#${mun.posicao_nacional}</strong> de 5.570</span><br>
                         <span>🥇 Ranking Estadual (${mun.uf}): <strong>#${mun.posicao_estadual}º</strong></span><br>
-                        <span>👥 Grupo de Pares: <strong>#${mun.posicao_grupo_pares || '—'}º</strong></span>
+                        <span>🏥 Região de Saúde: <strong>${mun.regiao_saude || '—'}</strong></span>
                     </div>
                 `;
             } else {
-                statusBlock = `<span style="color:#d97706; font-weight:700;">Status: Sem Classificação (Fase 0)</span><br>`;
+                statusBlock = `<span style="color:#d97706; font-weight:700;">Status: Sem Classificação</span><br>`;
             }
             
             layer.bindTooltip(`
-                <div style="font-size:0.8125rem; line-height:1.45; min-width:200px; padding:2px;">
+                <div style="font-size:0.8125rem; line-height:1.45; min-width:210px; padding:2px;">
                     <strong style="font-size:1rem; color:#0f172a;">${mun.nome} (${mun.uf || ''})</strong><br>
                     <span style="color:#475569;">👥 População: <strong>${popFmt}</strong></span><br>
                     ${statusBlock}
@@ -286,7 +286,6 @@ function styleFeature(feature) {
     const ibge = feature.properties?.id || feature.properties?.codarea || feature.properties?.ibge7;
     const mun = mapaResumoData[ibge];
 
-    // Regra 3 e 4: Sem classificação recebe padrão visual cinza neutro
     if (!mun || mun.status === "sem_classificacao" || mun[activeLayerKey] === null) {
         return {
             fillColor: "#94a3b8",
@@ -324,22 +323,144 @@ function setupLayerSelector() {
             layerButtons.forEach((b) => b.classList.remove("active"));
             btn.classList.add("active");
             activeLayerKey = btn.dataset.layer;
-            console.log(`[map.js] Camada ativa alterada para: ${activeLayerKey}`);
             if (geoJsonLayer) {
                 geoJsonLayer.setStyle(styleFeature);
             }
+            renderMapOverlayMarkers();
         });
     });
+}
+
+function setMarkerMode(mode) {
+    activeMarkerMode = mode;
+    document.querySelectorAll(".marker-mode-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.markerMode === mode);
+    });
+    renderMapOverlayMarkers();
+}
+
+function setupMarkerModeSelector() {
+    const btns = document.querySelectorAll(".marker-mode-btn");
+    btns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            setMarkerMode(btn.dataset.markerMode || "none");
+        });
+    });
+}
+
+function renderMapOverlayMarkers() {
+    if (!overlayMarkersLayer || !leafletMap) return;
+    overlayMarkersLayer.clearLayers();
+
+    if (activeMarkerMode === "none") return;
+
+    const ufDimFieldMap = {
+        "nota_geral": "media_escore_uf",
+        "d1_nota": "media_d1_uf",
+        "d2_nota": "media_d2_uf",
+        "d3_nota": "media_d3_uf"
+    };
+
+    if (activeMarkerMode === "estados") {
+        const estados = rankingsData?.ranking_estados || [];
+        const field = ufDimFieldMap[activeLayerKey] || "media_escore_uf";
+        const sorted = [...estados].sort((a, b) => (b[field] || 0) - (a[field] || 0));
+
+        sorted.forEach((est, idx) => {
+            const val = est[field];
+            if (val === null || val === undefined) return;
+            const color = getColorForScore(val);
+            const icon = L.divIcon({
+                className: "map-numeric-pin-wrapper",
+                html: `
+                    <div class="map-numeric-pin" style="border-color:${color};">
+                        <span class="map-numeric-pin__label">${est.uf}</span>
+                        <span class="map-numeric-pin__val" style="background:${color};">${val.toFixed(1)}</span>
+                    </div>
+                `,
+                iconSize: [74, 26],
+                iconAnchor: [37, 13]
+            });
+
+            const marker = L.marker([est.lat, est.lng], { icon, zIndexOffset: 900 });
+            marker.bindTooltip(`
+                <div style="font-size:0.8rem; line-height:1.45; min-width:190px;">
+                    <strong style="font-size:0.95rem;">#${idx + 1}º ${est.nome_uf} (${est.uf})</strong><br>
+                    <span>Média Estadual (Nota Geral): <strong>${est.media_escore_uf.toFixed(1)} pts</strong></span><br>
+                    <span>Média Ponderada Pop.: <strong>${est.media_ponderada_uf.toFixed(1)} pts</strong></span><br>
+                    <span>D1: <strong>${est.media_d1_uf.toFixed(1)}</strong> | D2: <strong>${est.media_d2_uf.toFixed(1)}</strong> | D3: <strong>${est.media_d3_uf.toFixed(1)}</strong></span><br>
+                    <span>Municípios: <strong>${est.total_municipios}</strong> &bull; Melhor: <strong>${est.melhor_municipio}</strong></span><br>
+                    <span style="color:#0284c7; font-weight:600;">👉 Clique para focar no Estado e ver o ranking da UF</span>
+                </div>
+            `, { direction: "top", offset: [0, -10] });
+
+            marker.on("click", () => {
+                const ufFilter = document.getElementById("uf-filter");
+                if (ufFilter) {
+                    ufFilter.value = est.uf;
+                    ufFilter.dispatchEvent(new Event("change"));
+                }
+                activeRankScope = "uf";
+                syncScopeTabs();
+                renderRankingsContent(est.uf);
+                const modalRanking = document.getElementById("rankings-modal");
+                if (modalRanking) modalRanking.classList.add("active");
+            });
+
+            marker.addTo(overlayMarkersLayer);
+        });
+    } else if (activeMarkerMode === "capitais") {
+        const capitais = rankingsData?.ranking_capitais || [];
+        const field = activeLayerKey || "nota_geral";
+        const sorted = [...capitais].sort((a, b) => (b[field] || 0) - (a[field] || 0));
+
+        sorted.forEach((cap, idx) => {
+            const val = cap[field] ?? cap.escore;
+            if (val === null || val === undefined) return;
+            const color = getColorForScore(val);
+            const shortName = cap.nome.length > 12 ? cap.nome.slice(0, 11) + "." : cap.nome;
+            const icon = L.divIcon({
+                className: "map-numeric-pin-wrapper",
+                html: `
+                    <div class="map-numeric-pin map-numeric-pin--cap" style="border-color:${color};">
+                        <span class="map-numeric-pin__label">${shortName}</span>
+                        <span class="map-numeric-pin__val" style="background:${color};">${val.toFixed(1)}</span>
+                    </div>
+                `,
+                iconSize: [98, 26],
+                iconAnchor: [49, 13]
+            });
+
+            const marker = L.marker([cap.lat, cap.lng], { icon, zIndexOffset: 950 });
+            marker.bindTooltip(`
+                <div style="font-size:0.8rem; line-height:1.45; min-width:195px;">
+                    <strong style="font-size:0.95rem;">🏙️ #${idx + 1}ª Capital: ${cap.nome} (${cap.uf})</strong><br>
+                    <span>Nota Geral: <strong>${cap.escore.toFixed(1)} / 100</strong> (#${cap.posicao_nacional}º no Brasil)</span><br>
+                    <span>D1: <strong>${cap.d1_nota.toFixed(1)}</strong> | D2: <strong>${cap.d2_nota.toFixed(1)}</strong> | D3: <strong>${cap.d3_nota.toFixed(1)}</strong></span><br>
+                    <span>População: <strong>${cap.populacao ? cap.populacao.toLocaleString("pt-BR") : '—'} hab.</strong></span><br>
+                    <span style="color:#0284c7; font-weight:600;">👉 Clique para abrir a ficha completa da Capital</span>
+                </div>
+            `, { direction: "top", offset: [0, -10] });
+
+            marker.on("click", () => {
+                const mun = mapaResumoData[cap.ibge7];
+                if (mun) openDrawer(mun);
+            });
+
+            marker.addTo(overlayMarkersLayer);
+        });
+    }
 }
 
 function setupSearchAndFilters() {
     const searchInput = document.getElementById("search-municipio-input");
     const dropdown = document.getElementById("search-results-dropdown");
     const ufFilter = document.getElementById("uf-filter");
+    const modalUfSelect = document.getElementById("modal-uf-select");
 
-    // Popula o select de UFs imediatamente com os 27 estados
+    const ufs = Object.keys(UF_CENTERS).sort();
+
     if (ufFilter && ufFilter.options.length <= 1) {
-        const ufs = Object.keys(UF_CENTERS).sort();
         ufs.forEach(uf => {
             const opt = document.createElement("option");
             opt.value = uf;
@@ -349,17 +470,45 @@ function setupSearchAndFilters() {
 
         ufFilter.addEventListener("change", () => {
             const selectedUf = ufFilter.value;
+            if (modalUfSelect && modalUfSelect.value !== selectedUf) {
+                modalUfSelect.value = selectedUf || "SP";
+            }
             if (selectedUf) {
-                console.log(`[map.js] Filtro por UF selecionado: ${selectedUf}`);
                 const centerCfg = UF_CENTERS[selectedUf];
                 if (centerCfg && leafletMap) {
                     leafletMap.setView([centerCfg[0], centerCfg[1]], centerCfg[2]);
                 }
+                activeRankScope = "uf";
+                syncScopeTabs();
                 renderRankingsContent(selectedUf);
             } else if (leafletMap) {
                 leafletMap.setView([-14.235, -51.925], 4);
+                activeRankScope = "brasil";
+                syncScopeTabs();
                 renderRankingsContent("");
             }
+        });
+    }
+
+    if (modalUfSelect && modalUfSelect.options.length === 0) {
+        ufs.forEach(uf => {
+            const opt = document.createElement("option");
+            opt.value = uf;
+            opt.textContent = uf;
+            modalUfSelect.appendChild(opt);
+        });
+        modalUfSelect.value = ufFilter?.value || "SP";
+
+        modalUfSelect.addEventListener("change", () => {
+            const chosenUf = modalUfSelect.value;
+            if (ufFilter) {
+                ufFilter.value = chosenUf;
+                const centerCfg = UF_CENTERS[chosenUf];
+                if (centerCfg && leafletMap) {
+                    leafletMap.setView([centerCfg[0], centerCfg[1]], centerCfg[2]);
+                }
+            }
+            renderRankingsContent(chosenUf);
         });
     }
 
@@ -394,7 +543,7 @@ function setupSearchAndFilters() {
                 dropdown.innerHTML = results.map(m => `
                     <div class="search-item" data-ibge="${m.ibge7}">
                         <strong>${m.nome} (${m.uf})</strong>
-                        <span style="font-size: 0.75rem; color: var(--color-text-subtle);">IBGE: ${m.ibge7}</span>
+                        <span style="font-size: 0.75rem; color: var(--color-text-subtle);">Nota: ${m.nota_geral ? m.nota_geral.toFixed(1) : '—'} | IBGE: ${m.ibge7}</span>
                     </div>
                 `).join("");
 
@@ -419,16 +568,31 @@ function setupSearchAndFilters() {
     });
 }
 
+function syncScopeTabs() {
+    document.querySelectorAll(".rank-scope-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.rankScope === activeRankScope);
+    });
+    const ufWrap = document.getElementById("modal-uf-selector-wrap");
+    if (ufWrap) {
+        ufWrap.style.display = activeRankScope === "uf" ? "flex" : "none";
+    }
+}
+
 function setupRankingsModal() {
     const btnRanking = document.getElementById("btn-toggle-ranking");
     const modalRanking = document.getElementById("rankings-modal");
     const btnCloseRank = document.getElementById("btn-close-ranking");
     const rankDimButtons = document.querySelectorAll(".rank-dim-btn");
+    const rankScopeButtons = document.querySelectorAll(".rank-scope-btn");
 
     if (btnRanking && modalRanking) {
         btnRanking.addEventListener("click", () => {
             const ufFilter = document.getElementById("uf-filter");
             const activeUf = ufFilter ? ufFilter.value : "";
+            if (activeUf && activeRankScope === "brasil") {
+                activeRankScope = "uf";
+            }
+            syncScopeTabs();
             renderRankingsContent(activeUf);
             modalRanking.classList.add("active");
         });
@@ -448,14 +612,25 @@ function setupRankingsModal() {
         });
     }
 
-    // Filtros de Dimensão dentro do Modal de Ranking
+    rankScopeButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            activeRankScope = btn.dataset.rankScope || "brasil";
+            syncScopeTabs();
+            const ufFilter = document.getElementById("uf-filter");
+            const modalUfSelect = document.getElementById("modal-uf-select");
+            const chosenUf = ufFilter?.value || modalUfSelect?.value || "SP";
+            renderRankingsContent(chosenUf);
+        });
+    });
+
     rankDimButtons.forEach(btn => {
         btn.addEventListener("click", () => {
             rankDimButtons.forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
             activeRankDim = btn.dataset.rankDim || "nota_geral";
             const ufFilter = document.getElementById("uf-filter");
-            const activeUf = ufFilter ? ufFilter.value : "";
+            const modalUfSelect = document.getElementById("modal-uf-select");
+            const activeUf = ufFilter?.value || modalUfSelect?.value || "SP";
             renderRankingsContent(activeUf);
         });
     });
@@ -501,46 +676,24 @@ function setupInfoModal() {
 
 function renderRankingsContent(selectedUf = "") {
     const container = document.getElementById("rankings-modal-body");
-    if (!container || !rankingsData || !rankingsData.top10_brasil_melhores) {
+    if (!container || !rankingsData) {
         if (container) container.innerHTML = `<p style="color:var(--color-text-subtle);">Carregando rankings oficiais...</p>`;
         return;
     }
 
-    // Seleciona ou calcula a lista de acordo com activeRankDim
-    let brasilTop10 = [];
-    let ufTop10 = [];
+    const dimLabelMap = {
+        "nota_geral": "Nota Geral Consolidada (D1 + D2 + D3)",
+        "d1_nota": "D1 — Resultados em Saúde (Mortalidade Infantil, DCNT e Evitáveis)",
+        "d2_nota": "D2 — Atenção Primária (ICSAP, Pré-natal 7+ e Vacinação Composta)",
+        "d3_nota": "D3 — Acesso e Capacidade (Leitos Regionais, Médicos/Enf. 40h e eSF)"
+    };
+    const activeLabel = dimLabelMap[activeRankDim] || "Nota Geral Consolidada";
     const allMun = Object.values(mapaResumoData);
 
-    if (activeRankDim === "nota_geral") {
-        brasilTop10 = rankingsData.top10_brasil_melhores || [];
-        ufTop10 = selectedUf ? (rankingsData.rankings_por_uf?.[selectedUf]?.melhores || []) : [];
-    } else {
-        brasilTop10 = allMun
-            .filter(m => typeof m[activeRankDim] === "number")
-            .sort((a, b) => b[activeRankDim] - a[activeRankDim])
-            .slice(0, 10);
-
-        if (selectedUf) {
-            ufTop10 = allMun
-                .filter(m => m.uf === selectedUf && typeof m[activeRankDim] === "number")
-                .sort((a, b) => b[activeRankDim] - a[activeRankDim])
-                .slice(0, 10);
+    const renderMunicipalityList = (items) => {
+        if (!items || items.length === 0) {
+            return "<p style='color:var(--color-text-subtle);'>Nenhum município listado.</p>";
         }
-    }
-
-    const dimLabelMap = {
-        "nota_geral": "Índice Consolidado (D1 + D2 + D3)",
-        "d1_nota": "Dimensão 1 — Mortalidade Infantil (SIM / SINASC)",
-        "d2_nota": "Dimensão 2 — Atenção Primária (Pré-natal e Vacinas)",
-        "d3_nota": "Dimensão 3 — Estrutura e Acesso (Leitos, Médicos, ESF)"
-    };
-    const activeLabel = dimLabelMap[activeRankDim] || "Índice Consolidado";
-
-    const ufInfo = selectedUf ? rankingsData.rankings_por_uf?.[selectedUf] : null;
-    const ufTitle = selectedUf ? `Top 10 — ${selectedUf} (Média Estadual: ${ufInfo?.media_escore_uf || '—'} pts)` : "Selecione um Estado no filtro de UF para ver o ranking estadual";
-
-    const renderList = (items) => {
-        if (!items || items.length === 0) return "<p style='color:var(--color-text-subtle);'>Nenhum município listado.</p>";
         return `
             <div style="display:flex; flex-direction:column; gap:0.4rem;">
                 ${items.map((m, idx) => {
@@ -555,6 +708,7 @@ function renderRankingsContent(selectedUf = "") {
                             <div>
                                 <span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${idx + 1}</span>
                                 <strong>${m.nome} (${m.uf})</strong>
+                                ${m.eh_capital ? `<span class="badge badge--quality-high" style="margin-left:4px;">Capital</span>` : ""}
                                 <div style="font-size:0.75rem; color:var(--color-text-subtle); margin-top:1px;">
                                     ${m.populacao ? m.populacao.toLocaleString('pt-BR') + ' hab.' : ''} &bull; 
                                     <span>D1: <strong>${d1}</strong></span> | 
@@ -572,25 +726,165 @@ function renderRankingsContent(selectedUf = "") {
         `;
     };
 
-    container.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:1.25rem;">
-            <div>
-                <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:0.5rem; color:#1e293b;">
-                    🇧🇷 Top 10 Brasil — ${activeLabel}
-                </h4>
-                ${renderList(brasilTop10)}
-            </div>
+    // ESCOPO 1: TOP 100 BRASIL
+    if (activeRankScope === "brasil") {
+        let brasilTop100 = [];
+        if (activeRankDim === "nota_geral" && rankingsData.top100_brasil_melhores) {
+            brasilTop100 = rankingsData.top100_brasil_melhores;
+        } else {
+            brasilTop100 = allMun
+                .filter(m => typeof m[activeRankDim] === "number")
+                .sort((a, b) => (b[activeRankDim] - a[activeRankDim]) || ((b.populacao || 0) - (a.populacao || 0)))
+                .slice(0, 100);
+        }
 
+        container.innerHTML = `
             <div>
-                <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:0.5rem; color:#1e293b;">
-                    🏛️ ${ufTitle}
+                <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:0.65rem; color:#1e293b;">
+                    🇧🇷 Top 100 Municípios do Brasil — ${activeLabel}
                 </h4>
-                ${selectedUf ? renderList(ufTop10) : `<p style="font-size:0.8125rem; color:var(--color-text-subtle);">Escolha um estado no filtro do topo da tela (ex.: SP, SC, MG, RS) para listar os 10 melhores municipais.</p>`}
+                ${renderMunicipalityList(brasilTop100)}
             </div>
-        </div>
-    `;
+        `;
+    }
+    // ESCOPO 2: SOMENTE O ESTADO SELECIONADO (SEM PRECISAR ROLAR PELO TOP 100 BRASIL!)
+    else if (activeRankScope === "uf") {
+        const modalUfSelect = document.getElementById("modal-uf-select");
+        const uf = selectedUf || modalUfSelect?.value || "SP";
+        if (modalUfSelect && modalUfSelect.value !== uf) {
+            modalUfSelect.value = uf;
+        }
+        const ufInfo = rankingsData.rankings_por_uf?.[uf];
+        let ufTopList = [];
+        if (activeRankDim === "nota_geral" && ufInfo?.melhores) {
+            ufTopList = ufInfo.melhores;
+        } else {
+            ufTopList = allMun
+                .filter(m => m.uf === uf && typeof m[activeRankDim] === "number")
+                .sort((a, b) => (b[activeRankDim] - a[activeRankDim]) || ((b.populacao || 0) - (a.populacao || 0)))
+                .slice(0, 100);
+        }
 
-    // Clique em qualquer item do ranking fecha modal e abre a ficha do município
+        container.innerHTML = `
+            <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.65rem; padding:0.6rem 0.75rem; background:var(--color-bg); border:1px solid var(--color-border); border-radius:6px;">
+                    <div>
+                        <h4 style="font-size:0.95rem; font-weight:700; margin:0; color:#1e293b;">
+                            🏛️ Ranking Estadual — ${ufInfo?.nome_uf || uf} (${uf})
+                        </h4>
+                        <span style="font-size:0.76rem; color:var(--color-text-muted);">
+                            Posição entre Estados: <strong>#${ufInfo?.posicao_uf || '—'}º de 27</strong> &bull;
+                            Média UF: <strong>${ufInfo?.media_escore_uf ?? '—'} pts</strong> &bull;
+                            Municípios: <strong>${ufInfo?.total_municipios || ufTopList.length}</strong>
+                        </span>
+                    </div>
+                </div>
+                ${renderMunicipalityList(ufTopList)}
+            </div>
+        `;
+    }
+    // ESCOPO 3: RANKING DOS 27 ESTADOS + DF (MÉDIA POR ESTADO)
+    else if (activeRankScope === "estados") {
+        const ufFieldMap = {
+            "nota_geral": "media_escore_uf",
+            "d1_nota": "media_d1_uf",
+            "d2_nota": "media_d2_uf",
+            "d3_nota": "media_d3_uf"
+        };
+        const field = ufFieldMap[activeRankDim] || "media_escore_uf";
+        const estados = [...(rankingsData.ranking_estados || [])].sort((a, b) => (b[field] || 0) - (a[field] || 0));
+
+        container.innerHTML = `
+            <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+                    <h4 style="font-size:0.95rem; font-weight:700; margin:0; color:#1e293b;">
+                        📊 Ranking das 27 Unidades da Federação — ${activeLabel}
+                    </h4>
+                    <button id="btn-show-estados-pins" class="btn-ranking-toggle" style="padding:0.3rem 0.65rem; font-size:0.75rem;">
+                        📍 Destacar Notas dos 27 Estados no Mapa
+                    </button>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                    ${estados.map((est, idx) => {
+                        const score = est[field];
+                        return `
+                            <div class="ranking-uf-item" data-uf="${est.uf}" style="display:flex; justify-content:space-between; align-items:center; padding:0.55rem 0.7rem; border:1px solid var(--color-border); border-radius:6px; background:var(--color-surface); cursor:pointer;">
+                                <div>
+                                    <span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${idx + 1}</span>
+                                    <strong>${est.nome_uf} (${est.uf})</strong>
+                                    <span style="font-size:0.74rem; color:var(--color-text-subtle); margin-left:4px;">(${est.total_municipios} mun. &bull; ${(est.populacao_uf || 0).toLocaleString('pt-BR')} hab.)</span>
+                                    <div style="font-size:0.75rem; color:var(--color-text-subtle); margin-top:2px;">
+                                        Média Pond. Pop.: <strong>${est.media_ponderada_uf.toFixed(1)}</strong> &bull;
+                                        D1: <strong>${est.media_d1_uf.toFixed(1)}</strong> |
+                                        D2: <strong>${est.media_d2_uf.toFixed(1)}</strong> |
+                                        D3: <strong>${est.media_d3_uf.toFixed(1)}</strong>
+                                    </div>
+                                </div>
+                                <span style="background:${getColorForScore(score)}; color:#fff; font-weight:700; font-size:0.85rem; padding:3px 9px; border-radius:4px; margin-left:8px;">
+                                    ${score.toFixed(1)}
+                                </span>
+                            </div>
+                        `;
+                    }).join("")}
+                </div>
+            </div>
+        `;
+
+        const btnPins = container.querySelector("#btn-show-estados-pins");
+        if (btnPins) {
+            btnPins.addEventListener("click", () => {
+                setMarkerMode("estados");
+                if (leafletMap) leafletMap.setView([-14.235, -51.925], 4);
+                const modalRanking = document.getElementById("rankings-modal");
+                if (modalRanking) modalRanking.classList.remove("active");
+            });
+        }
+
+        container.querySelectorAll(".ranking-uf-item").forEach(row => {
+            row.addEventListener("click", () => {
+                const uf = row.dataset.uf;
+                activeRankScope = "uf";
+                const modalUfSelect = document.getElementById("modal-uf-select");
+                if (modalUfSelect) modalUfSelect.value = uf;
+                syncScopeTabs();
+                renderRankingsContent(uf);
+            });
+        });
+        return;
+    }
+    // ESCOPO 4: RANKING DAS 27 CAPITAIS
+    else if (activeRankScope === "capitais") {
+        const caps = [...(rankingsData.ranking_capitais || [])].sort((a, b) => {
+            const va = typeof a[activeRankDim] === "number" ? a[activeRankDim] : a.escore;
+            const vb = typeof b[activeRankDim] === "number" ? b[activeRankDim] : b.escore;
+            return vb - va;
+        });
+
+        container.innerHTML = `
+            <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+                    <h4 style="font-size:0.95rem; font-weight:700; margin:0; color:#1e293b;">
+                        🏙️ Ranking das 27 Capitais Brasileiras — ${activeLabel}
+                    </h4>
+                    <button id="btn-show-capitais-pins" class="btn-ranking-toggle" style="padding:0.3rem 0.65rem; font-size:0.75rem;">
+                        📍 Destacar Notas das 27 Capitais no Mapa
+                    </button>
+                </div>
+                ${renderMunicipalityList(caps)}
+            </div>
+        `;
+
+        const btnCapPins = container.querySelector("#btn-show-capitais-pins");
+        if (btnCapPins) {
+            btnCapPins.addEventListener("click", () => {
+                setMarkerMode("capitais");
+                if (leafletMap) leafletMap.setView([-14.235, -51.925], 4);
+                const modalRanking = document.getElementById("rankings-modal");
+                if (modalRanking) modalRanking.classList.remove("active");
+            });
+        }
+    }
+
     container.querySelectorAll(".ranking-row-item").forEach(item => {
         item.addEventListener("click", () => {
             const ibge7 = item.dataset.ibge;

@@ -23,6 +23,67 @@ import numpy as np
 import pandas as pd
 import yaml
 
+# Coordenadas das 27 Capitais (IBGE 7 dígitos -> (lat, lng, uf, nome_uf))
+CAPITAIS_INFO = {
+    "1100205": (-8.7619, -63.9039, "RO", "Rondônia"),
+    "1200401": (-9.9754, -67.8249, "AC", "Acre"),
+    "1302603": (-3.1190, -60.0217, "AM", "Amazonas"),
+    "1400100": (2.8235, -60.6758, "RR", "Roraima"),
+    "1501402": (-1.4558, -48.4902, "PA", "Pará"),
+    "1600303": (0.0356, -51.0705, "AP", "Amapá"),
+    "1721000": (-10.2491, -48.3243, "TO", "Tocantins"),
+    "2111300": (-2.5391, -44.2829, "MA", "Maranhão"),
+    "2211001": (-5.0920, -42.8038, "PI", "Piauí"),
+    "2304400": (-3.7319, -38.5267, "CE", "Ceará"),
+    "2408102": (-5.7945, -35.2110, "RN", "Rio Grande do Norte"),
+    "2507507": (-7.1195, -34.8450, "PB", "Paraíba"),
+    "2611606": (-8.0476, -34.8770, "PE", "Pernambuco"),
+    "2704302": (-9.6658, -35.7350, "AL", "Alagoas"),
+    "2800308": (-10.9472, -37.0731, "SE", "Sergipe"),
+    "2927408": (-12.9777, -38.5016, "BA", "Bahia"),
+    "3106200": (-19.9167, -43.9345, "MG", "Minas Gerais"),
+    "3205309": (-20.3155, -40.3128, "ES", "Espírito Santo"),
+    "3304557": (-22.9068, -43.1729, "RJ", "Rio de Janeiro"),
+    "3550308": (-23.5505, -46.6333, "SP", "São Paulo"),
+    "4106902": (-25.4284, -49.2733, "PR", "Paraná"),
+    "4205407": (-27.5949, -48.5482, "SC", "Santa Catarina"),
+    "4314902": (-30.0346, -51.2177, "RS", "Rio Grande do Sul"),
+    "5002704": (-20.4697, -54.6201, "MS", "Mato Grosso do Sul"),
+    "5103403": (-15.6014, -56.0979, "MT", "Mato Grosso"),
+    "5208707": (-16.6869, -49.2648, "GO", "Goiás"),
+    "5300108": (-15.7975, -47.8919, "DF", "Distrito Federal"),
+}
+
+UF_CENTROIDES = {
+    "AC": (-9.02, -70.81, "Acre"),
+    "AL": (-9.57, -36.78, "Alagoas"),
+    "AM": (-3.41, -65.85, "Amazonas"),
+    "AP": (1.41, -51.77, "Amapá"),
+    "BA": (-12.57, -41.70, "Bahia"),
+    "CE": (-5.49, -39.32, "Ceará"),
+    "DF": (-15.83, -47.86, "Distrito Federal"),
+    "ES": (-19.18, -40.30, "Espírito Santo"),
+    "GO": (-15.93, -50.14, "Goiás"),
+    "MA": (-5.42, -45.44, "Maranhão"),
+    "MG": (-18.51, -44.55, "Minas Gerais"),
+    "MS": (-20.77, -54.78, "Mato Grosso do Sul"),
+    "MT": (-12.68, -55.42, "Mato Grosso"),
+    "PA": (-3.79, -52.48, "Pará"),
+    "PB": (-7.24, -36.78, "Paraíba"),
+    "PE": (-8.28, -37.86, "Pernambuco"),
+    "PI": (-7.71, -42.72, "Piauí"),
+    "PR": (-24.89, -51.55, "Paraná"),
+    "RJ": (-22.25, -42.66, "Rio de Janeiro"),
+    "RN": (-5.81, -36.59, "Rio Grande do Norte"),
+    "RO": (-10.83, -63.34, "Rondônia"),
+    "RR": (2.73, -61.30, "Roraima"),
+    "RS": (-30.01, -53.48, "Rio Grande do Sul"),
+    "SC": (-27.33, -50.44, "Santa Catarina"),
+    "SE": (-10.57, -37.38, "Sergipe"),
+    "SP": (-22.19, -48.79, "São Paulo"),
+    "TO": (-10.25, -48.25, "Tocantins"),
+}
+
 
 def load_yaml(filepath: str):
     if not os.path.exists(filepath):
@@ -67,7 +128,7 @@ def build_meta_payload() -> dict:
     meta_build = {
         "build_timestamp": datetime.now(timezone.utc).isoformat(),
         "versao_metodologia": versao_metodologia,
-        "status_metodologia": "Preliminar — Normalização Relativa por Percentis (P5–P95)",
+        "status_metodologia": "Experimental — Normalização Relativa por Percentis (P5–P95)",
         "regras_inegociaveis": [
             "Proibido inventar dados numéricos, metas ou limites sem validação documental",
             "Zero imputação silenciosa: dado ausente permanece NaN e exige mínimo de componentes por dimensão",
@@ -78,32 +139,32 @@ def build_meta_payload() -> dict:
         "fontes": registry_cfg.get("fontes", []),
         "dimensoes": {
             "D1": {
-                "nome": "Resultados em Saúde",
-                "descricao": "Desfechos epidemiológicos por residência (D1.1 Mortalidade Infantil 2021–2023 ativa na nota; D1.2 Razão de Mortalidade Materna 2019–2023 informativa)",
+                "nome": "Resultados em Saúde da População",
+                "descricao": "Desfechos epidemiológicos por residência (D1.1 Mortalidade Infantil, D1.3 Mortalidade Prematura DCNT 30–69a e D1.4 Causas Evitáveis no triênio 2021–2023; D1.2 Razão de Mortalidade Materna 2019–2023 informativa)",
                 "nivel_agregacao": "Município de residência",
                 "peso_padrao": pesos_cfg.get("esquemas", {}).get("pesos_iguais", {}).get("dimensoes", {}).get("D1", 0.3333)
             },
             "D2": {
-                "nome": "Atenção Primária",
-                "descricao": "Cobertura e efetividade da APS (D2.2 Pré-natal 7+ consultas SINASC e D2.3 Vacinação Poliomielite SI-PNI, triênio 2021–2023)",
+                "nome": "Atenção Primária e Prevenção",
+                "descricao": "Resolutividade e prevenção na APS (D2.1 Internações Sensíveis à APS - ICSAP, D2.2 Pré-natal 7+ consultas SINASC e D2.3 Cobertura Vacinal Composta Pólio+Penta+Tríplice Viral, triênio 2021–2023)",
                 "nivel_agregacao": "Município de residência",
                 "peso_padrao": pesos_cfg.get("esquemas", {}).get("pesos_iguais", {}).get("dimensoes", {}).get("D2", 0.3333)
             },
             "D3": {
-                "nome": "Acesso e Estrutura",
-                "descricao": "Capacidade instalada do SUS (D3.1 Leitos SUS, D3.2 Médicos e D3.3 Cobertura eSF, triênio 2021–2023)",
-                "nivel_agregacao": "Município / Região de Saúde",
+                "nome": "Acesso e Capacidade Assistencial",
+                "descricao": "Capacidade instalada e regionalizada do SUS (D3.1 Leitos SUS na Região de Saúde, D3.2 Médicos e Enfermeiros padronizados por CH e D3.3 Cobertura eSF, triênio 2021–2023)",
+                "nivel_agregacao": "Região de Saúde / Município",
                 "peso_padrao": pesos_cfg.get("esquemas", {}).get("pesos_iguais", {}).get("dimensoes", {}).get("D3", 0.3333)
             },
             "D4": {
-                "nome": "Contexto Municipal",
-                "descricao": "Financiamento e determinantes socioeconômicos — FORA DA NOTA PRINCIPAL (DEC-001)",
+                "nome": "Contexto Financeiro Municipal",
+                "descricao": "Despesa per capita deflacionada (SIOPS) e aplicação de receita própria (% EC 29) — FORA DA NOTA PRINCIPAL (DEC-001)",
                 "nivel_agregacao": "Município de residência",
                 "peso_padrao": 0.0
             },
             "PRIVADA": {
-                "nome": "Camada Privada",
-                "descricao": "Saúde suplementar e oferta privada não-SUS — FORA DA NOTA PRINCIPAL (DEC-001)",
+                "nome": "Camada Privada e Saúde Suplementar",
+                "descricao": "Cobertura de planos privados (ANS) e leitos hospitalares não-SUS (CNES) — FORA DA NOTA PRINCIPAL (DEC-001)",
                 "nivel_agregacao": "Município de residência",
                 "peso_padrao": 0.0
             }
@@ -137,7 +198,7 @@ def build_mapa_resumo_payload(meta_build: dict):
         print(f"[export_site_payloads:ERRO] {comp_path} não encontrado.")
         sys.exit(1)
 
-    print("[export_site_payloads] Gerando mapa_resumo.json a partir do índice v0.4.0...")
+    print(f"[export_site_payloads] Gerando mapa_resumo.json a partir do índice {meta_build['versao_metodologia']}...")
     df = pd.read_parquet(comp_path)
 
     versao = meta_build["versao_metodologia"]
@@ -152,15 +213,20 @@ def build_mapa_resumo_payload(meta_build: dict):
         porte_val = str(row.get("porte_populacional", "A_VALIDAR"))
         status_mun = str(row.get("status", "sem_classificacao"))
         motivo_sem = str(row.get("motivo_sem_classificacao", ""))
+        reg_saude = str(row.get("regiao_saude_nome", row.get("regiao_imediata_nome", "A_VALIDAR")))
+        if not reg_saude or reg_saude == "nan":
+            reg_saude = str(row.get("regiao_imediata_nome", "A_VALIDAR"))
 
         ic_d1_1 = [num_or_none(row.get("tmi_ic95_min")), num_or_none(row.get("tmi_ic95_max"))] if pd.notna(row.get("tmi_ic95_min")) else None
         ic_d1_2 = [num_or_none(row.get("rmm_ic95_min"), 1), num_or_none(row.get("rmm_ic95_max"), 1)] if pd.notna(row.get("rmm_ic95_min")) else None
+        ic_d1_3 = [num_or_none(row.get("dcnt_ic95_min"), 1), num_or_none(row.get("dcnt_ic95_max"), 1)] if pd.notna(row.get("dcnt_ic95_min")) else None
         ic_d2_2 = [num_or_none(row.get("pre7_ic95_min"), 1), num_or_none(row.get("pre7_ic95_max"), 1)] if pd.notna(row.get("pre7_ic95_min")) else None
 
         indicadores_dict = {
             "D1.1": {
                 "valor": num_or_none(row.get("tmi_bayes"), 2),
                 "taxa_bruta": num_or_none(row.get("tmi_bruta"), 2),
+                "tmn_bruta": num_or_none(row.get("tmn_bruta"), 2),
                 "escore": num_or_none(row.get("escore_D1_1"), 1),
                 "eventos": int(row["d1_1_obitos"]) if pd.notna(row.get("d1_1_obitos")) else None,
                 "denominador": int(row["d1_1_nv"]) if pd.notna(row.get("d1_1_nv")) else None,
@@ -171,7 +237,7 @@ def build_mapa_resumo_payload(meta_build: dict):
                 "data_coleta": coleta_sim,
                 "versao_metodologia": versao,
                 "qualidade_dado": str(row.get("qualidade_D1_1", "baixa")),
-                "papel_na_nota": "ativo (100% de D1)"
+                "papel_na_nota": "ativo (40% de D1)"
             },
             "D1.2": {
                 "valor": num_or_none(row.get("rmm_bayes"), 1),
@@ -186,7 +252,48 @@ def build_mapa_resumo_payload(meta_build: dict):
                 "data_coleta": coleta_sim,
                 "versao_metodologia": versao,
                 "qualidade_dado": str(row.get("qualidade_D1_2", "baixa")),
-                "papel_na_nota": "informativo (peso 0)"
+                "papel_na_nota": "informativo"
+            },
+            "D1.3": {
+                "valor": num_or_none(row.get("dcnt_bayes"), 1),
+                "taxa_bruta": num_or_none(row.get("dcnt_bruta"), 1),
+                "escore": num_or_none(row.get("escore_D1_3"), 1),
+                "eventos": int(row["d1_3_obitos"]) if pd.notna(row.get("d1_3_obitos")) else None,
+                "denominador": int(row["d1_3_pop_anos"]) if pd.notna(row.get("d1_3_pop_anos")) else None,
+                "ic_95": ic_d1_3,
+                "fonte_id": "sim_do",
+                "fonte_detalhe": "SIM / DATASUS (30–69a: I00–I99, C00–C97, E10–E14, J30–J98) + Censo 2022",
+                "periodo_vintage": str(row.get("d1_3_janela", "2021–2023")),
+                "data_coleta": coleta_sim,
+                "versao_metodologia": versao,
+                "qualidade_dado": str(row.get("qualidade_D1_3", "media")),
+                "papel_na_nota": "ativo (30% de D1)"
+            },
+            "D1.4": {
+                "valor": num_or_none(row.get("tx_mort_evit"), 1),
+                "taxa_bruta": num_or_none(row.get("tx_mort_evit"), 1),
+                "escore": num_or_none(row.get("escore_D1_4"), 1),
+                "ic_95": None,
+                "fonte_id": "sim_do",
+                "fonte_detalhe": "SIM / MS (Lista Brasileira de Evitabilidade) via IEPS Data",
+                "periodo_vintage": "2021–2023",
+                "data_coleta": coleta_ieps,
+                "versao_metodologia": versao,
+                "qualidade_dado": str(row.get("qualidade_D1_4", "alta")),
+                "papel_na_nota": "ativo (30% de D1)"
+            },
+            "D2.1": {
+                "valor": num_or_none(row.get("icsap_10k"), 1),
+                "taxa_bruta": num_or_none(row.get("icsap_10k"), 1),
+                "escore": num_or_none(row.get("escore_D2_1"), 1),
+                "ic_95": None,
+                "fonte_id": "sih_rd",
+                "fonte_detalhe": "SIH/SUS (Portaria SAS/MS 221/2008 - CSAP) via IEPS Data",
+                "periodo_vintage": "2021–2023",
+                "data_coleta": coleta_ieps,
+                "versao_metodologia": versao,
+                "qualidade_dado": str(row.get("qualidade_D2_1", "alta")),
+                "papel_na_nota": "ativo (33,3% de D2)"
             },
             "D2.2": {
                 "valor": num_or_none(row.get("pre7_pct"), 1),
@@ -201,28 +308,28 @@ def build_mapa_resumo_payload(meta_build: dict):
                 "data_coleta": coleta_sim,
                 "versao_metodologia": versao,
                 "qualidade_dado": str(row.get("qualidade_D2_2", "alta")),
-                "papel_na_nota": "ativo (50% de D2)"
+                "papel_na_nota": "ativo (33,3% de D2)"
             },
             "D2.3": {
-                "valor": num_or_none(row.get("cob_vac_polio"), 1),
+                "valor": num_or_none(row.get("cob_vac_composta"), 1),
                 "taxa_bruta": num_or_none(row.get("cob_vac_polio"), 1),
                 "escore": num_or_none(row.get("escore_D2_3"), 1),
                 "ic_95": None,
                 "fonte_id": "si_pni",
-                "fonte_detalhe": "SI-PNI / MS consolidado via IEPS Data (média 2021–2023)",
+                "fonte_detalhe": "SI-PNI / MS (média Pólio + Pentavalente + Tríplice Viral D1) via IEPS Data",
                 "periodo_vintage": "2021–2023",
                 "data_coleta": coleta_ieps,
                 "versao_metodologia": versao,
                 "qualidade_dado": str(row.get("qualidade_D2_3", "alta")),
-                "papel_na_nota": "ativo (50% de D2)"
+                "papel_na_nota": "ativo (33,3% de D2)"
             },
             "D3.1": {
-                "valor": num_or_none(row.get("tx_leito_sus"), 1),
+                "valor": num_or_none(row.get("tx_leito_sus_reg"), 1),
                 "taxa_bruta": num_or_none(row.get("tx_leito_sus"), 1),
                 "escore": num_or_none(row.get("escore_D3_1"), 1),
                 "ic_95": None,
                 "fonte_id": "cnes",
-                "fonte_detalhe": "CNES / MS consolidado via IEPS Data (média 2021–2023)",
+                "fonte_detalhe": f"CNES / MS — Região de Saúde ({reg_saude}) e taxa local via IEPS Data",
                 "periodo_vintage": "2021–2023",
                 "data_coleta": coleta_ieps,
                 "versao_metodologia": versao,
@@ -230,12 +337,12 @@ def build_mapa_resumo_payload(meta_build: dict):
                 "papel_na_nota": "ativo (33,3% de D3)"
             },
             "D3.2": {
-                "valor": num_or_none(row.get("tx_med"), 2),
-                "taxa_bruta": num_or_none(row.get("tx_med"), 2),
+                "valor": num_or_none(row.get("tx_prof_ch"), 2),
+                "taxa_bruta": num_or_none(row.get("tx_prof_bruto"), 2),
                 "escore": num_or_none(row.get("escore_D3_2"), 1),
                 "ic_95": None,
                 "fonte_id": "cnes",
-                "fonte_detalhe": "CNES / MS consolidado via IEPS Data (média 2021–2023)",
+                "fonte_detalhe": "CNES / MS (Médicos + Enfermeiros padronizados por 40h/sem) via IEPS Data",
                 "periodo_vintage": "2021–2023",
                 "data_coleta": coleta_ieps,
                 "versao_metodologia": versao,
@@ -257,6 +364,11 @@ def build_mapa_resumo_payload(meta_build: dict):
             }
         }
 
+        gasto_pc = num_or_none(row.get("gasto_pc_def_val"), 2)
+        pct_rec = num_or_none(row.get("pct_rec_propria_val"), 1)
+        cob_priv = num_or_none(row.get("cob_priv_val"), 1)
+        leitos_priv = num_or_none(row.get("leitos_priv_val"), 1)
+
         municipios_payload[ibge7] = {
             "ibge7": ibge7,
             "ibge6": str(row["ibge6"]),
@@ -265,7 +377,8 @@ def build_mapa_resumo_payload(meta_build: dict):
             "regiao": str(row["regiao_macro"]),
             "populacao": pop_val,
             "porte": porte_val,
-            "regiao_saude": str(row.get("regiao_imediata_nome", "A_VALIDAR")),
+            "regiao_saude": reg_saude,
+            "eh_capital": ibge7 in CAPITAIS_INFO,
             "status": status_mun,
             "motivo_sem_classificacao": motivo_sem if status_mun != "classificado" else None,
             "nota_geral": num_or_none(row.get("nota_geral"), 1),
@@ -280,22 +393,56 @@ def build_mapa_resumo_payload(meta_build: dict):
             "pct_obitos_mal_definidos": num_or_none(row.get("pct_obitos_mal_definidos"), 1),
             "indicadores": indicadores_dict,
             "d4_contexto": {
-                "gasto_per_capita": None,
-                "percentual_proprio": None
+                "gasto_per_capita": {
+                    "valor": gasto_pc,
+                    "taxa_bruta": gasto_pc,
+                    "ic_95": None,
+                    "fonte_id": "siops",
+                    "fonte_detalhe": "SIOPS / MS (Despesa total per capita deflacionada) via IEPS Data",
+                    "periodo_vintage": "2021–2023",
+                    "data_coleta": coleta_ieps,
+                    "versao_metodologia": versao,
+                    "qualidade_dado": str(row.get("qualidade_D4_1", "alta")),
+                    "papel_na_nota": "informativo"
+                } if gasto_pc is not None else None,
+                "percentual_proprio": {
+                    "valor": pct_rec,
+                    "taxa_bruta": pct_rec,
+                    "ic_95": None,
+                    "fonte_id": "siops",
+                    "fonte_detalhe": "SIOPS / MS (% receita própria EC 29 / LC 141) via IEPS Data",
+                    "periodo_vintage": "2021–2023",
+                    "data_coleta": coleta_ieps,
+                    "versao_metodologia": versao,
+                    "qualidade_dado": str(row.get("qualidade_D4_2", "alta")),
+                    "papel_na_nota": "informativo"
+                } if pct_rec is not None else None
             },
             "camada_privada": {
-                "cobertura_planos": None,
+                "cobertura_planos": {
+                    "valor": cob_priv,
+                    "taxa_bruta": cob_priv,
+                    "ic_95": None,
+                    "fonte_id": "ans",
+                    "fonte_detalhe": "ANS / MS (Beneficiários de planos médicos) via IEPS Data",
+                    "periodo_vintage": "2021–2023",
+                    "data_coleta": coleta_ieps,
+                    "versao_metodologia": versao,
+                    "qualidade_dado": str(row.get("qualidade_PRIV_1", "alta")),
+                    "papel_na_nota": "informativo"
+                } if cob_priv is not None else None,
                 "leitos_privados": {
-                    "valor": num_or_none(row.get("leitos_priv_val"), 1),
-                    "taxa_bruta": num_or_none(row.get("leitos_priv_val"), 1),
+                    "valor": leitos_priv,
+                    "taxa_bruta": leitos_priv,
                     "ic_95": None,
                     "fonte_id": "cnes",
                     "fonte_detalhe": "CNES / MS consolidado via IEPS Data (média 2021–2023)",
                     "periodo_vintage": "2021–2023",
                     "data_coleta": coleta_ieps,
                     "versao_metodologia": versao,
-                    "qualidade_dado": str(row.get("qualidade_PRIV_2", "alta"))
-                }
+                    "qualidade_dado": str(row.get("qualidade_PRIV_2", "alta")),
+                    "papel_na_nota": "informativo"
+                } if leitos_priv is not None else None
             }
         }
 
@@ -309,17 +456,21 @@ def build_mapa_resumo_payload(meta_build: dict):
 
 
 def build_rankings_payload(df: pd.DataFrame):
-    print("[export_site_payloads] Compilando rankings sintéticos consolidados...")
+    print("[export_site_payloads] Compilando rankings sintéticos consolidados (Top 100, UFs e Capitais)...")
     cls = df[df["status"] == "classificado"].copy()
 
     def format_mun(row):
+        ibge7 = str(row["ibge7"])
         return {
-            "ibge7": str(row["ibge7"]),
+            "ibge7": ibge7,
             "nome": str(row["nome_municipio"]),
             "uf": str(row["uf_sigla"]),
+            "regiao": str(row.get("regiao_macro", "")),
             "populacao": int(row["populacao_censo_2022"]) if pd.notna(row.get("populacao_censo_2022")) else None,
             "porte": str(row.get("porte_populacional", "")),
+            "eh_capital": ibge7 in CAPITAIS_INFO,
             "escore": num_or_none(row.get("nota_geral"), 1),
+            "nota_geral": num_or_none(row.get("nota_geral"), 1),
             "d1_nota": num_or_none(row.get("d1_nota"), 1),
             "d2_nota": num_or_none(row.get("d2_nota"), 1),
             "d3_nota": num_or_none(row.get("d3_nota"), 1),
@@ -331,27 +482,70 @@ def build_rankings_payload(df: pd.DataFrame):
         }
 
     df_sorted = cls.sort_values(by=["nota_geral", "populacao_censo_2022"], ascending=[False, False])
-    top10_brasil = [format_mun(r) for _, r in df_sorted.head(10).iterrows()]
-    piores10_brasil = [format_mun(r) for _, r in df_sorted.tail(10).iloc[::-1].iterrows()]
+    top100_brasil = [format_mun(r) for _, r in df_sorted.head(100).iterrows()]
+    piores100_brasil = [format_mun(r) for _, r in df_sorted.tail(100).iloc[::-1].iterrows()]
 
     rankings_uf = {}
+    estados_list = []
     for uf, group in cls.groupby("uf_sigla"):
         g_sorted = group.sort_values(by=["nota_geral", "populacao_censo_2022"], ascending=[False, False])
-        rankings_uf[uf] = {
+        pop_uf = int(group["populacao_censo_2022"].sum())
+        w_pop = group["populacao_censo_2022"].fillna(0)
+        media_pond = float((group["nota_geral"] * w_pop).sum() / w_pop.sum()) if w_pop.sum() > 0 else float(group["nota_geral"].mean())
+
+        lat_uf, lng_uf, nome_uf = UF_CENTROIDES.get(uf, (-14.23, -51.92, uf))
+        melhor_row = g_sorted.iloc[0]
+
+        uf_obj = {
+            "uf": uf,
+            "nome_uf": nome_uf,
+            "regiao": str(melhor_row.get("regiao_macro", "")),
+            "lat": lat_uf,
+            "lng": lng_uf,
+            "populacao_uf": pop_uf,
             "media_escore_uf": round(float(group["nota_geral"].mean()), 1),
+            "media_ponderada_uf": round(media_pond, 1),
             "media_d1_uf": round(float(group["d1_nota"].mean()), 1),
             "media_d2_uf": round(float(group["d2_nota"].mean()), 1),
             "media_d3_uf": round(float(group["d3_nota"].mean()), 1),
-            "total_municipios": len(group),
-            "melhores": [format_mun(r) for _, r in g_sorted.head(10).iterrows()],
-            "piores": [format_mun(r) for _, r in g_sorted.tail(10).iloc[::-1].iterrows()]
+            "mediana_tmi_uf": round(float(group["tmi_bayes"].median()), 2),
+            "media_gasto_pc_uf": round(float(group["gasto_pc_def_val"].dropna().mean()), 2) if group["gasto_pc_def_val"].notna().any() else None,
+            "media_cob_priv_uf": round(float(group["cob_priv_val"].dropna().mean()), 1) if group["cob_priv_val"].notna().any() else None,
+            "total_municipios": int(len(group)),
+            "melhor_municipio": f"{melhor_row['nome_municipio']} ({melhor_row['nota_geral']:.1f})",
+            "melhores": [format_mun(r) for _, r in g_sorted.head(100).iterrows()],
+            "piores": [format_mun(r) for _, r in g_sorted.tail(20).iloc[::-1].iterrows()]
         }
+        rankings_uf[uf] = uf_obj
+        estados_list.append({k: v for k, v in uf_obj.items() if k not in ("melhores", "piores")})
+
+    estados_list.sort(key=lambda x: (x["media_escore_uf"], x["media_ponderada_uf"]), reverse=True)
+    for idx, est in enumerate(estados_list, start=1):
+        est["posicao_uf"] = idx
+        rankings_uf[est["uf"]]["posicao_uf"] = idx
+
+    # Ranking das 27 Capitais
+    caps_df = cls[cls["ibge7"].astype(str).isin(CAPITAIS_INFO.keys())].copy()
+    caps_df = caps_df.sort_values(by=["nota_geral", "populacao_censo_2022"], ascending=[False, False])
+    ranking_capitais = []
+    for idx, (_, r) in enumerate(caps_df.iterrows(), start=1):
+        item = format_mun(r)
+        lat_c, lng_c, _, nome_uf = CAPITAIS_INFO[item["ibge7"]]
+        item["posicao_capital"] = idx
+        item["lat"] = lat_c
+        item["lng"] = lng_c
+        item["nome_uf"] = nome_uf
+        ranking_capitais.append(item)
 
     rankings_payload = {
         "atualizacao": datetime.now(timezone.utc).isoformat(),
         "indicador_ativo": "Índice Sintético Consolidado (D1 + D2 + D3) — Janela 2021–2023 (Normalização por Percentis P5–P95)",
-        "top10_brasil_melhores": top10_brasil,
-        "top10_brasil_piores": piores10_brasil,
+        "top10_brasil_melhores": top100_brasil[:10],
+        "top10_brasil_piores": piores100_brasil[:10],
+        "top100_brasil_melhores": top100_brasil,
+        "top100_brasil_piores": piores100_brasil,
+        "ranking_estados": estados_list,
+        "ranking_capitais": ranking_capitais,
         "rankings_por_uf": rankings_uf
     }
 

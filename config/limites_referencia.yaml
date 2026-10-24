@@ -1,18 +1,15 @@
 # Normalização 0–100 dos indicadores do Índice de Saúde Municipal
-# Versão: v0.4.0
+# Versão: v0.5.0-draft
 #
-# REGRA INEGOCIÁVEL: proibido inventar limites ou metas. Por isso, enquanto as metas oficiais
+# REGRA INEGOCIÁVEL: proibido inventar limites ou metas. Enquanto as metas normativas oficiais
 # (MS/PNI/OMS) não forem confirmadas em documento primário e registradas em docs/PENDENCIAS.md,
 # a normalização é RELATIVA: percentis da distribuição observada entre os municípios brasileiros.
 #   nota = 100 * clip((valor - pior) / (melhor - pior), 0, 1)
 #   pior/melhor = percentis (p_inf, p_sup) do valor da janela vigente, em TODOS os municípios com dado.
 # Os limites efetivamente usados ficam CONGELADOS por versão metodológica em
-# config/limites_calculados.json (recalculados somente em nova versão — ver DEC-009/DEC-013).
-#
-# Interpretação: a nota expressa a POSIÇÃO RELATIVA no Brasil, não o cumprimento de uma meta sanitária.
-# Quando uma meta oficial for validada, ela substituirá os percentis em nova versão (PEND-033).
+# config/limites_calculados.json (recalculados somente em nova versão — ver DEC-010).
 
-versao_limites: "v0.4.0"
+versao_limites: "v0.5.0-draft"
 status_geral: "RELATIVO_POR_PERCENTIS"
 pendencia_id: "PEND-033"
 metodo_normalizacao: "percentis"
@@ -30,13 +27,31 @@ indicadores:
     coluna: "tmi_bayes"
     sentido: "menor_melhor"
     dimensao: "D1"
-    meta_oficial_confirmada: null   # A_VALIDAR: ODS 3.2 define metas para neonatal/<5 anos, não para infantil
+    meta_oficial_confirmada: null   # A_VALIDAR: ODS 3.2 define metas para neonatal/<5 anos
   D1.2:
     nome: "Razão de mortalidade materna (suavizada)"
     coluna: "rmm_bayes"
     sentido: "menor_melhor"
     dimensao: "D1"
-    meta_oficial_confirmada: null   # A_VALIDAR: ODS 3.1 (<70/100 mil NV) a confirmar em documento primário
+    meta_oficial_confirmada: null   # A_VALIDAR: ODS 3.1 (<70/100 mil NV); informativo em nível municipal (PEND-038)
+  D1.3:
+    nome: "Mortalidade prematura (30–69a) por DCNT (suavizada)"
+    coluna: "dcnt_bayes"
+    sentido: "menor_melhor"
+    dimensao: "D1"
+    meta_oficial_confirmada: null   # A_VALIDAR: padronização etária direta pendente (PEND-017)
+  D1.4:
+    nome: "Mortalidade por causas evitáveis pelo SUS"
+    coluna: "tx_mort_evit"
+    sentido: "menor_melhor"
+    dimensao: "D1"
+    meta_oficial_confirmada: null   # A_VALIDAR: Lista Brasileira de Evitabilidade (PEND-018)
+  D2.1:
+    nome: "Internações por Condições Sensíveis à APS (ICSAP)"
+    coluna: "icsap_10k"
+    sentido: "menor_melhor"
+    dimensao: "D2"
+    meta_oficial_confirmada: null   # A_VALIDAR: Portaria SAS/MS nº 221/2008 (PEND-019)
   D2.2:
     nome: "Pré-natal com 7+ consultas"
     coluna: "pre7_pct"
@@ -44,25 +59,25 @@ indicadores:
     dimensao: "D2"
     meta_oficial_confirmada: null   # A_VALIDAR: parâmetro oficial vigente (Rede Cegonha / PNAB)
   D2.3:
-    nome: "Cobertura vacinal poliomielite"
-    coluna: "cob_vac_polio"
+    nome: "Cobertura vacinal infantil composta (Pólio, Penta, Tríplice Viral)"
+    coluna: "cob_vac_composta"
     sentido: "maior_melhor"
     dimensao: "D2"
-    meta_oficial_confirmada: null   # A_VALIDAR: meta PNI (a confirmar em documento oficial do CGPNI)
+    meta_oficial_confirmada: null   # A_VALIDAR: metas PNI por imunizante (95%)
   D3.1:
-    nome: "Leitos SUS por 100 mil hab."
-    coluna: "tx_leito_sus"
+    nome: "Leitos SUS na Região de Saúde por 100 mil hab."
+    coluna: "tx_leito_sus_reg"
     sentido: "maior_melhor"
     dimensao: "D3"
-    meta_oficial_confirmada: null   # A_VALIDAR
+    meta_oficial_confirmada: null   # A_VALIDAR: parâmetro regionalizado CNES/CIT (PEND-023)
   D3.2:
-    nome: "Médicos por 1.000 hab."
-    coluna: "tx_med"
+    nome: "Médicos e Enfermeiros padronizados por CH por 1.000 hab."
+    coluna: "tx_prof_ch"
     sentido: "maior_melhor"
     dimensao: "D3"
-    meta_oficial_confirmada: null   # A_VALIDAR
+    meta_oficial_confirmada: null   # A_VALIDAR: padronização por carga horária CNES (PEND-024)
   D3.3:
-    nome: "Cobertura da Estratégia Saúde da Família"
+    nome: "Cobertura da Estratégia Saúde da Família (eSF)"
     coluna: "cob_esf"
     sentido: "maior_melhor"
     dimensao: "D3"
@@ -70,8 +85,5 @@ indicadores:
 
 # Indicadores ainda sem pipeline (fora do cálculo; permanecem A_VALIDAR)
 pendentes_sem_calculo:
-  D1.3: "Mortalidade prematura por DCNT — exige denominador populacional por faixa etária (30–69 anos)"
-  D1.4: "Mortalidade por causas evitáveis — exige lista de evitabilidade oficial validada"
-  D2.1: "ICSAP — exige microdados SIH/SUS (RD) e lista oficial de CID (Portaria SAS/MS 221/2008)"
-  D2.4: "Desempenho APS — fora até consolidação"
-  D3.4: "Internações no próprio município — informativo"
+  D2.4: "Desempenho APS pós-Previne Brasil (Metodologia 2024) — fora até consolidação de série"
+  D3.4: "Internações de residentes no próprio município — informativo"

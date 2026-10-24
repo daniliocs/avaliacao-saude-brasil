@@ -25,7 +25,23 @@ import sys
 import urllib.request
 from datetime import date
 
-INDICADORES = ["cob_esf", "cob_vac_polio", "tx_med", "tx_leito_sus", "tx_leito_nsus"]
+INDICADORES = [
+    "cob_esf",
+    "cob_vac_polio",
+    "cob_vac_penta",
+    "cob_vac_tvd1",
+    "tx_hosp_csap",
+    "tx_mort_evit",
+    "tx_med",
+    "tx_med_ch",
+    "tx_enf",
+    "tx_enf_ch",
+    "tx_leito_sus",
+    "tx_leito_nsus",
+    "desp_tot_saude_pc_mun_def",
+    "pct_desp_recp_saude_mun",
+    "cob_priv",
+]
 RAW_DIR = os.path.join("data", "raw", "ieps")
 MANIFEST = os.path.join(RAW_DIR, "manifest_ieps.json")
 
@@ -37,15 +53,22 @@ def url_ano(ano: int) -> str:
     )
 
 
-def baixar(ano: int) -> dict:
+def baixar(ano: int, forcar: bool = False) -> dict:
     destino = os.path.join(RAW_DIR, f"ieps_{ano}.csv")
-    if os.path.exists(destino) and os.path.getsize(destino) > 100_000:
-        print(f"[ieps_series] {ano}: cache existente ({destino}).")
+    url = url_ano(ano)
+    precisa_baixar = forcar or not os.path.exists(destino) or os.path.getsize(destino) < 100_000
+    if not precisa_baixar:
+        with open(destino, "rb") as f:
+            head = f.readline().decode("latin1", errors="ignore")
+        if "Pentavalente" not in head or "CSAP" not in head:
+            precisa_baixar = True
+    if not precisa_baixar:
+        print(f"[ieps_series] {ano}: cache existente completo ({destino}).")
         with open(destino, "rb") as f:
             blob = f.read()
     else:
-        print(f"[ieps_series] {ano}: baixando...")
-        req = urllib.request.Request(url_ano(ano), headers={"User-Agent": "Mozilla/5.0"})
+        print(f"[ieps_series] {ano}: baixando 15 indicadores...")
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=180) as resp:
             blob = resp.read()
         os.makedirs(RAW_DIR, exist_ok=True)

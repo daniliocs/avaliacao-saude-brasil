@@ -1,8 +1,5 @@
 # Critérios de precisão/qualidade do dado (selos exibidos na interface)
-# Versão: v0.4.0 — STATUS: A_DECIDIR (PEND-037)
-#
-# São parâmetros de MÉTODO, ancorados em precisão estatística (erro relativo de uma contagem de
-# Poisson ≈ 1/√n: n=20 → ~22%, n=5 → ~45%), e não fatos de saúde. Validar com bioestatístico.
+# Versão: v0.5.0-draft — STATUS: A_DECIDIR (PEND-037)
 status: "A_DECIDIR"
 pendencia_id: "PEND-037"
 
@@ -10,6 +7,7 @@ precisao:
   eventos_taxa:          # nº de óbitos na janela
     D1.1: {alta_min: 20, media_min: 5}
     D1.2: {alta_min: 20, media_min: 5}
+    D1.3: {alta_min: 30, media_min: 10}
   proporcao_base:        # nº de nascidos com informação válida na janela
     D2.2: {alta_min: 100, media_min: 30}
   ignorado_max_pct: 20   # % de "ignorado" acima do qual o selo vira "alerta"

@@ -1,9 +1,9 @@
 # Catálogo Paramétrico de Indicadores do Índice de Saúde Municipal
-# Versão: v0.4.0-draft
+# Versão: v0.5.0-draft
 # Regra: Nenhum dado inventado. Campos não confirmados devem ser parametrizados como "A_VALIDAR" ou null.
 
 indicadores:
-  # DIMENSÃO 1: Resultados em saúde (por local de residência)
+  # DIMENSÃO 1: Resultados em saúde da população (por local de residência)
   - id: D1.1
     dimensao: D1
     nome: "Mortalidade Infantil"
@@ -13,7 +13,7 @@ indicadores:
     fontes:
       - sim_do
       - sinasc_nv
-    janela_anos: 3 # Triênio 2021-2023 (PEND-035)
+    janela_anos: 3
     nivel_agregacao: "residencia"
     entra_na_nota: true
     requer_suavizacao_bayesiana: true
@@ -23,13 +23,13 @@ indicadores:
   - id: D1.2
     dimensao: D1
     nome: "Razão de Mortalidade Materna"
-    descricao: "Óbitos maternos (CID-10 Cap. XV O00–O99) por 100.000 nascidos vivos (janela quinquenal 2019–2023)"
+    descricao: "Óbitos maternos (CID-10 Cap. XV O00–O99, exceto tardias) por 100.000 nascidos vivos (janela quinquenal 2019–2023)"
     sentido: "menor_melhor"
     unidade: "óbitos por 100.000 NV"
     fontes:
       - sim_do
       - sinasc_nv
-    janela_anos: 5 # Quinquênio 2019-2023 por raridade de evento
+    janela_anos: 5
     nivel_agregacao: "residencia"
     entra_na_nota: false # Informativo em nível municipal (93% dos municípios <5 óbitos no quinquênio - PEND-038)
     requer_suavizacao_bayesiana: true
@@ -38,8 +38,8 @@ indicadores:
 
   - id: D1.3
     dimensao: D1
-    nome: "Mortalidade Prematura por DCNT Padronizada"
-    descricao: "Taxa de mortalidade prematura (30 a 69 anos) por Doenças Crônicas Não Transmissíveis padronizada por idade"
+    nome: "Mortalidade Prematura (30–69 anos) por DCNT"
+    descricao: "Taxa de mortalidade prematura (30 a 69 anos) pelos 4 grandes grupos de DCNT (circulatórias I00–I99, neoplasias C00–C97, diabetes E10–E14 e respiratórias crônicas J30–J98 exceto J36 — triênio 2021–2023)"
     sentido: "menor_melhor"
     unidade: "óbitos por 100.000 hab"
     fontes:
@@ -55,40 +55,40 @@ indicadores:
   - id: D1.4
     dimensao: D1
     nome: "Mortalidade por Causas Evitáveis pelo SUS"
-    descricao: "Taxa de mortalidade por causas evitáveis por intervenções do Sistema Único de Saúde"
+    descricao: "Taxa de mortalidade por causas evitáveis por intervenções do Sistema Único de Saúde (Lista Brasileira de Evitabilidade — triênio 2021–2023)"
     sentido: "menor_melhor"
     unidade: "óbitos por 100.000 hab"
     fontes:
+      - ieps_data
       - sim_do
-      - ibge_pop
     janela_anos: 3
     nivel_agregacao: "residencia"
     entra_na_nota: true
-    requer_suavizacao_bayesiana: true
-    calcula_ic_poisson: true
+    requer_suavizacao_bayesiana: false
+    calcula_ic_poisson: false
     pendencia_id: "PEND-018"
 
-  # DIMENSÃO 2: Atenção Primária (Processo)
+  # DIMENSÃO 2: Atenção Primária e Prevenção (Processo)
   - id: D2.1
     dimensao: D2
     nome: "Internações por Condições Sensíveis à APS (ICSAP)"
-    descricao: "Taxa de internações hospitalares no SUS por condições sensíveis à atenção primária por 10.000 habitantes"
+    descricao: "Taxa de internações hospitalares no SUS por condições sensíveis à atenção primária (Portaria SAS/MS nº 221/2008 — triênio 2021–2023)"
     sentido: "menor_melhor"
     unidade: "internações por 10.000 hab"
     fontes:
+      - ieps_data
       - sih_rd
-      - ibge_pop
     janela_anos: 3
     nivel_agregacao: "residencia"
     entra_na_nota: true
-    requer_suavizacao_bayesiana: true
-    calcula_ic_poisson: true
+    requer_suavizacao_bayesiana: false
+    calcula_ic_poisson: false
     pendencia_id: "PEND-019"
 
   - id: D2.2
     dimensao: D2
     nome: "Pré-natal Adequado (7+ Consultas)"
-    descricao: "Proporção de nascidos vivos cujas mães realizaram 7 ou mais consultas de pré-natal (CONSULTAS=4 ou CONSPRENAT>=7, triênio 2021–2023)"
+    descricao: "Proporção de nascidos vivos cujas mães realizaram 7 ou mais consultas de pré-natal (SINASC CONSULTAS=4, triênio 2021–2023)"
     sentido: "maior_melhor"
     unidade: "%"
     fontes:
@@ -102,14 +102,14 @@ indicadores:
 
   - id: D2.3
     dimensao: D2
-    nome: "Cobertura Vacinal Infantil (Poliomielite)"
-    descricao: "Cobertura vacinal contra Poliomielite em menores de 1 ano (média trienal 2021–2023 via IEPS Data / SI-PNI)"
+    nome: "Cobertura Vacinal Infantil Composta (Pólio, Penta e Tríplice Viral)"
+    descricao: "Média da cobertura vacinal infantil para Poliomielite, Pentavalente (DTP+HB+Hib) e Tríplice Viral D1 (triênio 2021–2023 via IEPS Data / SI-PNI)"
     sentido: "maior_melhor"
     unidade: "%"
     fontes:
       - ieps_data
       - si_pni
-    janela_anos: 3 # Triênio 2021-2023 (PEND-035)
+    janela_anos: 3
     nivel_agregacao: "residencia"
     entra_na_nota: true
     requer_suavizacao_bayesiana: false
@@ -126,23 +126,23 @@ indicadores:
       - sisab
     janela_anos: 1
     nivel_agregacao: "residencia"
-    entra_na_nota: false # A_VALIDAR: Manter como camada separada até haver série histórica consolidada
+    entra_na_nota: false
     requer_suavizacao_bayesiana: false
     calcula_ic_poisson: false
     pendencia_id: "PEND-022"
 
-  # DIMENSÃO 3: Acesso e Estrutura
+  # DIMENSÃO 3: Acesso e Capacidade Assistencial
   - id: D3.1
     dimensao: D3
-    nome: "Leitos SUS por 100.000 Habitantes"
-    descricao: "Leitos hospitalares disponíveis ao SUS por 100.000 habitantes (média trienal 2021–2023 via IEPS Data / CNES)"
-    sentido: "maior_melhor" # A_VALIDAR: Faixa ótima vs linear
+    nome: "Leitos SUS na Região de Saúde (por 100 mil hab.)"
+    descricao: "Razão de leitos hospitalares disponíveis ao SUS por 100.000 habitantes na Região de Saúde (CIR) do município (taxa regional no escore e taxa municipal bruta informada — triênio 2021–2023)"
+    sentido: "maior_melhor"
     unidade: "leitos por 100.000 hab"
     fontes:
       - ieps_data
       - cnes
     janela_anos: 3
-    nivel_agregacao: "residencia" # A_VALIDAR: Agregação por Região de Saúde (PEND-023)
+    nivel_agregacao: "regiao_saude"
     entra_na_nota: true
     requer_suavizacao_bayesiana: false
     calcula_ic_poisson: false
@@ -150,10 +150,10 @@ indicadores:
 
   - id: D3.2
     dimensao: D3
-    nome: "Médicos por 1.000 Habitantes"
-    descricao: "Total de médicos por 1.000 habitantes no município (média trienal 2021–2023 via IEPS Data / CNES)"
+    nome: "Médicos e Enfermeiros Padronizados por Carga Horária (por 1.000 hab.)"
+    descricao: "Soma de médicos e enfermeiros padronizados por carga horária de 40h semanais por 1.000 habitantes (com razão bruta de vínculos exibida ao lado — triênio 2021–2023 via CNES / IEPS Data)"
     sentido: "maior_melhor"
-    unidade: "médicos por 1.000 hab"
+    unidade: "profissionais (40h) por 1.000 hab"
     fontes:
       - ieps_data
       - cnes
@@ -190,22 +190,22 @@ indicadores:
       - sih_rd
     janela_anos: 1
     nivel_agregacao: "residencia"
-    entra_na_nota: false # Informativo: mede autossuficiência vs dependência regional
+    entra_na_nota: false
     requer_suavizacao_bayesiana: false
     calcula_ic_poisson: false
     pendencia_id: "PEND-026"
 
-  # DIMENSÃO 4: Contexto (NÃO entra na nota de qualidade)
+  # DIMENSÃO 4: Contexto Financeiro e Orçamentário (NÃO entra na nota de qualidade — DEC-001)
   - id: D4.1
     dimensao: D4
-    nome: "Gasto Per Capita em Saúde (SIOPS)"
-    descricao: "Despesa total liquidada em ações e serviços públicos de saúde por habitante"
+    nome: "Gasto Per Capita em Saúde Deflacionado (SIOPS)"
+    descricao: "Despesa total municipal com saúde por habitante em valores constantes deflacionados (média trienal 2021–2023)"
     sentido: "contexto"
-    unidade: "R$/hab/ano"
+    unidade: "R$/hab/ano (const.)"
     fontes:
+      - ieps_data
       - siops
-      - ibge_pop
-    janela_anos: 1
+    janela_anos: 3
     nivel_agregacao: "residencia"
     entra_na_nota: false
     requer_suavizacao_bayesiana: false
@@ -214,30 +214,31 @@ indicadores:
 
   - id: D4.2
     dimensao: D4
-    nome: "Aplicação de Receita Própria em Saúde (% EC 29)"
-    descricao: "Percentual da receita de impostos e transferências constitucionais aplicada em saúde"
+    nome: "Aplicação de Receita Própria em Saúde (% EC 29 / LC 141)"
+    descricao: "Percentual da receita de impostos e transferências constitucionais do município aplicada em saúde (média trienal 2021–2023)"
     sentido: "contexto"
     unidade: "%"
     fontes:
+      - ieps_data
       - siops
-    janela_anos: 1
+    janela_anos: 3
     nivel_agregacao: "residencia"
     entra_na_nota: false
     requer_suavizacao_bayesiana: false
     calcula_ic_poisson: false
     pendencia_id: "PEND-027"
 
-  # CAMADA PRIVADA (Informativa, NÃO entra na nota de qualidade)
+  # CAMADA PRIVADA (Informativa, NÃO entra na nota de qualidade — DEC-001)
   - id: PRIV.1
     dimensao: PRIVADA
     nome: "Taxa de Cobertura de Planos Privados de Saúde"
-    descricao: "Proporção de residentes municipais com plano de assistência médica privada"
+    descricao: "Proporção de residentes municipais beneficiários de planos privados de assistência médica (ANS — média trienal 2021–2023)"
     sentido: "contexto"
     unidade: "%"
     fontes:
+      - ieps_data
       - ans
-      - ibge_pop
-    janela_anos: 1
+    janela_anos: 3
     nivel_agregacao: "residencia"
     entra_na_nota: false
     requer_suavizacao_bayesiana: false
@@ -247,13 +248,13 @@ indicadores:
   - id: PRIV.2
     dimensao: PRIVADA
     nome: "Leitos Hospitalares Privados Não-SUS"
-    descricao: "Número de leitos hospitalares privados não conveniados ao SUS por 1.000 habitantes"
+    descricao: "Número de leitos hospitalares privados não conveniados ao SUS por 100.000 habitantes (CNES — média trienal 2021–2023)"
     sentido: "contexto"
-    unidade: "leitos por 1.000 hab"
+    unidade: "leitos por 100.000 hab"
     fontes:
+      - ieps_data
       - cnes
-      - ibge_pop
-    janela_anos: 1
+    janela_anos: 3
     nivel_agregacao: "residencia"
     entra_na_nota: false
     requer_suavizacao_bayesiana: false

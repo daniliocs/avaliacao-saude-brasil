@@ -6,6 +6,26 @@ O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [v0.5.0-draft] - 2026-10-24
+
+### Adicionado
+- **Expansão Metodológica do Índice Sintético (10 Indicadores de Desempenho + 4 de Contexto/Privado, Série 2019–2023)**:
+  - **D1.3 — Mortalidade Prematura (30–69 anos) por DCNT**: Calculada diretamente dos microdados primários do SIM por residência (2021–2023) para os 4 grupos da OMS/ODS 3.4 (`I00–I99`, `C00–C97`, `E10–E14`, `J30–J98 exceto J36`), com IC 95% de Poisson e suavização por Bayes Empírico (`peso: 30%` de D1).
+  - **D1.4 — Mortalidade por Causas Evitáveis pelo SUS**: Integrada na janela 2021–2023 (`peso: 30%` de D1).
+  - **D2.1 — Internações por Condições Sensíveis à Atenção Primária (ICSAP / CSAP)**: Integrada na janela 2021–2023 conforme Portaria SAS/MS nº 221/2008 (`peso: 33,3%` de D2).
+  - **D2.3 — Cobertura Vacinal Infantil Composta**: Ampliada de apenas Poliomielite para a média composta de **Poliomielite + Pentavalente + Tríplice Viral D1** no triênio 2021–2023 (`peso: 33,3%` de D2).
+  - **D3.1 — Leitos SUS Regionalizados por Região de Saúde (CIR)**: Mapeamento completo das **438 Regiões de Saúde do SUS**; o escore de D3.1 passa a refletir a razão regional de leitos SUS na Região de Saúde do município (evitando penalizar municípios pequenos atendidos por hospital polo regional), exibindo a taxa municipal local ao lado.
+  - **D3.2 — Médicos e Enfermeiros Padronizados por Carga Horária (40h/sem)**: Soma de médicos e enfermeiros padronizados por carga horária no CNES por 1.000 hab. (com razão bruta exibida ao lado).
+  - **D4 (Contexto SIOPS) e Camada Privada (ANS/CNES) 100% Populados**: Integrados `D4.1` (Despesa Total Per Capita em Saúde Deflacionada — SIOPS), `D4.2` (% da Receita Própria Aplicada em Saúde — EC 29/LC 141) e `PRIV.1` (Taxa de Cobertura de Planos Privados de Saúde — ANS) para todos os municípios na gaveta lateral e no comparador, mantidos estritamente fora da nota principal (`peso: 0.0`).
+  - **Catálogo de Fontes Expandido (`sources/registry.yaml`)**: Adicionadas as fontes candidatas `painel_oncologia`, `siscan`, `samu_192` e `sigtap` com estágios granulares de verificação (`estagio_pipeline` e `geografia_base`).
+- **Novas Funcionalidades de Interface (`/site`)**:
+  - **Aba "⚖️ Comparar Cidades / Estados" (`site/assets/js/compare_view.js`)**: Comparação lado a lado entre quaisquer 2 municípios ou 2 Unidades da Federação, com barras comparativas por dimensão, tabela indicador a indicador e destaque automático do melhor desempenho.
+  - **Rankings Separados (Top 100 Brasil, Por Estado, 27 Estados + DF e 27 Capitais)**: Ao selecionar um Estado, exibe exclusivamente o ranking daquele Estado (sem precisar rolar pelo Top 100 Brasil).
+  - **Marcadores Numéricos Visíveis no Mapa**: Botões na barra superior e no modal de rankings para exibir sobre o mapa os rótulos numéricos com a nota de cada um dos **27 Estados (UFs)** ou das **27 Capitais**.
+  - **Controles de Zoom e Layout**: Botões `+`/`-` movidos para o canto inferior direito (`bottomright`) e correção do dimensionamento flexbox dos botões de filtro do modal de rankings.
+
+---
+
 ## [v0.4.0-draft] - 2026-10-24
 
 ### Adicionado

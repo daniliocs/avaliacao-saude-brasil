@@ -1,172 +1,262 @@
 # Registro Oficial de Fontes de Dados
 # Regra inegociável: Apenas fontes cadastradas neste arquivo podem ser consumidas pelo pipeline.
-# Campos não confirmados devem permanecer como "A_VALIDAR" ou null.
+# Campos de auditoria técnica seguem estágios granulares:
+#   documented -> access_verified -> download_verified -> schema_verified -> quality_checked -> production_ready
 
 fontes:
   - id: sim_do
     nome: "Sistema de Informações sobre Mortalidade (SIM) — Microdados de Declaração de Óbito por Residência (DORES)"
-    orgao: "Ministério da Saúde / SVS / DATASUS"
-    url_documentacao: "https://datasus.saude.gov.br/transferencia-de-arquivos/"
+    orgao: "Ministério da Saúde / SVSA / DATASUS"
+    url_documentacao: "https://www.gov.br/saude/pt-br/composicao/svsa/sistemas-de-informacao/sim"
     url_dados: "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DORES/"
-    formato: "dbc"
+    formato: "dbc -> parquet"
     periodicidade_publicacao: "anual"
     defasagem_tipica: "12 a 18 meses após encerramento do ano-calendário"
     licenca_termos_uso: "Dados Abertos Governamentais (Acesso Público DATASUS)"
     ultima_verificacao: "2026-10-24"
     ultimo_periodo_disponivel: "2019-2023"
     status: "ativo"
+    estagio_pipeline: "quality_checked"
+    geografia_base: "residencia"
     pendencia_id: "PEND-004"
 
   - id: sinasc_nv
     nome: "Sistema de Informações sobre Nascidos Vivos (SINASC) — Microdados de Nascidos Vivos por Residência (DNRES)"
-    orgao: "Ministério da Saúde / SVS / DATASUS"
+    orgao: "Ministério da Saúde / SVSA / DATASUS"
     url_documentacao: "https://datasus.saude.gov.br/transferencia-de-arquivos/"
     url_dados: "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/1996_/Dados/DNRES/"
-    formato: "dbc"
+    formato: "dbc -> parquet"
     periodicidade_publicacao: "anual"
     defasagem_tipica: "12 a 18 meses após encerramento do ano-calendário"
     licenca_termos_uso: "Dados Abertos Governamentais (Acesso Público DATASUS)"
     ultima_verificacao: "2026-10-24"
     ultimo_periodo_disponivel: "2019-2023"
     status: "ativo"
+    estagio_pipeline: "quality_checked"
+    geografia_base: "residencia"
     pendencia_id: "PEND-005"
 
   - id: sih_rd
-    nome: "Sistema de Informações Hospitalares do SUS (SIH/SUS) — Reduzida de AIH"
-    orgao: "Ministério da Saúde / DATASUS"
-    url_documentacao: "A_VALIDAR"
-    url_dados: "A_VALIDAR"
-    formato: "dbc" # A_VALIDAR
-    periodicidade_publicacao: "A_VALIDAR"
-    defasagem_tipica: "A_VALIDAR"
-    licenca_termos_uso: "A_VALIDAR"
-    ultima_verificacao: null
-    ultimo_periodo_disponivel: null
-    status: "em_revisao"
+    nome: "Sistema de Informações Hospitalares do SUS (SIH/SUS) — AIH Reduzida e Indicadores CSAP"
+    orgao: "Ministério da Saúde / SAES / DATASUS"
+    url_documentacao: "https://www.gov.br/saude/pt-br/acesso-a-informacao/sic/dados-em-transparencia-ativa/saes"
+    url_dados: "ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/"
+    formato: "dbc / csv (agregado via ieps_data)"
+    periodicidade_publicacao: "mensal / anual"
+    defasagem_tipica: "2 a 6 meses"
+    licenca_termos_uso: "Dados Abertos Governamentais"
+    ultima_verificacao: "2026-10-24"
+    ultimo_periodo_disponivel: "2019-2023"
+    status: "ativo"
+    estagio_pipeline: "quality_checked"
+    geografia_base: "residencia"
     pendencia_id: "PEND-006"
 
   - id: sia_sus
-    nome: "Sistema de Informações Ambulatoriais do SUS (SIA/SUS)"
-    orgao: "Ministério da Saúde / DATASUS"
-    url_documentacao: "A_VALIDAR"
+    nome: "Sistema de Informações Ambulatoriais do SUS (SIA/SUS) — BPA / APAC"
+    orgao: "Ministério da Saúde / SAES / DATASUS"
+    url_documentacao: "https://www.gov.br/saude/pt-br/acesso-a-informacao/sic/dados-em-transparencia-ativa/saes"
     url_dados: "A_VALIDAR"
-    formato: "dbc" # A_VALIDAR
-    periodicidade_publicacao: "A_VALIDAR"
+    formato: "dbc"
+    periodicidade_publicacao: "mensal"
     defasagem_tipica: "A_VALIDAR"
     licenca_termos_uso: "A_VALIDAR"
     ultima_verificacao: null
     ultimo_periodo_disponivel: null
     status: "em_revisao"
+    estagio_pipeline: "documented"
+    geografia_base: "atendimento_ou_residencia"
     pendencia_id: "PEND-007"
 
   - id: cnes
     nome: "Cadastro Nacional de Estabelecimentos de Saúde (CNES) — Estabelecimentos, Leitos e Profissionais"
-    orgao: "Ministério da Saúde / DATASUS"
-    url_documentacao: "A_VALIDAR"
-    url_dados: "A_VALIDAR"
-    formato: "dbc" # A_VALIDAR
-    periodicidade_publicacao: "A_VALIDAR"
-    defasagem_tipica: "A_VALIDAR"
-    licenca_termos_uso: "A_VALIDAR"
-    ultima_verificacao: null
-    ultimo_periodo_disponivel: null
-    status: "em_revisao"
+    orgao: "Ministério da Saúde / SAES / DATASUS"
+    url_documentacao: "https://dadosabertos.saude.gov.br/dataset/cnes-cadastro-nacional-de-estabelecimentos-de-saude"
+    url_dados: "https://dadosabertos.saude.gov.br/dataset/hospitais-e-leitos"
+    formato: "csv / dbc (série 2019-2023 via ieps_data)"
+    periodicidade_publicacao: "mensal / anual"
+    defasagem_tipica: "1 a 3 meses"
+    licenca_termos_uso: "Dados Abertos Governamentais"
+    ultima_verificacao: "2026-10-24"
+    ultimo_periodo_disponivel: "2019-2023"
+    status: "ativo"
+    estagio_pipeline: "quality_checked"
+    geografia_base: "estabelecimento_e_regiao_saude"
     pendencia_id: "PEND-008"
 
   - id: si_pni
     nome: "Sistema de Informação do Programa Nacional de Imunizações (SI-PNI / RNDS)"
-    orgao: "Ministério da Saúde / CGPNI"
-    url_documentacao: "A_VALIDAR"
-    url_dados: "A_VALIDAR"
-    formato: "api" # A_VALIDAR: migração SI-PNI para RNDS
-    periodicidade_publicacao: "A_VALIDAR"
-    defasagem_tipica: "A_VALIDAR"
-    licenca_termos_uso: "A_VALIDAR"
-    ultima_verificacao: null
-    ultimo_periodo_disponivel: null
-    status: "em_revisao"
+    orgao: "Ministério da Saúde / SVSA / DPNI"
+    url_documentacao: "https://datasus.saude.gov.br/acesso-a-informacao/imunizacoes-desde-1994/"
+    url_dados: "https://iepsdata.org.br/indicadores/"
+    formato: "csv (série 2019-2023 via ieps_data)"
+    periodicidade_publicacao: "anual"
+    defasagem_tipica: "6 a 12 meses"
+    licenca_termos_uso: "Dados Abertos Governamentais"
+    ultima_verificacao: "2026-10-24"
+    ultimo_periodo_disponivel: "2019-2023"
+    status: "ativo"
+    estagio_pipeline: "quality_checked"
+    geografia_base: "residencia"
     pendencia_id: "PEND-009"
 
   - id: sisab
-    nome: "Sistema de Informação em Saúde para a Atenção Básica (SISAB / e-Gestor AB)"
+    nome: "Sistema de Informação em Saúde para a Atenção Básica (SISAB / e-Gestor APS)"
     orgao: "Ministério da Saúde / SAPS"
-    url_documentacao: "A_VALIDAR"
-    url_dados: "A_VALIDAR"
-    formato: "csv" # A_VALIDAR
-    periodicidade_publicacao: "A_VALIDAR"
-    defasagem_tipica: "A_VALIDAR"
-    licenca_termos_uso: "A_VALIDAR"
-    ultima_verificacao: null
-    ultimo_periodo_disponivel: null
-    status: "em_revisao"
+    url_documentacao: "https://sisab.saude.gov.br/"
+    url_dados: "https://dadosabertos.saude.gov.br/dataset/indicadores_desempenho_sisab"
+    formato: "csv (cobertura eSF 2019-2023 via ieps_data)"
+    periodicidade_publicacao: "mensal / quadrimestral"
+    defasagem_tipica: "2 a 4 meses"
+    licenca_termos_uso: "Dados Abertos Governamentais"
+    ultima_verificacao: "2026-10-24"
+    ultimo_periodo_disponivel: "2019-2023"
+    status: "ativo"
+    estagio_pipeline: "quality_checked"
+    geografia_base: "residencia"
     pendencia_id: "PEND-010"
 
   - id: ibge_pop
-    nome: "Instituto Brasileiro de Geografia e Estatística — Estimativas Populacionais, Censo e Malha Municipal"
+    nome: "Instituto Brasileiro de Geografia e Estatística — Censo Demográfico 2022, Estimativas e Malha Municipal"
     orgao: "IBGE"
-    url_documentacao: "https://www.ibge.gov.br"
+    url_documentacao: "https://www.ibge.gov.br/estatisticas/sociais/populacao/9103-estimativas-de-population.html"
     url_dados: "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
-    formato: "api"
-    periodicidade_publicacao: "A_VALIDAR"
-    defasagem_tipica: "A_VALIDAR"
+    formato: "api / json"
+    periodicidade_publicacao: "anual / decenal"
+    defasagem_tipica: "anual"
     licenca_termos_uso: "Creative Commons Atribuição (CC BY) / Dados Abertos Brasil"
-    ultima_verificacao: null
-    ultimo_periodo_disponivel: null
+    ultima_verificacao: "2026-10-24"
+    ultimo_periodo_disponivel: "2022"
     status: "ativo"
+    estagio_pipeline: "production_ready"
+    geografia_base: "residencia"
     pendencia_id: "PEND-011"
 
   - id: siops
     nome: "Sistema de Informações sobre Orçamentos Públicos em Saúde (SIOPS)"
-    orgao: "Ministério da Saúde"
-    url_documentacao: "A_VALIDAR"
-    url_dados: "A_VALIDAR"
-    formato: "csv" # A_VALIDAR
-    periodicidade_publicacao: "A_VALIDAR"
-    defasagem_tipica: "A_VALIDAR"
-    licenca_termos_uso: "A_VALIDAR"
-    ultima_verificacao: null
-    ultimo_periodo_disponivel: null
-    status: "em_revisao"
-    pendencia_id: "PEND-012"
-
-  - id: ans
-    nome: "Agência Nacional de Saúde Suplementar (ANS) — Caderno de Informações da Saúde Suplementar"
-    orgao: "ANS / Ministério da Saúde"
-    url_documentacao: "A_VALIDAR"
-    url_dados: "A_VALIDAR"
-    formato: "csv" # A_VALIDAR
-    periodicidade_publicacao: "A_VALIDAR"
-    defasagem_tipica: "A_VALIDAR"
-    licenca_termos_uso: "A_VALIDAR"
-    ultima_verificacao: null
-    ultimo_periodo_disponivel: null
-    status: "em_revisao"
-    pendencia_id: "PEND-013"
-
-  - id: ieps_data
-    nome: "IEPS Data — Base Consolidada de Indicadores Municipais (agregador intermediário de SI-PNI, CNES e SISAB/e-Gestor AB)"
-    orgao: "Instituto de Estudos para Políticas de Saúde (IEPS)"
-    url_documentacao: "https://iepsdata.org.br"
-    url_dados: "https://api.iepsdata.org.br/files/Download_data"
-    formato: "csv"
-    periodicidade_publicacao: "anual"
-    defasagem_tipica: "12 meses"
-    licenca_termos_uso: "A_VALIDAR"
+    orgao: "Ministério da Saúde / DESID"
+    url_documentacao: "https://www.gov.br/saude/pt-br/acesso-a-informacao/siops/entrega-de-dados"
+    url_dados: "https://iepsdata.org.br/indicadores/"
+    formato: "csv (série 2019-2023 deflacionada via ieps_data)"
+    periodicidade_publicacao: "bimestral / anual"
+    defasagem_tipica: "6 a 12 meses"
+    licenca_termos_uso: "Dados Abertos Governamentais"
     ultima_verificacao: "2026-10-24"
     ultimo_periodo_disponivel: "2019-2023"
     status: "ativo"
+    estagio_pipeline: "quality_checked"
+    geografia_base: "residencia"
+    pendencia_id: "PEND-012"
+
+  - id: ans
+    nome: "Agência Nacional de Saúde Suplementar (ANS) — Beneficiários e Cobertura de Planos Privados"
+    orgao: "ANS / Ministério da Saúde"
+    url_documentacao: "https://www.gov.br/ans/pt-br/acesso-a-informacao/perfil-do-setor/dados-e-indicadores-do-setor"
+    url_dados: "https://iepsdata.org.br/indicadores/"
+    formato: "csv (série 2019-2023 via ieps_data)"
+    periodicidade_publicacao: "trimestral / anual"
+    defasagem_tipica: "3 a 6 meses"
+    licenca_termos_uso: "Dados Abertos Governamentais"
+    ultima_verificacao: "2026-10-24"
+    ultimo_periodo_disponivel: "2019-2023"
+    status: "ativo"
+    estagio_pipeline: "quality_checked"
+    geografia_base: "residencia"
+    pendencia_id: "PEND-013"
+
+  - id: ieps_data
+    nome: "IEPS Data — Agregador Secundário de Indicadores Municipais (SI-PNI, SIH/CSAP, CNES, SISAB, SIOPS, ANS)"
+    orgao: "Instituto de Estudos para Políticas de Saúde (IEPS)"
+    url_documentacao: "https://iepsdata.org.br/indicadores/"
+    url_dados: "https://iepsdata.org.br/wp-json/caleidosapi/get_csv"
+    formato: "csv"
+    periodicidade_publicacao: "anual"
+    defasagem_tipica: "12 meses"
+    licenca_termos_uso: "Uso público acadêmico e analítico com atribuição (IEPS)"
+    ultima_verificacao: "2026-10-24"
+    ultimo_periodo_disponivel: "2019-2023"
+    status: "ativo"
+    estagio_pipeline: "quality_checked"
+    geografia_base: "residencia_e_regiao_saude"
     pendencia_id: "PEND-014"
 
   - id: ips_brasil
-    nome: "Índice de Progresso Social do Brasil (IPS Brasil)"
+    nome: "Índice de Progresso Social do Brasil (IPS Brasil — Referência Externa de Contexto)"
     orgao: "Rede IPS Brasil / Imazon"
-    url_documentacao: "https://ipsbrasil.org.br"
+    url_documentacao: "https://ipsbrasil.org.br/conheca/metodologia"
     url_dados: "A_VALIDAR"
     formato: "csv"
-    periodicidade_publicacao: "A_VALIDAR"
+    periodicidade_publicacao: "anual"
     defasagem_tipica: "A_VALIDAR"
     licenca_termos_uso: "A_VALIDAR"
     ultima_verificacao: null
     ultimo_periodo_disponivel: null
     status: "em_revisao"
+    estagio_pipeline: "documented"
+    geografia_base: "residencia"
     pendencia_id: "PEND-015"
+
+  # Fontes candidatas adicionais (Auditoria Parte II — Seção 8)
+  - id: painel_oncologia
+    nome: "Painel-Oncologia / TabNet — Tempo até o Primeiro Tratamento Oncológico (Lei nº 12.732/2012 - 60 dias)"
+    orgao: "Ministério da Saúde / SAES / CGCAN / INCA"
+    url_documentacao: "https://www.gov.br/saude/pt-br/composicao/saes/cgcan/cgcan"
+    url_dados: "http://tabnet.datasus.gov.br/cgi/dhdat.exe?PAINEL_ONCO/PAINEL_ONCOLOGIABR.def"
+    formato: "tabnet / csv"
+    periodicidade_publicacao: "mensal"
+    defasagem_tipica: "3 a 6 meses"
+    licenca_termos_uso: "Dados Abertos Governamentais"
+    ultima_verificacao: "2026-10-24"
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    estagio_pipeline: "documented"
+    geografia_base: "residencia_e_atendimento"
+    pendencia_id: "PEND-039"
+
+  - id: siscan
+    nome: "Sistema de Informação do Câncer (SISCAN) — Rastreamento de Colo do Útero e Mama"
+    orgao: "Ministério da Saúde / DATASUS / INCA"
+    url_documentacao: "https://datasus.saude.gov.br/acesso-a-informacao/sistema-de-informacao-do-cancer-siscan-colo-do-utero-e-mama/"
+    url_dados: "A_VALIDAR"
+    formato: "csv / tabnet"
+    periodicidade_publicacao: "mensal"
+    defasagem_tipica: "A_VALIDAR"
+    licenca_termos_uso: "Dados Abertos Governamentais"
+    ultima_verificacao: null
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    estagio_pipeline: "documented"
+    geografia_base: "residencia_e_atendimento"
+    pendencia_id: "PEND-040"
+
+  - id: samu_192
+    nome: "Serviço de Atendimento Móvel de Urgência (SAMU 192) — Unidades Móveis e Cobertura"
+    orgao: "Ministério da Saúde / SAES / DAHU"
+    url_documentacao: "https://dadosabertos.saude.gov.br/dataset/mgdi-servico-de-atendimento-movel-de-urgencia-samu-192"
+    url_dados: "https://dadosabertos.saude.gov.br/dataset/mgdi-servico-de-atendimento-movel-de-urgencia-samu-192"
+    formato: "csv / json"
+    periodicidade_publicacao: "anual"
+    defasagem_tipica: "A_VALIDAR"
+    licenca_termos_uso: "Dados Abertos Governamentais"
+    ultima_verificacao: "2026-10-24"
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    estagio_pipeline: "documented"
+    geografia_base: "cobertura_regional"
+    pendencia_id: "PEND-041"
+
+  - id: sigtap
+    nome: "Sistema de Gerenciamento da Tabela de Procedimentos, Medicamentos e OPM do SUS (SIGTAP)"
+    orgao: "Ministério da Saúde / SAES / DRAC"
+    url_documentacao: "https://www.gov.br/saude/pt-br/acesso-a-informacao/sic/dados-em-transparencia-ativa/saes"
+    url_dados: "ftp://ftp.datasus.gov.br/dissemin/publicos/SIGTAP/"
+    formato: "txt / zip"
+    periodicidade_publicacao: "mensal"
+    defasagem_tipica: "mensal"
+    licenca_termos_uso: "Dados Abertos Governamentais"
+    ultima_verificacao: "2026-10-24"
+    ultimo_periodo_disponivel: null
+    status: "em_revisao"
+    estagio_pipeline: "documented"
+    geografia_base: "tabela_nacional"
+    pendencia_id: "PEND-042"

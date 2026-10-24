@@ -3,7 +3,7 @@
  * 
  * Renderiza dinamicamente a página "Fontes & Proveniência" a partir de meta_build.json
  * (derivado de sources/registry.yaml).
- * Garante que apenas fontes oficialmente registradas e catalogadas sejam apresentadas.
+ * Inclui estágios granulares de validação técnica (Auditoria Parte II).
  */
 
 export function renderSourcesView(metaBuild) {
@@ -12,11 +12,23 @@ export function renderSourcesView(metaBuild) {
 
     const fontes = metaBuild.fontes || [];
 
+    const stageLabels = {
+        "production_ready": { label: "Pronto p/ Produção", cls: "badge--quality-high" },
+        "quality_checked": { label: "Qualidade Verificada", cls: "badge--quality-high" },
+        "schema_verified": { label: "Esquema Verificado", cls: "badge--quality-high" },
+        "download_verified": { label: "Download Verificado", cls: "badge--pending" },
+        "documented": { label: "Documentado (Candidata)", cls: "badge--pending" },
+        "blocked": { label: "Bloqueado", cls: "badge--quality-warning" }
+    };
+
     const rowsHtml = fontes.map(fonte => {
         const isEmRevisao = fonte.status === "em_revisao";
         const statusBadge = isEmRevisao 
             ? `<span class="badge badge--pending">Em Revisão</span>` 
-            : `<span class="badge badge--quality-high">Ativo</span>`;
+            : `<span class="badge badge--quality-high">Integrada</span>`;
+
+        const stg = stageLabels[fonte.estagio_pipeline] || { label: fonte.estagio_pipeline || "Em validação", cls: "badge--pending" };
+        const stageBadge = `<span class="badge ${stg.cls}" style="display:inline-block; margin-top:3px;">${escapeHtml(stg.label)}</span>`;
 
         return `
             <tr>
@@ -26,6 +38,10 @@ export function renderSourcesView(metaBuild) {
                 </td>
                 <td>
                     <div style="font-weight: 600;">${escapeHtml(fonte.nome)}</div>
+                    <div style="font-size: 0.74rem; color: var(--color-text-subtle); margin-top:2px;">
+                        Geografia: <code>${escapeHtml(fonte.geografia_base || 'residencia')}</code>
+                        ${fonte.ultimo_periodo_disponivel ? ` &bull; Série: <strong>${escapeHtml(fonte.ultimo_periodo_disponivel)}</strong>` : ''}
+                    </div>
                     ${fonte.url_documentacao && fonte.url_documentacao !== 'A_VALIDAR' ? 
                         `<a href="${escapeHtml(fonte.url_documentacao)}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: var(--color-primary);">Documentação Oficial ↗</a>` : 
                         `<span style="font-size: 0.75rem; color: var(--color-warning);">URL Documentação: A Validar</span>`
@@ -34,7 +50,10 @@ export function renderSourcesView(metaBuild) {
                 <td><span style="font-family: var(--font-mono); font-size: 0.8rem;">${escapeHtml(fonte.formato || 'A_VALIDAR')}</span></td>
                 <td>${escapeHtml(fonte.periodicidade_publicacao || 'A_VALIDAR')}</td>
                 <td>${escapeHtml(fonte.defasagem_tipica || 'A_VALIDAR')}</td>
-                <td>${statusBadge}</td>
+                <td>
+                    <div>${statusBadge}</div>
+                    <div>${stageBadge}</div>
+                </td>
                 <td>
                     ${fonte.pendencia_id ? `<span class="badge badge--pending">${escapeHtml(fonte.pendencia_id)}</span>` : '—'}
                 </td>
@@ -47,23 +66,22 @@ export function renderSourcesView(metaBuild) {
             <header class="page-header">
                 <h1 class="page-title">Registro Oficial de Fontes e Proveniência</h1>
                 <p class="page-lead">
-                    Catálogo de fontes de dados públicas do Sistema Único de Saúde (SUS) e órgãos oficiais integrados ao pipeline.
-                    Apenas dados devidamente cadastrados em <code>sources/registry.yaml</code> são consumidos pelo sistema.
+                    Catálogo auditável de fontes de dados públicas do Sistema Único de Saúde (SUS), IBGE e agregadores secundários cadastrados em <code>sources/registry.yaml</code>, com estágios granulares de verificação técnica.
                 </p>
             </header>
 
             <section class="content-section">
-                <h2 class="section-title">Fontes Cadastradas no Pipeline (${fontes.length} fontes)</h2>
+                <h2 class="section-title">Fontes Cadastradas e Candidatas (${fontes.length} fontes)</h2>
                 <div class="sources-table-wrapper">
                     <table class="data-table">
                         <thead>
                             <tr>
                                 <th>ID / Órgão</th>
-                                <th>Sistema / Documentação</th>
+                                <th>Sistema / Geografia / Documentação</th>
                                 <th>Formato</th>
                                 <th>Periodicidade</th>
                                 <th>Defasagem Típica</th>
-                                <th>Status</th>
+                                <th>Status &amp; Estágio</th>
                                 <th>Rastreamento</th>
                             </tr>
                         </thead>
