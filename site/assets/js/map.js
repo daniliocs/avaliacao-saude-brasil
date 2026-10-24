@@ -17,8 +17,9 @@ let canvasRenderer = null;
 let highlightLayer = null;
 let mapaResumoData = {};
 let rankingsData = {};
-let activeLayerKey = "nota_geral"; // 'nota_geral' | 'd1_nota' | 'd2_nota' | 'd3_nota'
-let activeRankDim = "nota_geral";  // 'nota_geral' | 'd1_nota' | 'd2_nota' | 'd3_nota'
+let activeIndexMode = "oficial"; // 'oficial' (nota_geral) | 'urgencia' (nota_com_urgencia)
+let activeLayerKey = "nota_geral"; // 'nota_geral' | 'd1_nota' | 'd2_nota' | 'd3_nota' | 'd5_nota'
+let activeRankDim = "nota_geral";  // 'nota_geral' | 'nota_com_urgencia' | 'd1_nota' | 'd2_nota' | 'd3_nota' | 'd5_nota'
 let activeRankScope = "brasil";    // 'brasil' | 'brasil_piores' | 'uf' | 'estados' | 'capitais'
 let activeMarkerMode = "none";     // 'none' | 'estados' | 'capitais'
 let geoJsonLayer = null;
@@ -157,7 +158,8 @@ export async function initMap(metaConfig) {
         if (leafletMap) leafletMap.invalidateSize();
     }, 150);
 
-    // 3. Configura controles de busca, filtros, seletor de camada, marcadores, rankings, layout e modal de info
+    // 3. Configura controles de busca, filtros, seletor de modelo, camada, marcadores, rankings, layout e modal de info
+    setupIndexModeSelector();
     setupLayerSelector();
     setupMarkerModeSelector();
     setupSearchAndFilters();
@@ -255,15 +257,25 @@ async function loadGeoBoundary() {
 
 function getTooltipHtml(mun) {
     const popFmt = mun.populacao ? mun.populacao.toLocaleString("pt-BR") + " hab." : "População em validação";
-    const escoreFmt = mun.nota_geral !== null && mun.nota_geral !== undefined ? mun.nota_geral.toFixed(1) : null;
-    const corNota = getColorForScore(mun.nota_geral);
+    const isUrgenciaMode = activeIndexMode === "urgencia";
+    const notaExibida = isUrgenciaMode ? mun.nota_com_urgencia : mun.nota_geral;
+    const escoreFmt = notaExibida !== null && notaExibida !== undefined ? notaExibida.toFixed(1) : null;
+    const corNota = getColorForScore(notaExibida);
+    const urg = mun.urgencia_samu;
 
     let statusBlock = "";
     if (escoreFmt) {
+        const titleBadge = isUrgenciaMode
+            ? `Nota c/ Urgência (10% RUE): ${escoreFmt} / 100`
+            : `Nota Geral: ${escoreFmt} / 100`;
+
+        const posNac = isUrgenciaMode ? mun.posicao_nacional_urgencia : mun.posicao_nacional;
+        const posEst = isUrgenciaMode ? mun.posicao_estadual_urgencia : mun.posicao_estadual;
+
         statusBlock = `
             <div style="margin: 4px 0 6px 0;">
                 <span style="background:${corNota}; color:#ffffff; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.875rem; display:inline-block;">
-                    Nota Geral: ${escoreFmt} / 100
+                    ${titleBadge}
                 </span>
             </div>
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:4px; padding:4px 6px; margin-bottom:6px; font-size:0.75rem;">
@@ -275,15 +287,19 @@ function getTooltipHtml(mun) {
                     <span><strong>D2</strong> Primária:</span>
                     <strong style="color:${getColorForScore(mun.d2_nota)}">${mun.d2_nota !== null && mun.d2_nota !== undefined ? mun.d2_nota.toFixed(1) : '—'}</strong>
                 </div>
-                <div style="display:flex; justify-content:space-between;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
                     <span><strong>D3</strong> Estrutura:</span>
                     <strong style="color:${getColorForScore(mun.d3_nota)}">${mun.d3_nota !== null && mun.d3_nota !== undefined ? mun.d3_nota.toFixed(1) : '—'}</strong>
                 </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span><strong>D5</strong> Urgência &amp; SAMU:</span>
+                    <strong style="color:${getColorForScore(mun.d5_nota)}">${mun.d5_nota !== null && mun.d5_nota !== undefined ? mun.d5_nota.toFixed(1) : '—'}</strong>
+                </div>
             </div>
             <div style="font-size:0.78rem; line-height:1.45; color:#334155;">
-                <span>🏆 Ranking Nacional: <strong>#${mun.posicao_nacional ? mun.posicao_nacional.toLocaleString("pt-BR") : '—'}</strong> de 5.570</span><br>
-                <span>🥇 Ranking Estadual (${mun.uf}): <strong>#${mun.posicao_estadual ? mun.posicao_estadual.toLocaleString("pt-BR") : '—'}</strong> de ${(mun.total_uf || '—').toLocaleString("pt-BR")}</span><br>
-                <span>👥 Grupo de Pares: <strong>#${mun.posicao_grupo_pares ? mun.posicao_grupo_pares.toLocaleString("pt-BR") : '—'}</strong> de ${(mun.total_grupo_pares || '—').toLocaleString("pt-BR")}</span><br>
+                <span>🏆 Ranking Nacional: <strong>#${posNac ? posNac.toLocaleString("pt-BR") : '—'}</strong> de 5.570</span><br>
+                <span>🥇 Ranking Estadual (${mun.uf}): <strong>#${posEst ? posEst.toLocaleString("pt-BR") : '—'}</strong> de ${(mun.total_uf || '—').toLocaleString("pt-BR")}</span><br>
+                ${urg ? `<span>🚑 SAMU: <strong>${urg.cob_samu_efetiva}%</strong> &bull; Região: <strong>${urg.usb_reg ?? 0} USB / ${urg.usa_reg ?? 0} USA</strong></span><br>` : ''}
                 <span>🏥 Região de Saúde: <strong>${mun.regiao_saude || '—'}</strong></span>
             </div>
         `;
@@ -292,7 +308,7 @@ function getTooltipHtml(mun) {
     }
 
     return `
-        <div style="font-size:0.8125rem; line-height:1.45; min-width:210px; padding:2px;">
+        <div style="font-size:0.8125rem; line-height:1.45; min-width:220px; padding:2px;">
             <strong style="font-size:1rem; color:#0f172a;">${mun.nome} (${mun.uf || ''})</strong><br>
             <span style="color:#475569;">👥 População: <strong>${popFmt}</strong></span><br>
             ${statusBlock}
@@ -344,7 +360,12 @@ function styleFeature(feature) {
     const ibge = feature.properties?.id || feature.properties?.codarea || feature.properties?.ibge7;
     const mun = mapaResumoData[ibge];
 
-    if (!mun || mun.status === "sem_classificacao" || mun[activeLayerKey] === null) {
+    let fieldKey = activeLayerKey;
+    if (activeLayerKey === "nota_geral" && activeIndexMode === "urgencia") {
+        fieldKey = "nota_com_urgencia";
+    }
+
+    if (!mun || mun.status === "sem_classificacao" || mun[fieldKey] === null || mun[fieldKey] === undefined) {
         return {
             fillColor: "#94a3b8",
             weight: 0.6,
@@ -355,7 +376,7 @@ function styleFeature(feature) {
         };
     }
 
-    const val = mun[activeLayerKey];
+    const val = mun[fieldKey];
     return {
         fillColor: getColorForScore(val),
         weight: 0.5,
@@ -372,6 +393,21 @@ function getColorForScore(score) {
     if (score >= 50) return "#eab308";
     if (score >= 35) return "#f97316";
     return "#dc2626";
+}
+
+function setupIndexModeSelector() {
+    const modeButtons = document.querySelectorAll(".index-mode-btn");
+    modeButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            modeButtons.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            activeIndexMode = btn.dataset.indexMode || "oficial";
+            if (geoJsonLayer) {
+                geoJsonLayer.setStyle(styleFeature);
+            }
+            renderMapOverlayMarkers();
+        });
+    });
 }
 
 function setupLayerSelector() {
@@ -413,15 +449,17 @@ function renderMapOverlayMarkers() {
     if (activeMarkerMode === "none") return;
 
     const ufDimFieldMap = {
-        "nota_geral": "media_escore_uf",
+        "nota_geral": activeIndexMode === "urgencia" ? "media_com_urgencia_uf" : "media_escore_uf",
         "d1_nota": "media_d1_uf",
         "d2_nota": "media_d2_uf",
-        "d3_nota": "media_d3_uf"
+        "d3_nota": "media_d3_uf",
+        "d5_nota": "media_d5_uf",
+        "nota_com_urgencia": "media_com_urgencia_uf"
     };
 
     if (activeMarkerMode === "estados") {
         const estados = rankingsData?.ranking_estados || [];
-        const field = ufDimFieldMap[activeLayerKey] || "media_escore_uf";
+        const field = ufDimFieldMap[activeLayerKey] || (activeIndexMode === "urgencia" ? "media_com_urgencia_uf" : "media_escore_uf");
         const sorted = [...estados].sort((a, b) => (b[field] || 0) - (a[field] || 0));
 
         sorted.forEach((est, idx) => {
@@ -444,10 +482,10 @@ function renderMapOverlayMarkers() {
             marker.bindTooltip(`
                 <div style="font-size:0.8rem; line-height:1.45; min-width:190px;">
                     <strong style="font-size:0.95rem;">#${idx + 1}º ${est.nome_uf} (${est.uf})</strong><br>
-                    <span>Média Estadual (Nota Geral): <strong>${est.media_escore_uf.toFixed(1)} pts</strong></span><br>
-                    <span>Média Ponderada Pop.: <strong>${est.media_ponderada_uf.toFixed(1)} pts</strong></span><br>
-                    <span>D1: <strong>${est.media_d1_uf.toFixed(1)}</strong> | D2: <strong>${est.media_d2_uf.toFixed(1)}</strong> | D3: <strong>${est.media_d3_uf.toFixed(1)}</strong></span><br>
-                    <span>Municípios: <strong>${est.total_municipios}</strong> &bull; Melhor: <strong>${est.melhor_municipio}</strong></span><br>
+                    <span>Média Oficial (3D): <strong>${est.media_escore_uf.toFixed(1)} pts</strong></span><br>
+                    <span>Média c/ Urgência (10%): <strong>${est.media_com_urgencia_uf ? est.media_com_urgencia_uf.toFixed(1) : '—'} pts</strong></span><br>
+                    <span>D1: <strong>${est.media_d1_uf.toFixed(1)}</strong> | D2: <strong>${est.media_d2_uf.toFixed(1)}</strong> | D3: <strong>${est.media_d3_uf.toFixed(1)}</strong> | D5: <strong>${est.media_d5_uf ? est.media_d5_uf.toFixed(1) : '—'}</strong></span><br>
+                    <span>Municípios: <strong>${est.total_municipios}</strong> &bull; SAMU: <strong>${est.cob_samu_media_uf ?? '—'}%</strong> &bull; UPAs: <strong>${est.total_upas_uf ?? 0}</strong></span><br>
                     <span style="color:#0284c7; font-weight:600;">👉 Clique para focar no Estado e ver o ranking da UF</span>
                 </div>
             `, { direction: "top", offset: [0, -10] });
@@ -469,7 +507,7 @@ function renderMapOverlayMarkers() {
         });
     } else if (activeMarkerMode === "capitais") {
         const capitais = rankingsData?.ranking_capitais || [];
-        const field = activeLayerKey || "nota_geral";
+        const field = (activeLayerKey === "nota_geral" && activeIndexMode === "urgencia") ? "nota_com_urgencia" : (activeLayerKey || "nota_geral");
         const sorted = [...capitais].sort((a, b) => (b[field] || 0) - (a[field] || 0));
 
         sorted.forEach((cap, idx) => {
@@ -490,12 +528,16 @@ function renderMapOverlayMarkers() {
             });
 
             const marker = L.marker([cap.lat, cap.lng], { icon, zIndexOffset: 950 });
+            const scoreLabel = (activeIndexMode === "urgencia" && cap.nota_com_urgencia)
+                ? `Nota c/ Urgência (10%): <strong>${cap.nota_com_urgencia.toFixed(1)} / 100</strong> (#${cap.posicao_nacional_urgencia}º BR)`
+                : `Nota Geral Oficial: <strong>${cap.escore.toFixed(1)} / 100</strong> (#${cap.posicao_nacional}º BR)`;
+
             marker.bindTooltip(`
                 <div style="font-size:0.8rem; line-height:1.45; min-width:195px;">
                     <strong style="font-size:0.95rem;">🏙️ #${idx + 1}ª Capital: ${cap.nome} (${cap.uf})</strong><br>
-                    <span>Nota Geral: <strong>${cap.escore.toFixed(1)} / 100</strong> (#${cap.posicao_nacional}º no Brasil)</span><br>
-                    <span>D1: <strong>${cap.d1_nota.toFixed(1)}</strong> | D2: <strong>${cap.d2_nota.toFixed(1)}</strong> | D3: <strong>${cap.d3_nota.toFixed(1)}</strong></span><br>
-                    <span>População: <strong>${cap.populacao ? cap.populacao.toLocaleString("pt-BR") : '—'} hab.</strong></span><br>
+                    <span>${scoreLabel}</span><br>
+                    <span>D1: <strong>${cap.d1_nota.toFixed(1)}</strong> | D2: <strong>${cap.d2_nota.toFixed(1)}</strong> | D3: <strong>${cap.d3_nota.toFixed(1)}</strong> | D5: <strong>${cap.d5_nota ? cap.d5_nota.toFixed(1) : '—'}</strong></span><br>
+                    <span>População: <strong>${cap.populacao ? cap.populacao.toLocaleString("pt-BR") : '—'} hab.</strong> &bull; SAMU: <strong>${cap.cob_samu_efetiva ?? '—'}%</strong></span><br>
                     <span style="color:#0284c7; font-weight:600;">👉 Clique para abrir a ficha completa da Capital</span>
                 </div>
             `, { direction: "top", offset: [0, -10] });
@@ -830,10 +872,12 @@ function renderRankingsContent(selectedUf = "") {
     }
 
     const dimLabelMap = {
-        "nota_geral": "Nota Geral Consolidada (D1 + D2 + D3)",
+        "nota_geral": "Nota Geral Consolidada (D1 + D2 + D3 — Padrão Oficial)",
+        "nota_com_urgencia": "Nota Expandida com Urgência (30% D1 + 30% D2 + 30% D3 + 10% D5)",
         "d1_nota": "D1 — Resultados em Saúde (Mortalidade Infantil, DCNT e Evitáveis)",
         "d2_nota": "D2 — Atenção Primária (ICSAP, Pré-natal 7+ e Vacinação Composta)",
-        "d3_nota": "D3 — Acesso e Capacidade (Leitos Regionais, Médicos/Enf. 40h e eSF)"
+        "d3_nota": "D3 — Acesso e Capacidade (Leitos Regionais, Médicos/Enf. 40h e eSF)",
+        "d5_nota": "D5 — Rede de Urgência & SAMU 192 (Cobertura SAMU, UPAs 24h e Frotas)"
     };
     const activeLabel = dimLabelMap[activeRankDim] || "Nota Geral Consolidada";
     const allMun = Object.values(mapaResumoData);
@@ -848,6 +892,7 @@ function renderRankingsContent(selectedUf = "") {
                     const d1 = typeof m.d1_nota === "number" ? m.d1_nota.toFixed(1) : "—";
                     const d2 = typeof m.d2_nota === "number" ? m.d2_nota.toFixed(1) : "—";
                     const d3 = typeof m.d3_nota === "number" ? m.d3_nota.toFixed(1) : "—";
+                    const d5 = typeof m.d5_nota === "number" ? m.d5_nota.toFixed(1) : "—";
                     const score = typeof m[activeRankDim] === "number" ? m[activeRankDim] : (typeof m.escore === "number" ? m.escore : m.nota_geral);
                     const scoreFmt = typeof score === "number" ? score.toFixed(1) : "—";
 
@@ -855,7 +900,11 @@ function renderRankingsContent(selectedUf = "") {
                         ? (activeRankDim === "nota_geral" && m.posicao_nacional
                             ? `<span style="font-weight:700; color:#dc2626; margin-right:4px;">#${m.posicao_nacional}º</span><span style="font-size:0.72rem; color:#dc2626; font-weight:600; margin-right:4px;">(${idx + 1}º menor)</span>`
                             : `<span style="font-weight:700; color:#dc2626; margin-right:4px;">#${idx + 1}º menor</span>`)
-                        : `<span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${idx + 1}</span>`;
+                        : (activeRankDim === "nota_geral" && m.posicao_nacional
+                            ? `<span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${m.posicao_nacional}</span>`
+                            : (activeRankDim === "nota_com_urgencia" && m.posicao_nacional_urgencia
+                                ? `<span style="font-weight:700; color:#0369a1; margin-right:4px;">#${m.posicao_nacional_urgencia}</span>`
+                                : `<span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${idx + 1}</span>`));
 
                     return `
                         <div class="ranking-row-item" data-ibge="${m.ibge7}" style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0.65rem; border:1px solid var(--color-border); border-radius:6px; background:var(--color-surface); cursor:pointer;">
@@ -867,7 +916,8 @@ function renderRankingsContent(selectedUf = "") {
                                     ${m.populacao ? m.populacao.toLocaleString('pt-BR') + ' hab.' : ''} &bull; 
                                     <span>D1: <strong>${d1}</strong></span> | 
                                     <span>D2: <strong>${d2}</strong></span> | 
-                                    <span>D3: <strong>${d3}</strong></span>
+                                    <span>D3: <strong>${d3}</strong></span> | 
+                                    <span>D5: <strong>${d5}</strong></span>
                                 </div>
                             </div>
                             <span style="background:${getColorForScore(score)}; color:#fff; font-weight:700; font-size:0.8125rem; padding:2px 8px; border-radius:4px; margin-left:8px;">
@@ -961,9 +1011,11 @@ function renderRankingsContent(selectedUf = "") {
     else if (activeRankScope === "estados") {
         const ufFieldMap = {
             "nota_geral": "media_escore_uf",
+            "nota_com_urgencia": "media_com_urgencia_uf",
             "d1_nota": "media_d1_uf",
             "d2_nota": "media_d2_uf",
-            "d3_nota": "media_d3_uf"
+            "d3_nota": "media_d3_uf",
+            "d5_nota": "media_d5_uf"
         };
         const field = ufFieldMap[activeRankDim] || "media_escore_uf";
         const estados = [...(rankingsData.ranking_estados || [])].sort((a, b) => (b[field] || 0) - (a[field] || 0));
@@ -991,11 +1043,15 @@ function renderRankingsContent(selectedUf = "") {
                                         Média Pond. Pop.: <strong>${est.media_ponderada_uf.toFixed(1)}</strong> &bull;
                                         D1: <strong>${est.media_d1_uf.toFixed(1)}</strong> |
                                         D2: <strong>${est.media_d2_uf.toFixed(1)}</strong> |
-                                        D3: <strong>${est.media_d3_uf.toFixed(1)}</strong>
+                                        D3: <strong>${est.media_d3_uf.toFixed(1)}</strong> |
+                                        D5: <strong>${est.media_d5_uf ? est.media_d5_uf.toFixed(1) : '—'}</strong>
+                                    </div>
+                                    <div style="font-size:0.72rem; color:var(--color-text-muted); margin-top:1px;">
+                                        SAMU: <strong>${est.cob_samu_media_uf ?? '—'}%</strong> &bull; UPAs 24h: <strong>${est.total_upas_uf ?? 0}</strong> &bull; Ambulâncias: <strong>${(est.total_usb_uf || 0) + (est.total_usa_uf || 0)}</strong> (USB: ${est.total_usb_uf || 0}, USA: ${est.total_usa_uf || 0})
                                     </div>
                                 </div>
                                 <span style="background:${getColorForScore(score)}; color:#fff; font-weight:700; font-size:0.85rem; padding:3px 9px; border-radius:4px; margin-left:8px;">
-                                    ${score.toFixed(1)}
+                                    ${score !== null && score !== undefined ? score.toFixed(1) : '—'}
                                 </span>
                             </div>
                         `;

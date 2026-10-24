@@ -209,6 +209,75 @@ function renderMunicipiosComparison() {
         `;
     }).join("");
 
+    // Dimensão 5: Urgência e SAMU 192 (DEMAS/MS)
+    const urgA = munA.urgencia_samu || {};
+    const urgB = munB.urgencia_samu || {};
+    const urgRows = [
+        {
+            nome: "D5 — Escore da Rede de Urgência & SAMU (0–100)",
+            unid: "pts",
+            vA: munA.d5_nota,
+            vB: munB.d5_nota,
+            digits: 1
+        },
+        {
+            nome: "D5.1 — Cobertura Efetiva do SAMU 192",
+            unid: "%",
+            vA: urgA.cob_samu_efetiva,
+            vB: urgB.cob_samu_efetiva,
+            digits: 1
+        },
+        {
+            nome: "D5.2 — UPAs 24h em Operação no Município",
+            unid: "unidades",
+            vA: urgA.upa_mun ?? 0,
+            vB: urgB.upa_mun ?? 0,
+            digits: 0
+        },
+        {
+            nome: "D5.3 — Ambulâncias Básicas (USB) no Município",
+            unid: "unidades",
+            vA: urgA.usb_mun ?? 0,
+            vB: urgB.usb_mun ?? 0,
+            digits: 0
+        },
+        {
+            nome: "D5.4 — UTIs Móveis / Avançadas (USA) no Município",
+            unid: "unidades",
+            vA: urgA.usa_mun ?? 0,
+            vB: urgB.usa_mun ?? 0,
+            digits: 0
+        },
+        {
+            nome: "D5.5 — Taxa de Frota SAMU na Região de Saúde",
+            unid: "amb. / 100k hab",
+            vA: urgA.tx_frota_samu_reg_100k,
+            vB: urgB.tx_frota_samu_reg_100k,
+            digits: 2
+        }
+    ];
+
+    const urgRowsHtml = `
+        <tr style="background:#eff6ff;">
+            <td colspan="3" style="text-align:center; color:#0369a1; font-weight:700; padding:0.45rem; font-size:0.84rem;">
+                🚑 Dimensão 5: Rede de Urgência &amp; SAMU 192 (DEMAS/SEIDIGI/MS 2024)
+            </td>
+        </tr>
+        ${urgRows.map(r => {
+            const aOk = typeof r.vA === "number" && !isNaN(r.vA);
+            const bOk = typeof r.vB === "number" && !isNaN(r.vB);
+            const winA = aOk && bOk && r.vA > r.vB;
+            const winB = aOk && bOk && r.vB > r.vA;
+            return `
+                <tr>
+                    <td style="text-align:right; font-weight:600; ${winA ? 'background:#f0fdf4;' : ''}">${fmtNum(r.vA, r.digits)} <small style="color:var(--color-text-subtle);">${r.unid}</small></td>
+                    <td style="text-align:center; background:#f8fafc; font-weight:600; font-size:0.82rem;">${r.nome}</td>
+                    <td style="text-align:left; font-weight:600; ${winB ? 'background:#f0fdf4;' : ''}">${fmtNum(r.vB, r.digits)} <small style="color:var(--color-text-subtle);">${r.unid}</small></td>
+                </tr>
+            `;
+        }).join("")}
+    `;
+
     // Contexto D4 e Camada Privada
     const ctxRows = [
         {
@@ -345,16 +414,18 @@ function renderMunicipiosComparison() {
 
             <h3 class="section-title" style="margin-top:0.5rem;">Comparação de Notas por Dimensão (Escala 0–100)</h3>
             <div style="display:flex; flex-direction:column; gap:0.75rem;">
-                ${diffRow("🌟 Nota Geral Consolidada", munA.nota_geral, munB.nota_geral, "maior_melhor", 1, " pts")}
-                ${diffRow("D1 — Resultados em Saúde (33,3%)", munA.d1_nota, munB.d1_nota, "maior_melhor", 1, " pts")}
-                ${diffRow("D2 — Atenção Primária e Prevenção (33,3%)", munA.d2_nota, munB.d2_nota, "maior_melhor", 1, " pts")}
-                ${diffRow("D3 — Acesso e Capacidade Assistencial (33,3%)", munA.d3_nota, munB.d3_nota, "maior_melhor", 1, " pts")}
+                ${diffRow("🌟 Nota Geral Consolidada (Padrão Oficial 3D)", munA.nota_geral, munB.nota_geral, "maior_melhor", 1, " pts")}
+                ${diffRow("⚡ Nota Expandida com Urgência (+10% RUE)", munA.nota_com_urgencia, munB.nota_com_urgencia, "maior_melhor", 1, " pts")}
+                ${diffRow("D1 — Resultados em Saúde (33,3% ou 30%)", munA.d1_nota, munB.d1_nota, "maior_melhor", 1, " pts")}
+                ${diffRow("D2 — Atenção Primária e Prevenção (33,3% ou 30%)", munA.d2_nota, munB.d2_nota, "maior_melhor", 1, " pts")}
+                ${diffRow("D3 — Acesso e Capacidade Assistencial (33,3% ou 30%)", munA.d3_nota, munB.d3_nota, "maior_melhor", 1, " pts")}
+                ${diffRow("🚑 D5 — Rede de Urgência & SAMU 192 (10% RUE)", munA.d5_nota, munB.d5_nota, "maior_melhor", 1, " pts")}
             </div>
         </section>
 
         <!-- Tabela Detalhada Indicador a Indicador -->
         <section class="content-section">
-            <h3 class="section-title">Comparação Indicador por Indicador (Triênio 2021–2023)</h3>
+            <h3 class="section-title">Comparação Indicador por Indicador (Triênio 2021–2023 & Urgência 2024)</h3>
             <div class="sources-table-wrapper">
                 <table class="data-table">
                     <thead>
@@ -366,6 +437,7 @@ function renderMunicipiosComparison() {
                     </thead>
                     <tbody>
                         ${indRowsHtml}
+                        ${urgRowsHtml}
                         ${ctxRowsHtml}
                     </tbody>
                 </table>
@@ -520,11 +592,16 @@ function renderEstadosComparison() {
 
             <h3 class="section-title" style="margin-top:0.5rem;">Médias Estaduais por Dimensão (0–100)</h3>
             <div style="display:flex; flex-direction:column; gap:0.75rem;">
-                ${diffRow("🌟 Média Estadual da Nota Geral", estA.media_escore_uf, estB.media_escore_uf, "maior_melhor", 1, " pts")}
+                ${diffRow("🌟 Média Estadual da Nota Geral (Padrão 3D)", estA.media_escore_uf, estB.media_escore_uf, "maior_melhor", 1, " pts")}
+                ${diffRow("⚡ Média Estadual com Urgência (+10% RUE)", estA.media_com_urgencia_uf, estB.media_com_urgencia_uf, "maior_melhor", 1, " pts")}
                 ${diffRow("👥 Média Estadual Ponderada pela População", estA.media_ponderada_uf, estB.media_ponderada_uf, "maior_melhor", 1, " pts")}
                 ${diffRow("D1 — Resultados em Saúde (Média UF)", estA.media_d1_uf, estB.media_d1_uf, "maior_melhor", 1, " pts")}
                 ${diffRow("D2 — Atenção Primária (Média UF)", estA.media_d2_uf, estB.media_d2_uf, "maior_melhor", 1, " pts")}
                 ${diffRow("D3 — Acesso e Estrutura (Média UF)", estA.media_d3_uf, estB.media_d3_uf, "maior_melhor", 1, " pts")}
+                ${diffRow("🚑 D5 — Urgência & SAMU 192 (Média UF)", estA.media_d5_uf, estB.media_d5_uf, "maior_melhor", 1, " pts")}
+                ${diffRow("📡 Cobertura Média do SAMU 192 na UF", estA.cob_samu_media_uf, estB.cob_samu_media_uf, "maior_melhor", 1, "%")}
+                ${diffRow("🏥 Total de UPAs 24h em Operação na UF", estA.total_upas_uf, estB.total_upas_uf, "maior_melhor", 0, " UPAs")}
+                ${diffRow("🚐 Total de Ambulâncias SAMU (USB + USA) na UF", (estA.total_usb_uf || 0) + (estA.total_usa_uf || 0), (estB.total_usb_uf || 0) + (estB.total_usa_uf || 0), "maior_melhor", 0, " amb.")}
             </div>
 
             <div class="compare-cards-duo" style="margin-top:1rem;">

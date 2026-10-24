@@ -355,6 +355,40 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+/* Seletor de Modelo de Índice (Padrão Oficial vs Com Urgência) */
+.index-mode-selector {
+  display: flex;
+  background-color: var(--color-bg);
+  padding: 0.2rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  gap: 0.2rem;
+}
+
+.index-mode-btn {
+  border: none;
+  background: none;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.index-mode-btn:hover {
+  color: var(--color-text-main);
+}
+
+.index-mode-btn.active {
+  background-color: #0284c7;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
 /* Botão de Destaque para Rankings */
 .btn-ranking-toggle {
   display: inline-flex;
@@ -1450,6 +1484,62 @@ details.dim-accordion[open] summary.dim-summary::after {
 .separated-tag--priv {
   background-color: #fce7f3;
   color: #9d174d;
+}
+
+.separated-layer-card--urgencia {
+  background-color: #f0f9ff; /* Azul clínico claro */
+  border-color: #bae6fd;
+}
+
+.separated-tag--urgencia {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.urgencia-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.urgencia-stat-box {
+  background: #ffffff;
+  border: 1px solid #e0f2fe;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.urgencia-stat-box__title {
+  font-size: 0.6875rem;
+  color: var(--color-text-subtle);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.urgencia-stat-box__val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0369a1;
+}
+
+.urgencia-stat-box__sub {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
+.urgencia-compare-pill {
+  background: #ffffff;
+  border: 1px dashed #7dd3fc;
+  border-radius: 6px;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.78rem;
+  color: #0369a1;
+  line-height: 1.45;
 }
 
 /* ==========================================================================

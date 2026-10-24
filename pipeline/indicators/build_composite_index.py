@@ -37,6 +37,7 @@ from pipeline.indicators.estatistica import limites_percentis, normalizar  # noq
 DIM_PATH = os.path.join("data", "processed", "dim_municipio.parquet")
 SIM_PATH = os.path.join("data", "processed", "indicadores_sim_sinasc.parquet")
 SERIE_PATH = os.path.join("data", "processed", "serie_anual_sim_sinasc.parquet")
+URG_PATH = os.path.join("data", "processed", "indicadores_urgencia_samu.parquet")
 IEPS_DIR = os.path.join("data", "raw", "ieps")
 LIMITES_CFG = os.path.join("config", "limites_referencia.yaml")
 PESOS_CFG = os.path.join("config", "pesos.yaml")
@@ -325,6 +326,9 @@ def construir() -> pd.DataFrame:
     ieps, meta_ieps = agregar_ieps(janelas, dim)
 
     df = dim.merge(sim, on="ibge6", how="left").merge(ieps, on="ibge6", how="left")
+    if os.path.exists(URG_PATH):
+        urg = pd.read_parquet(URG_PATH).drop(columns=["ibge6", "nome_municipio", "uf_sigla", "populacao_censo_2022"], errors="ignore")
+        df = df.merge(urg, on="ibge7", how="left")
     assert len(df) == 5570 and df["ibge7"].is_unique, "Cardinalidade/unicidade violada após junções"
 
     # Preenche regiao_saude_id e regiao_saude_nome reais (438 Regiões de Saúde do SUS)
@@ -381,6 +385,28 @@ def construir() -> pd.DataFrame:
     for c in ("posicao_nacional", "posicao_estadual", "posicao_grupo_pares", "faixa_posicao_min", "faixa_posicao_max",
               "rank_d1", "rank_d2", "rank_d3"):
         df[c] = df[c].astype("Int64")
+
+    # Fase 1: Escore D5 Urgência & SAMU 192 e Modo de Índice com Urgência (10% de peso)
+    if "escore_urgencia_rue" in df.columns:
+        df["d5_nota"] = df["escore_urgencia_rue"].round(1)
+        df["rank_d5"] = rank_min(df["d5_nota"]).astype("Int64")
+        df["nota_com_urgencia"] = np.where(
+            df["status"] == "classificado",
+            (0.30 * df["d1_nota"] + 0.30 * df["d2_nota"] + 0.30 * df["d3_nota"] + 0.10 * df["d5_nota"]).round(1),
+            np.nan
+        )
+        df["posicao_nacional_urgencia"] = np.nan
+        df.loc[cls, "posicao_nacional_urgencia"] = rank_min(df.loc[cls, "nota_com_urgencia"])
+        df["posicao_estadual_urgencia"] = np.nan
+        df.loc[cls, "posicao_estadual_urgencia"] = df[cls].groupby("uf_sigla")["nota_com_urgencia"].rank(ascending=False, method="min")
+        for c in ("posicao_nacional_urgencia", "posicao_estadual_urgencia"):
+            df[c] = df[c].astype("Int64")
+    else:
+        df["d5_nota"] = np.nan
+        df["rank_d5"] = pd.Series(pd.NA, dtype="Int64", index=df.index)
+        df["nota_com_urgencia"] = df["nota_geral"]
+        df["posicao_nacional_urgencia"] = df["posicao_nacional"]
+        df["posicao_estadual_urgencia"] = df["posicao_estadual"]
 
     # Camada privada e Contexto D4 (fora da nota)
     df["leitos_priv_val"] = df["tx_leito_nsus"].round(1)

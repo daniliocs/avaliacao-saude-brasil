@@ -387,6 +387,10 @@ def build_mapa_resumo_payload(meta_build: dict):
             "d1_nota": num_or_none(row.get("d1_nota"), 1),
             "d2_nota": num_or_none(row.get("d2_nota"), 1),
             "d3_nota": num_or_none(row.get("d3_nota"), 1),
+            "d5_nota": num_or_none(row.get("d5_nota"), 1),
+            "nota_com_urgencia": num_or_none(row.get("nota_com_urgencia"), 1),
+            "posicao_nacional_urgencia": int(row["posicao_nacional_urgencia"]) if pd.notna(row.get("posicao_nacional_urgencia")) else None,
+            "posicao_estadual_urgencia": int(row["posicao_estadual_urgencia"]) if pd.notna(row.get("posicao_estadual_urgencia")) else None,
             "faixa_posicao_min": int(row["faixa_posicao_min"]) if pd.notna(row.get("faixa_posicao_min")) else None,
             "faixa_posicao_max": int(row["faixa_posicao_max"]) if pd.notna(row.get("faixa_posicao_max")) else None,
             "posicao_nacional": int(row["posicao_nacional"]) if pd.notna(row.get("posicao_nacional")) else None,
@@ -448,6 +452,21 @@ def build_mapa_resumo_payload(meta_build: dict):
                     "qualidade_dado": str(row.get("qualidade_PRIV_2", "alta")),
                     "papel_na_nota": "informativo"
                 } if leitos_priv is not None else None
+            },
+            "urgencia_samu": {
+                "escore": num_or_none(row.get("d5_nota"), 1),
+                "cob_samu_efetiva": num_or_none(row.get("cob_samu_efetiva"), 1),
+                "cob_samu_mun": num_or_none(row.get("cob_samu_mun"), 1),
+                "cob_samu_reg": num_or_none(row.get("cob_samu_reg"), 1),
+                "usb_mun": int(row["usb_mun"]) if pd.notna(row.get("usb_mun")) else 0,
+                "usb_reg": int(row["usb_reg"]) if pd.notna(row.get("usb_reg")) else 0,
+                "usa_mun": int(row["usa_mun"]) if pd.notna(row.get("usa_mun")) else 0,
+                "usa_reg": int(row["usa_reg"]) if pd.notna(row.get("usa_reg")) else 0,
+                "upa_mun": int(row["upa_mun"]) if pd.notna(row.get("upa_mun")) else 0,
+                "upa_reg": int(row["upa_reg"]) if pd.notna(row.get("upa_reg")) else 0,
+                "tx_frota_samu_reg_100k": num_or_none(row.get("tx_frota_samu_reg_100k"), 2),
+                "tx_upa_reg_100k": num_or_none(row.get("tx_upa_reg_100k"), 2),
+                "no_regiao_saude": str(row.get("no_regiao_saude", ""))
             }
         }
 
@@ -481,6 +500,12 @@ def build_rankings_payload(df: pd.DataFrame):
             "d1_nota": num_or_none(row.get("d1_nota"), 1),
             "d2_nota": num_or_none(row.get("d2_nota"), 1),
             "d3_nota": num_or_none(row.get("d3_nota"), 1),
+            "d5_nota": num_or_none(row.get("d5_nota"), 1),
+            "nota_com_urgencia": num_or_none(row.get("nota_com_urgencia"), 1),
+            "posicao_nacional_urgencia": int(row["posicao_nacional_urgencia"]) if pd.notna(row.get("posicao_nacional_urgencia")) else None,
+            "posicao_estadual_urgencia": int(row["posicao_estadual_urgencia"]) if pd.notna(row.get("posicao_estadual_urgencia")) else None,
+            "cob_samu_efetiva": num_or_none(row.get("cob_samu_efetiva"), 1),
+            "tx_frota_samu_reg_100k": num_or_none(row.get("tx_frota_samu_reg_100k"), 2),
             "tmi_bayes": num_or_none(row.get("tmi_bayes"), 2),
             "faixa_min": int(row["faixa_posicao_min"]) if pd.notna(row.get("faixa_posicao_min")) else None,
             "faixa_max": int(row["faixa_posicao_max"]) if pd.notna(row.get("faixa_posicao_max")) else None,
@@ -519,6 +544,12 @@ def build_rankings_payload(df: pd.DataFrame):
             "media_d1_uf": round(float(group["d1_nota"].mean()), 1),
             "media_d2_uf": round(float(group["d2_nota"].mean()), 1),
             "media_d3_uf": round(float(group["d3_nota"].mean()), 1),
+            "media_d5_uf": round(float(group["d5_nota"].mean()), 1) if "d5_nota" in group and group["d5_nota"].notna().any() else None,
+            "media_com_urgencia_uf": round(float(group["nota_com_urgencia"].mean()), 1) if "nota_com_urgencia" in group and group["nota_com_urgencia"].notna().any() else None,
+            "cob_samu_media_uf": round(float(group["cob_samu_efetiva"].mean()), 1) if "cob_samu_efetiva" in group and group["cob_samu_efetiva"].notna().any() else None,
+            "total_upas_uf": int(group["upa_mun"].sum()) if "upa_mun" in group else 0,
+            "total_usb_uf": int(group["usb_mun"].sum()) if "usb_mun" in group else 0,
+            "total_usa_uf": int(group["usa_mun"].sum()) if "usa_mun" in group else 0,
             "mediana_tmi_uf": round(float(group["tmi_bayes"].median()), 2),
             "media_gasto_pc_uf": round(float(group["gasto_pc_def_val"].dropna().mean()), 2) if group["gasto_pc_def_val"].notna().any() else None,
             "media_cob_priv_uf": round(float(group["cob_priv_val"].dropna().mean()), 1) if group["cob_priv_val"].notna().any() else None,

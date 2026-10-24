@@ -69,8 +69,8 @@ export function openDrawer(municipioData) {
                 </div>
             </div>
 
-            <!-- Dimensões D1, D2 e D3 SEMPRE VISÍVEIS NO MESMO BLOCO -->
-            <div class="dimensions-trio-grid">
+            <!-- Dimensões D1, D2, D3 e D5 (Urgência) -->
+            <div class="dimensions-trio-grid" style="grid-template-columns: repeat(4, 1fr);">
                 <div class="dim-item-box">
                     <span class="dim-item-label">D1 — Resultados</span>
                     <span class="dim-item-value">${formatNota(municipioData.d1_nota)}</span>
@@ -83,6 +83,15 @@ export function openDrawer(municipioData) {
                     <span class="dim-item-label">D3 — Estrutura/Acesso</span>
                     <span class="dim-item-value">${formatNota(municipioData.d3_nota)}</span>
                 </div>
+                <div class="dim-item-box" style="border-left: 2px solid #0284c7;">
+                    <span class="dim-item-label" style="color:#0369a1;">D5 — Urgência &amp; SAMU</span>
+                    <span class="dim-item-value" style="color:#0369a1;">${formatNota(municipioData.d5_nota)}</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 0.5rem; padding: 0.4rem 0.6rem; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px; font-size: 0.75rem; color: #0369a1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.3rem;">
+                <span><strong>⚡ Simulação com Urgência (10% RUE):</strong> ${municipioData.nota_com_urgencia ? municipioData.nota_com_urgencia.toFixed(1) : '—'} pts</span>
+                <span>Posição com Urgência: <strong>#${municipioData.posicao_nacional_urgencia ? municipioData.posicao_nacional_urgencia.toLocaleString('pt-BR') : '—'}º</strong> no Brasil (${municipioData.posicao_estadual_urgencia ? '#' + municipioData.posicao_estadual_urgencia + 'º na UF' : ''})</span>
             </div>
 
             <!-- Comparações de Ranking -->
@@ -113,6 +122,9 @@ export function openDrawer(municipioData) {
             ${renderDimAccordion("D2", "Atenção Primária à Saúde", ["D2.1", "D2.2", "D2.3", "D2.4"], municipioData)}
             ${renderDimAccordion("D3", "Acesso e Infraestrutura", ["D3.1", "D3.2", "D3.3", "D3.4"], municipioData)}
         </section>
+
+        <!-- BLOCO DEDICADO: REDE DE URGÊNCIA & SAMU 192 (RUE) -->
+        ${renderUrgenciaSamuCard(municipioData)}
 
         <!-- BLOCO SEPARADO: CONTEXTO MUNICIPAL (D4) - FORA DA NOTA -->
         <section class="separated-layer-card" aria-label="Contexto Municipal">
@@ -217,5 +229,72 @@ function renderDimAccordion(dimId, dimNome, indicatorIds, municipioData) {
                 ${cardsHtml}
             </div>
         </details>
+    `;
+}
+
+function renderUrgenciaSamuCard(municipioData) {
+    const urg = municipioData.urgencia_samu;
+    if (!urg) return "";
+
+    const escoreVal = typeof urg.escore === "number" ? urg.escore.toFixed(1) : (typeof municipioData.d5_nota === "number" ? municipioData.d5_nota.toFixed(1) : "—");
+    const cobEfetiva = typeof urg.cob_samu_efetiva === "number" ? urg.cob_samu_efetiva.toFixed(1) + "%" : "—";
+    const cobMun = typeof urg.cob_samu_mun === "number" ? urg.cob_samu_mun.toFixed(1) + "%" : "—";
+    const cobReg = typeof urg.cob_samu_reg === "number" ? urg.cob_samu_reg.toFixed(1) + "%" : "—";
+    const regNome = urg.no_regiao_saude || municipioData.regiao_saude || "Região de Saúde";
+
+    const diffPts = (typeof municipioData.nota_com_urgencia === "number" && typeof municipioData.nota_geral === "number")
+        ? (municipioData.nota_com_urgencia - municipioData.nota_geral).toFixed(1)
+        : null;
+    const diffSign = diffPts && Number(diffPts) > 0 ? `+${diffPts}` : diffPts;
+
+    return `
+        <section class="separated-layer-card separated-layer-card--urgencia" aria-label="Rede de Urgência e SAMU 192">
+            <div class="separated-layer-header">
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <span style="font-size: 1.15rem;">🚑</span>
+                    <h4 style="font-size: 0.95rem; font-weight: 700; color: #0369a1; margin: 0;">Dimensão 5: Rede de Urgência &amp; SAMU 192 (RUE)</h4>
+                </div>
+                <span class="separated-tag separated-tag--urgencia">Escore: ${escoreVal} / 100</span>
+            </div>
+            
+            <p style="font-size: 0.75rem; color: #0369a1; margin: 0;">
+                Mapeamento das Unidades Móveis (USB/USA) e UPAs 24h na malha municipal e na Região de Saúde (<strong>${regNome}</strong>), garantindo socorro a agravos agudos (infartos, AVCs, traumas).
+            </p>
+
+            <div class="urgencia-stats-grid">
+                <div class="urgencia-stat-box">
+                    <span class="urgencia-stat-box__title">📡 Cobertura SAMU 192</span>
+                    <span class="urgencia-stat-box__val">${cobEfetiva}</span>
+                    <span class="urgencia-stat-box__sub">Local: ${cobMun} &bull; Região: ${cobReg}</span>
+                </div>
+
+                <div class="urgencia-stat-box">
+                    <span class="urgencia-stat-box__title">🏥 UPAs 24h em Operação</span>
+                    <span class="urgencia-stat-box__val">${urg.upa_mun ?? 0} UPA(s)</span>
+                    <span class="urgencia-stat-box__sub">Região: ${urg.upa_reg ?? 0} UPAs (${typeof urg.tx_upa_reg_100k === "number" ? urg.tx_upa_reg_100k.toFixed(2) : "0"}/100k hab.)</span>
+                </div>
+
+                <div class="urgencia-stat-box">
+                    <span class="urgencia-stat-box__title">🚐 Ambulâncias Básicas (USB)</span>
+                    <span class="urgencia-stat-box__val">${urg.usb_mun ?? 0} USB</span>
+                    <span class="urgencia-stat-box__sub">Região de Saúde: ${urg.usb_reg ?? 0} USBs ativas</span>
+                </div>
+
+                <div class="urgencia-stat-box">
+                    <span class="urgencia-stat-box__title">🚨 UTIs Móveis / Avançadas (USA)</span>
+                    <span class="urgencia-stat-box__val">${urg.usa_mun ?? 0} USA</span>
+                    <span class="urgencia-stat-box__sub">Região de Saúde: ${urg.usa_reg ?? 0} USAs ativas</span>
+                </div>
+            </div>
+
+            <div class="urgencia-compare-pill">
+                <strong>⚡ Comparativo de Modelos:</strong><br>
+                &bull; <strong>Nota Geral Oficial (Padrão 3D):</strong> ${typeof municipioData.nota_geral === "number" ? municipioData.nota_geral.toFixed(1) : "—"} pts (#${municipioData.posicao_nacional || '—'}º BR)<br>
+                &bull; <strong>Nota com Urgência (+10% RUE):</strong> ${typeof municipioData.nota_com_urgencia === "number" ? municipioData.nota_com_urgencia.toFixed(1) : "—"} pts (#${municipioData.posicao_nacional_urgencia || '—'}º BR) ${diffSign ? `[Variação: ${diffSign} pts]` : ''}
+                <div style="font-size:0.7rem; color:var(--color-text-subtle); margin-top:3px;">
+                    Fonte: DEMAS / SEIDIGI / Ministério da Saúde (Base Oficial 2024).
+                </div>
+            </div>
+        </section>
     `;
 }

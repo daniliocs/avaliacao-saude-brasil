@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   
   <!-- Estilos da Aplicação -->
-  <link rel="stylesheet" href="assets/css/style.css?v=0.5.3">
+  <link rel="stylesheet" href="assets/css/style.css?v=0.5.4">
 </head>
 <body>
 
@@ -62,12 +62,19 @@
               <option value="">Todos os Estados (UFs)</option>
             </select>
 
+            <!-- Seletor de Modelo de Índice (Padrão Oficial vs Com Urgência) -->
+            <div class="layer-selector index-mode-selector" role="group" aria-label="Modelo de Cálculo do Índice">
+              <button class="index-mode-btn active" data-index-mode="oficial" title="Índice Oficial Padrão (33,3% D1, 33,3% D2, 33,3% D3)">⚖️ Padrão Oficial</button>
+              <button class="index-mode-btn" data-index-mode="urgencia" title="Índice Expandido com Urgência e SAMU 192 (+10% Peso RUE)">⚡ Com Urgência (10%)</button>
+            </div>
+
             <!-- Seletor de Camada do Índice -->
             <div class="layer-selector" role="group" aria-label="Selecionar Camada Visualizada">
               <button class="layer-btn active" data-layer="nota_geral">Nota Geral</button>
               <button class="layer-btn" data-layer="d1_nota">D1: Resultados</button>
               <button class="layer-btn" data-layer="d2_nota">D2: Primária</button>
               <button class="layer-btn" data-layer="d3_nota">D3: Estrutura</button>
+              <button class="layer-btn" data-layer="d5_nota" title="Escore de Urgência &amp; SAMU 192 (0 a 100)">🚑 Urgência</button>
             </div>
 
             <!-- Seletor de Marcadores Numéricos no Mapa (Estados / Capitais) -->
@@ -132,9 +139,11 @@
             <div class="ranking-dimension-filter" role="group" aria-label="Filtrar Dimensão do Ranking">
               <div class="rank-dim-buttons-group">
                 <button class="rank-dim-btn active" data-rank-dim="nota_geral">🌟 Nota Geral</button>
+                <button class="rank-dim-btn" data-rank-dim="nota_com_urgencia" title="Nota com 10% Urgência/SAMU">⚡ Nota + Urgência (10%)</button>
                 <button class="rank-dim-btn" data-rank-dim="d1_nota">D1: Resultados</button>
                 <button class="rank-dim-btn" data-rank-dim="d2_nota">D2: Atenção Primária</button>
                 <button class="rank-dim-btn" data-rank-dim="d3_nota">D3: Estrutura</button>
+                <button class="rank-dim-btn" data-rank-dim="d5_nota" title="Escore da Rede de Urgência &amp; SAMU 192">🚑 D5: Urgência</button>
               </div>
               <div id="modal-uf-selector-wrap" class="modal-uf-selector-wrap" style="display:none;">
                 <label for="modal-uf-select" style="font-size:0.75rem; font-weight:700; color:var(--color-text-muted);">UF:</label>
@@ -172,6 +181,7 @@
                   <li><strong>D3 — Acesso e Capacidade Assistencial (33,3%):</strong> Leitos SUS regionalizados na Região de Saúde - CIR (33,3%), Médicos + Enfermeiros padronizados por carga horária de 40h/sem (33,3%) e Cobertura da Estratégia Saúde da Família - eSF (33,3%) no triênio 2021–2023.</li>
                   <li><strong>Normalização Relativa (P5–P95):</strong> Indicadores normalizados pelos percentis empíricos P5 e P95 da distribuição nacional observada, com análise de sensibilidade completa.</li>
                   <li><strong>Dimensão 4 (Financiamento SIOPS deflacionado) e Camada Privada (ANS/CNES):</strong> Populados para os 5.570 municípios e exibidos separadamente fora da nota principal.</li>
+                  <li><strong>Dimensão 5 — Urgência &amp; SAMU 192 (Fase 1 de Expansão):</strong> Cobertura populacional de SAMU 192, frota de ambulâncias (USB básica e UTI Móvel USA) e UPAs 24h municipais e da Região de Saúde (DEMAS/SEIDIGI/MS). Disponível como camada visualizável (0–100) e como modelo alternativo via seletor (30% D1 + 30% D2 + 30% D3 + 10% D5).</li>
                 </ul>
               </div>
 
@@ -242,6 +252,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   
   <!-- Script Principal da Aplicação com Cache-Buster -->
-  <script type="module" src="assets/js/app.js?v=0.5.3"></script>
+  <script type="module" src="assets/js/app.js?v=0.5.4"></script>
 </body>
 </html>
