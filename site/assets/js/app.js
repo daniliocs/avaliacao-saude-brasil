@@ -7,12 +7,12 @@
  * - Inicializa o Mapa Leaflet, a Gaveta Municipal, o Comparador e as Vistas Dinâmicas
  */
 
-import { initMap } from "./map.js?v=0.5.2";
-import { initDrawer } from "./drawer_municipio.js?v=0.5.2";
-import { initCompareView } from "./compare_view.js?v=0.5.2";
-import { renderMethodologyView } from "./methodology_view.js?v=0.5.2";
-import { renderSourcesView } from "./sources_view.js?v=0.5.2";
-import { renderDownloadsView } from "./downloads_view.js?v=0.5.2";
+import { initMap } from "./map.js?v=0.5.3";
+import { initDrawer } from "./drawer_municipio.js?v=0.5.3";
+import { initCompareView } from "./compare_view.js?v=0.5.3";
+import { renderMethodologyView } from "./methodology_view.js?v=0.5.3";
+import { renderSourcesView } from "./sources_view.js?v=0.5.3";
+import { renderDownloadsView } from "./downloads_view.js?v=0.5.3";
 
 let metaBuild = null;
 

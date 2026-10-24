@@ -9,8 +9,8 @@
  * - Modal de Rankings com 4 escopos separados: Top 100 Brasil, Por Estado (isolado), 27 Estados e 27 Capitais
  */
 
-import { openDrawer } from "./drawer_municipio.js?v=0.5.2";
-import { updateCompareData } from "./compare_view.js?v=0.5.2";
+import { openDrawer } from "./drawer_municipio.js?v=0.5.3";
+import { updateCompareData } from "./compare_view.js?v=0.5.3";
 
 let leafletMap = null;
 let canvasRenderer = null;
@@ -178,9 +178,9 @@ export async function initMap(metaConfig) {
 
 async function loadRankings() {
     const candidatePaths = [
-        "data/releases/latest/rankings_resumo.json?v=0.5.2",
-        "./data/releases/latest/rankings_resumo.json?v=0.5.2",
-        "../data/releases/latest/rankings_resumo.json?v=0.5.2"
+        "data/releases/latest/rankings_resumo.json?v=0.5.3",
+        "./data/releases/latest/rankings_resumo.json?v=0.5.3",
+        "../data/releases/latest/rankings_resumo.json?v=0.5.3"
     ];
 
     for (const path of candidatePaths) {
@@ -200,9 +200,9 @@ async function loadRankings() {
 
 async function loadMapaResumo() {
     const candidatePaths = [
-        "data/releases/latest/mapa_resumo.json?v=0.5.2",
-        "./data/releases/latest/mapa_resumo.json?v=0.5.2",
-        "../data/releases/latest/mapa_resumo.json?v=0.5.2"
+        "data/releases/latest/mapa_resumo.json?v=0.5.3",
+        "./data/releases/latest/mapa_resumo.json?v=0.5.3",
+        "../data/releases/latest/mapa_resumo.json?v=0.5.3"
     ];
 
     for (const path of candidatePaths) {
@@ -922,7 +922,7 @@ function renderRankingsContent(selectedUf = "") {
             </div>
         `;
     }
-    // ESCOPO 2: SOMENTE O ESTADO SELECIONADO (SEM PRECISAR ROLAR PELO TOP 100 BRASIL!)
+    // ESCOPO 2: SOMENTE O ESTADO SELECIONADO (TODOS OS MUNICÍPIOS DO ESTADO)
     else if (activeRankScope === "uf") {
         const modalUfSelect = document.getElementById("modal-uf-select");
         const uf = selectedUf || modalUfSelect?.value || "SP";
@@ -930,14 +930,13 @@ function renderRankingsContent(selectedUf = "") {
             modalUfSelect.value = uf;
         }
         const ufInfo = rankingsData.rankings_por_uf?.[uf];
-        let ufTopList = [];
+        let ufList = [];
         if (activeRankDim === "nota_geral" && ufInfo?.melhores) {
-            ufTopList = ufInfo.melhores;
+            ufList = ufInfo.melhores;
         } else {
-            ufTopList = allMun
+            ufList = allMun
                 .filter(m => m.uf === uf && typeof m[activeRankDim] === "number")
-                .sort((a, b) => (b[activeRankDim] - a[activeRankDim]) || ((b.populacao || 0) - (a.populacao || 0)))
-                .slice(0, 100);
+                .sort((a, b) => (b[activeRankDim] - a[activeRankDim]) || ((b.populacao || 0) - (a.populacao || 0)));
         }
 
         container.innerHTML = `
@@ -945,16 +944,16 @@ function renderRankingsContent(selectedUf = "") {
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.65rem; padding:0.6rem 0.75rem; background:var(--color-bg); border:1px solid var(--color-border); border-radius:6px;">
                     <div>
                         <h4 style="font-size:0.95rem; font-weight:700; margin:0; color:#1e293b;">
-                            🏛️ Ranking Estadual — ${ufInfo?.nome_uf || uf} (${uf})
+                            🏛️ Ranking Estadual Completo — ${ufInfo?.nome_uf || uf} (${uf})
                         </h4>
                         <span style="font-size:0.76rem; color:var(--color-text-muted);">
                             Posição entre Estados: <strong>#${ufInfo?.posicao_uf || '—'}º de 27</strong> &bull;
                             Média UF: <strong>${ufInfo?.media_escore_uf ?? '—'} pts</strong> &bull;
-                            Municípios: <strong>${ufInfo?.total_municipios || ufTopList.length}</strong>
+                            Total de Municípios: <strong>${ufList.length}</strong>
                         </span>
                     </div>
                 </div>
-                ${renderMunicipalityList(ufTopList)}
+                ${renderMunicipalityList(ufList)}
             </div>
         `;
     }

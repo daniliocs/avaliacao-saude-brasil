@@ -524,7 +524,7 @@ def build_rankings_payload(df: pd.DataFrame):
             "media_cob_priv_uf": round(float(group["cob_priv_val"].dropna().mean()), 1) if group["cob_priv_val"].notna().any() else None,
             "total_municipios": int(len(group)),
             "melhor_municipio": f"{melhor_row['nome_municipio']} ({melhor_row['nota_geral']:.1f})",
-            "melhores": [format_mun(r) for _, r in g_sorted.head(100).iterrows()],
+            "melhores": [format_mun(r) for _, r in g_sorted.iterrows()],
             "piores": [format_mun(r) for _, r in g_sorted.tail(20).iloc[::-1].iterrows()]
         }
         rankings_uf[uf] = uf_obj
