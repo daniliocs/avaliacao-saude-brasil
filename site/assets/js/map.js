@@ -13,6 +13,8 @@ import { openDrawer } from "./drawer_municipio.js?v=0.5.0";
 import { updateCompareData } from "./compare_view.js?v=0.5.0";
 
 let leafletMap = null;
+let canvasRenderer = null;
+let highlightLayer = null;
 let mapaResumoData = {};
 let rankingsData = {};
 let activeLayerKey = "nota_geral"; // 'nota_geral' | 'd1_nota' | 'd2_nota' | 'd3_nota'
@@ -53,14 +55,53 @@ export async function initMap(metaConfig) {
         leafletMap = null;
     }
 
-    // 1. Inicializa o objeto Leaflet centrado no Brasil com botões de zoom no canto inferior direito
+    // Renderizador Canvas Otimizado:
+    // padding: 0.5 expande a área de desenho em 50% além do viewport em todas as direções,
+    // eliminando completamente o corte/truncamento de polígonos durante transições de zoom e pan.
+    canvasRenderer = L.canvas({
+        padding: 0.5,
+        tolerance: 3
+    });
+
+    // 1. Inicializa o objeto Leaflet centrado no Brasil com controle de zoom fluido e debounce
     leafletMap = L.map("leaflet-map", {
         center: [-14.235, -51.925],
         zoom: 4,
         minZoom: 3,
         maxZoom: 18,
         zoomControl: false,
-        preferCanvas: true
+        renderer: canvasRenderer,
+        preferCanvas: true,
+        wheelPxPerZoomLevel: 100, // Zoom de scroll mais controlado e fluido
+        wheelDebounceTime: 40,
+        zoomAnimation: true,
+        fadeAnimation: true
+    });
+
+    // Pane dedicado para destaque (highlight) em SVG (evita repintar todos os 5.570 municípios no canvas)
+    leafletMap.createPane("highlightPane");
+    const hPane = leafletMap.getPane("highlightPane");
+    if (hPane) {
+        hPane.style.zIndex = "650";
+        hPane.style.pointerEvents = "none";
+    }
+
+    highlightLayer = L.geoJSON(null, {
+        pane: "highlightPane",
+        style: {
+            weight: 2.8,
+            color: "#0369a1",
+            fillColor: "#0284c7",
+            fillOpacity: 0.4
+        }
+    }).addTo(leafletMap);
+
+    leafletMap.on("zoomstart movestart", () => {
+        if (highlightLayer) highlightLayer.clearLayers();
+    });
+
+    leafletMap.on("zoomend moveend", () => {
+        if (highlightLayer) highlightLayer.clearLayers();
     });
 
     L.control.zoom({ position: "bottomright" }).addTo(leafletMap);
@@ -212,72 +253,85 @@ async function loadGeoBoundary() {
     }
 }
 
+function getTooltipHtml(mun) {
+    const popFmt = mun.populacao ? mun.populacao.toLocaleString("pt-BR") + " hab." : "População em validação";
+    const escoreFmt = mun.nota_geral !== null && mun.nota_geral !== undefined ? mun.nota_geral.toFixed(1) : null;
+    const corNota = getColorForScore(mun.nota_geral);
+
+    let statusBlock = "";
+    if (escoreFmt) {
+        statusBlock = `
+            <div style="margin: 4px 0 6px 0;">
+                <span style="background:${corNota}; color:#ffffff; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.875rem; display:inline-block;">
+                    Nota Geral: ${escoreFmt} / 100
+                </span>
+            </div>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:4px; padding:4px 6px; margin-bottom:6px; font-size:0.75rem;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                    <span><strong>D1</strong> Resultados:</span>
+                    <strong style="color:${getColorForScore(mun.d1_nota)}">${mun.d1_nota !== null && mun.d1_nota !== undefined ? mun.d1_nota.toFixed(1) : '—'}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                    <span><strong>D2</strong> Primária:</span>
+                    <strong style="color:${getColorForScore(mun.d2_nota)}">${mun.d2_nota !== null && mun.d2_nota !== undefined ? mun.d2_nota.toFixed(1) : '—'}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span><strong>D3</strong> Estrutura:</span>
+                    <strong style="color:${getColorForScore(mun.d3_nota)}">${mun.d3_nota !== null && mun.d3_nota !== undefined ? mun.d3_nota.toFixed(1) : '—'}</strong>
+                </div>
+            </div>
+            <div style="font-size:0.78rem; line-height:1.45; color:#334155;">
+                <span>🏆 Ranking Nacional: <strong>#${mun.posicao_nacional ? mun.posicao_nacional.toLocaleString("pt-BR") : '—'}</strong> de 5.570</span><br>
+                <span>🥇 Ranking Estadual (${mun.uf}): <strong>#${mun.posicao_estadual ? mun.posicao_estadual.toLocaleString("pt-BR") : '—'}</strong> de ${(mun.total_uf || '—').toLocaleString("pt-BR")}</span><br>
+                <span>👥 Grupo de Pares: <strong>#${mun.posicao_grupo_pares ? mun.posicao_grupo_pares.toLocaleString("pt-BR") : '—'}</strong> de ${(mun.total_grupo_pares || '—').toLocaleString("pt-BR")}</span><br>
+                <span>🏥 Região de Saúde: <strong>${mun.regiao_saude || '—'}</strong></span>
+            </div>
+        `;
+    } else {
+        statusBlock = `<span style="color:#d97706; font-weight:700;">Status: Sem Classificação</span><br>`;
+    }
+
+    return `
+        <div style="font-size:0.8125rem; line-height:1.45; min-width:210px; padding:2px;">
+            <strong style="font-size:1rem; color:#0f172a;">${mun.nome} (${mun.uf || ''})</strong><br>
+            <span style="color:#475569;">👥 População: <strong>${popFmt}</strong></span><br>
+            ${statusBlock}
+            <span style="color:#0284c7; font-size:0.75rem; font-weight:600; display:block; margin-top:4px;">👉 Clique para abrir a ficha completa</span>
+        </div>
+    `;
+}
+
 function renderGeoJson(geoData) {
     if (geoJsonLayer) {
         leafletMap.removeLayer(geoJsonLayer);
     }
 
     geoJsonLayer = L.geoJSON(geoData, {
+        renderer: canvasRenderer,
+        smoothFactor: 1.2,
         style: styleFeature,
         onEachFeature: (feature, layer) => {
             const ibge = feature.properties?.id || feature.properties?.codarea || feature.properties?.ibge7;
             const mun = mapaResumoData[ibge] || { nome: feature.properties?.name || "Município", ibge7: ibge };
-            const popFmt = mun.populacao ? mun.populacao.toLocaleString("pt-BR") + " hab." : "População em validação";
-            const escoreFmt = mun.nota_geral !== null && mun.nota_geral !== undefined ? mun.nota_geral.toFixed(1) : null;
-            const corNota = getColorForScore(mun.nota_geral);
 
-            let statusBlock = "";
-            if (escoreFmt) {
-                statusBlock = `
-                    <div style="margin: 4px 0 6px 0;">
-                        <span style="background:${corNota}; color:#ffffff; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.875rem; display:inline-block;">
-                            Nota Geral: ${escoreFmt} / 100
-                        </span>
-                    </div>
-                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:4px; padding:4px 6px; margin-bottom:6px; font-size:0.75rem;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                            <span><strong>D1</strong> Resultados:</span>
-                            <strong style="color:${getColorForScore(mun.d1_nota)}">${mun.d1_nota !== null && mun.d1_nota !== undefined ? mun.d1_nota.toFixed(1) : '—'}</strong>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                            <span><strong>D2</strong> Primária:</span>
-                            <strong style="color:${getColorForScore(mun.d2_nota)}">${mun.d2_nota !== null && mun.d2_nota !== undefined ? mun.d2_nota.toFixed(1) : '—'}</strong>
-                        </div>
-                        <div style="display:flex; justify-content:space-between;">
-                            <span><strong>D3</strong> Estrutura:</span>
-                            <strong style="color:${getColorForScore(mun.d3_nota)}">${mun.d3_nota !== null && mun.d3_nota !== undefined ? mun.d3_nota.toFixed(1) : '—'}</strong>
-                        </div>
-                    </div>
-                    <div style="font-size:0.78rem; line-height:1.45; color:#334155;">
-                        <span>🏆 Ranking Nacional: <strong>#${mun.posicao_nacional ? mun.posicao_nacional.toLocaleString("pt-BR") : '—'}</strong> de 5.570</span><br>
-                        <span>🥇 Ranking Estadual (${mun.uf}): <strong>#${mun.posicao_estadual ? mun.posicao_estadual.toLocaleString("pt-BR") : '—'}</strong> de ${(mun.total_uf || '—').toLocaleString("pt-BR")}</span><br>
-                        <span>👥 Grupo de Pares: <strong>#${mun.posicao_grupo_pares ? mun.posicao_grupo_pares.toLocaleString("pt-BR") : '—'}</strong> de ${(mun.total_grupo_pares || '—').toLocaleString("pt-BR")}</span><br>
-                        <span>🏥 Região de Saúde: <strong>${mun.regiao_saude || '—'}</strong></span>
-                    </div>
-                `;
-            } else {
-                statusBlock = `<span style="color:#d97706; font-weight:700;">Status: Sem Classificação</span><br>`;
-            }
-            
-            layer.bindTooltip(`
-                <div style="font-size:0.8125rem; line-height:1.45; min-width:210px; padding:2px;">
-                    <strong style="font-size:1rem; color:#0f172a;">${mun.nome} (${mun.uf || ''})</strong><br>
-                    <span style="color:#475569;">👥 População: <strong>${popFmt}</strong></span><br>
-                    ${statusBlock}
-                    <span style="color:#0284c7; font-size:0.75rem; font-weight:600; display:block; margin-top:4px;">👉 Clique para abrir a ficha completa</span>
-                </div>
-            `, {
+            // Tooltip sob demanda via função (não cria 5.564 strings HTML na memória)
+            layer.bindTooltip(() => getTooltipHtml(mun), {
                 sticky: true
             });
 
             layer.on({
                 click: () => openDrawer(mun),
                 mouseover: (e) => {
-                    const l = e.target;
-                    l.setStyle({ weight: 2.5, color: "#0284c7", fillOpacity: 0.85 });
+                    // Destaque instantâneo no highlightPane SVG (0 repinturas no canvas principal)
+                    if (highlightLayer && e.target.feature) {
+                        highlightLayer.clearLayers();
+                        highlightLayer.addData(e.target.feature);
+                    }
                 },
-                mouseout: (e) => {
-                    geoJsonLayer.resetStyle(e.target);
+                mouseout: () => {
+                    if (highlightLayer) {
+                        highlightLayer.clearLayers();
+                    }
                 }
             });
         }
@@ -520,6 +574,25 @@ function setupLayoutControls() {
     });
 }
 
+function focusMunicipalityOnMap(ibge7) {
+    if (!geoJsonLayer || !leafletMap) return;
+    geoJsonLayer.eachLayer(layer => {
+        const id = layer.feature?.properties?.id || layer.feature?.properties?.codarea || layer.feature?.properties?.ibge7;
+        if (id === ibge7) {
+            if (highlightLayer && layer.feature) {
+                highlightLayer.clearLayers();
+                highlightLayer.addData(layer.feature);
+            }
+            try {
+                const bounds = layer.getBounds();
+                leafletMap.fitBounds(bounds, { maxZoom: 9, padding: [40, 40] });
+            } catch (e) {
+                // ignora se bounds não puderem ser calculados
+            }
+        }
+    });
+}
+
 function setupSearchAndFilters() {
     const searchInput = document.getElementById("search-municipio-input");
     const dropdown = document.getElementById("search-results-dropdown");
@@ -621,6 +694,7 @@ function setupSearchAndFilters() {
                         const mun = mapaResumoData[ibge7];
                         dropdown.classList.remove("visible");
                         searchInput.value = `${mun.nome} (${mun.uf})`;
+                        focusMunicipalityOnMap(ibge7);
                         openDrawer(mun);
                     });
                 });
@@ -960,6 +1034,7 @@ function renderRankingsContent(selectedUf = "") {
             const modalRanking = document.getElementById("rankings-modal");
             if (modalRanking) modalRanking.classList.remove("active");
             if (mun) {
+                focusMunicipalityOnMap(ibge7);
                 openDrawer(mun);
             }
         });
