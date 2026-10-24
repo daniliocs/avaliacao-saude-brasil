@@ -1,117 +1,77 @@
-# Limites de Referência Fixos para Normalização Escalar (0 a 100)
-# Regra inegociável: Proibido inventar limites ou metas sem validação oficial.
-# Todos os parâmetros não consolidados permanecem como "A_VALIDAR" ou null.
-# Pendência associada: PEND-033
+# Normalização 0–100 dos indicadores do Índice de Saúde Municipal
+# Versão: v0.4.0
+#
+# REGRA INEGOCIÁVEL: proibido inventar limites ou metas. Por isso, enquanto as metas oficiais
+# (MS/PNI/OMS) não forem confirmadas em documento primário e registradas em docs/PENDENCIAS.md,
+# a normalização é RELATIVA: percentis da distribuição observada entre os municípios brasileiros.
+#   nota = 100 * clip((valor - pior) / (melhor - pior), 0, 1)
+#   pior/melhor = percentis (p_inf, p_sup) do valor da janela vigente, em TODOS os municípios com dado.
+# Os limites efetivamente usados ficam CONGELADOS por versão metodológica em
+# config/limites_calculados.json (recalculados somente em nova versão — ver DEC-009/DEC-013).
+#
+# Interpretação: a nota expressa a POSIÇÃO RELATIVA no Brasil, não o cumprimento de uma meta sanitária.
+# Quando uma meta oficial for validada, ela substituirá os percentis em nova versão (PEND-033).
 
-versao_limites: "v0.1.0-draft"
-status_geral: "A_VALIDAR"
-metodo_normalizacao: "min_max_fixo" # Nota = 100 * (valor - pior_limite) / (melhor_limite - pior_limite)
+versao_limites: "v0.4.0"
+status_geral: "RELATIVO_POR_PERCENTIS"
+pendencia_id: "PEND-033"
+metodo_normalizacao: "percentis"
+percentil_inferior: 5
+percentil_superior: 95
+# Pares (p_inf, p_sup) usados na ANÁLISE DE SENSIBILIDADE da faixa de posição plausível
+sensibilidade_percentis:
+  - [1, 99]
+  - [5, 95]
+  - [10, 90]
 
-limites:
+indicadores:
   D1.1:
-    indicador: "Mortalidade Infantil"
+    nome: "Mortalidade infantil (suavizada)"
+    coluna: "tmi_bayes"
     sentido: "menor_melhor"
-    limite_pior: 30.0 # Limiar crítico de vulnerabilidade (taxa >= 30 por mil NV = 0 pontos)
-    limite_melhor: 5.0 # Padrão de excelência internacional OCDE / ODS avançado (<= 5 por mil NV = 100 pontos)
-    fonte_referencia: "Meta ODS 3.2 / Padrão Internacional OCDE / RIPSA"
-    status: "ativo"
-    pendencia_id: "PEND-033"
-
+    dimensao: "D1"
+    meta_oficial_confirmada: null   # A_VALIDAR: ODS 3.2 define metas para neonatal/<5 anos, não para infantil
   D1.2:
-    indicador: "Razão de Mortalidade Materna"
+    nome: "Razão de mortalidade materna (suavizada)"
+    coluna: "rmm_bayes"
     sentido: "menor_melhor"
-    limite_pior: null
-    limite_melhor: null # A_VALIDAR: meta ODS 3.1 (< 70 por 100.000 NV ou meta Brasil <= 30)
-    fonte_referencia: "A_VALIDAR (Meta ODS 3.1 / MS)"
-    status: "A_VALIDAR"
-    pendencia_id: "PEND-033"
-
-  D1.3:
-    indicador: "Mortalidade Prematura por DCNT"
-    sentido: "menor_melhor"
-    limite_pior: null
-    limite_melhor: null # A_VALIDAR: meta ODS 3.4 (reduzir em um terço a mortalidade prematura)
-    fonte_referencia: "A_VALIDAR (Meta ODS 3.4 / OMS)"
-    status: "A_VALIDAR"
-    pendencia_id: "PEND-033"
-
-  D1.4:
-    indicador: "Mortalidade por Causas Evitáveis pelo SUS"
-    sentido: "menor_melhor"
-    limite_pior: null
-    limite_melhor: null
-    fonte_referencia: "A_VALIDAR (Lista Brasileira de Evitabilidade / MS)"
-    status: "A_VALIDAR"
-    pendencia_id: "PEND-033"
-
-  D2.1:
-    indicador: "Internações por Condições Sensíveis à APS (ICSAP)"
-    sentido: "menor_melhor"
-    limite_pior: null
-    limite_melhor: null
-    fonte_referencia: "A_VALIDAR (Portaria SAS/MS nº 221/2008)"
-    status: "A_VALIDAR"
-    pendencia_id: "PEND-033"
-
+    dimensao: "D1"
+    meta_oficial_confirmada: null   # A_VALIDAR: ODS 3.1 (<70/100 mil NV) a confirmar em documento primário
   D2.2:
-    indicador: "Pré-natal Adequado (7+ Consultas)"
+    nome: "Pré-natal com 7+ consultas"
+    coluna: "pre7_pct"
     sentido: "maior_melhor"
-    limite_pior: null
-    limite_melhor: null # A_VALIDAR: ex. 85% ou 90%
-    fonte_referencia: "A_VALIDAR (Parâmetros da Rede Cegonha / Atenção Básica MS)"
-    status: "A_VALIDAR"
-    pendencia_id: "PEND-033"
-
+    dimensao: "D2"
+    meta_oficial_confirmada: null   # A_VALIDAR: parâmetro oficial vigente (Rede Cegonha / PNAB)
   D2.3:
-    indicador: "Cobertura Vacinal Infantil"
+    nome: "Cobertura vacinal poliomielite"
+    coluna: "cob_vac_polio"
     sentido: "maior_melhor"
-    limite_pior: null
-    limite_melhor: null # A_VALIDAR: Meta oficial PNI (90% a 95% dependendo do imunobiológico)
-    fonte_referencia: "A_VALIDAR (CGPNI / Ministério da Saúde)"
-    status: "A_VALIDAR"
-    pendencia_id: "PEND-033"
-
-  D2.4:
-    indicador: "Desempenho da Qualidade no Cofinanciamento da APS"
-    sentido: "maior_melhor"
-    limite_pior: null
-    limite_melhor: null
-    fonte_referencia: "A_VALIDAR (Portarias SAPS/MS 2024)"
-    status: "A_VALIDAR"
-    pendencia_id: "PEND-022"
-
+    dimensao: "D2"
+    meta_oficial_confirmada: null   # A_VALIDAR: meta PNI (a confirmar em documento oficial do CGPNI)
   D3.1:
-    indicador: "Leitos SUS por Mil Habitantes"
+    nome: "Leitos SUS por 100 mil hab."
+    coluna: "tx_leito_sus"
     sentido: "maior_melhor"
-    limite_pior: null
-    limite_melhor: null # A_VALIDAR: Portaria GM/MS nº 1.101/2002 ou parâmetros vigentes da CIT
-    fonte_referencia: "A_VALIDAR (Parâmetros de Planejamento da Atenção Hospitalar / MS)"
-    status: "A_VALIDAR"
-    pendencia_id: "PEND-033"
-
+    dimensao: "D3"
+    meta_oficial_confirmada: null   # A_VALIDAR
   D3.2:
-    indicador: "Médicos e Enfermeiros SUS por Mil Habitantes"
+    nome: "Médicos por 1.000 hab."
+    coluna: "tx_med"
     sentido: "maior_melhor"
-    limite_pior: null
-    limite_melhor: null # A_VALIDAR: Parâmetro OMS / MS
-    fonte_referencia: "A_VALIDAR (Relatório Demografia Médica / OMS)"
-    status: "A_VALIDAR"
-    pendencia_id: "PEND-033"
-
+    dimensao: "D3"
+    meta_oficial_confirmada: null   # A_VALIDAR
   D3.3:
-    indicador: "Cobertura de Equipes de Saúde da Família (eSF)"
+    nome: "Cobertura da Estratégia Saúde da Família"
+    coluna: "cob_esf"
     sentido: "maior_melhor"
-    limite_pior: 0.0
-    limite_melhor: 100.0
-    fonte_referencia: "A_VALIDAR (PNAB / Ministério da Saúde)"
-    status: "A_VALIDAR"
-    pendencia_id: "PEND-033"
+    dimensao: "D3"
+    meta_oficial_confirmada: null   # A_VALIDAR (teto natural 100%)
 
-  D3.4:
-    indicador: "Internações no Próprio Município"
-    sentido: "informativo"
-    limite_pior: null
-    limite_melhor: null
-    fonte_referencia: "A_VALIDAR"
-    status: "A_VALIDAR"
-    pendencia_id: "PEND-026"
+# Indicadores ainda sem pipeline (fora do cálculo; permanecem A_VALIDAR)
+pendentes_sem_calculo:
+  D1.3: "Mortalidade prematura por DCNT — exige denominador populacional por faixa etária (30–69 anos)"
+  D1.4: "Mortalidade por causas evitáveis — exige lista de evitabilidade oficial validada"
+  D2.1: "ICSAP — exige microdados SIH/SUS (RD) e lista oficial de CID (Portaria SAS/MS 221/2008)"
+  D2.4: "Desempenho APS — fora até consolidação"
+  D3.4: "Internações no próprio município — informativo"

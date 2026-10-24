@@ -1,0 +1,188 @@
+{
+  "versao_metodologia": "v0.4.0-draft",
+  "gerado_em": "2026-10-24",
+  "n_municipios": 5570,
+  "n_classificados": 5570,
+  "n_sem_classificacao": 0,
+  "janelas": {
+    "D1.1": [
+      2021,
+      2022,
+      2023
+    ],
+    "D1.2": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023
+    ],
+    "D2.2": [
+      2021,
+      2022,
+      2023
+    ],
+    "D2.3": [
+      2021,
+      2022,
+      2023
+    ],
+    "D3.1": [
+      2021,
+      2022,
+      2023
+    ],
+    "D3.2": [
+      2021,
+      2022,
+      2023
+    ],
+    "D3.3": [
+      2021,
+      2022,
+      2023
+    ],
+    "PRIV.2": [
+      2021,
+      2022,
+      2023
+    ]
+  },
+  "fontes": {
+    "sim_sinasc": {
+      "data_coleta": "2026-10-24",
+      "origem": "ftp.datasus.gov.br (microdados por residência)"
+    },
+    "ieps": {
+      "data_coleta": "2026-10-24",
+      "origem": "iepsdata.org.br (intermediário)",
+      "indicadores": {
+        "D2.3": {
+          "anos": [
+            2021,
+            2022,
+            2023
+          ],
+          "min_anos_validos": 2
+        },
+        "D3.1": {
+          "anos": [
+            2021,
+            2022,
+            2023
+          ],
+          "min_anos_validos": 2
+        },
+        "D3.2": {
+          "anos": [
+            2021,
+            2022,
+            2023
+          ],
+          "min_anos_validos": 2
+        },
+        "D3.3": {
+          "anos": [
+            2021,
+            2022,
+            2023
+          ],
+          "min_anos_validos": 2
+        },
+        "PRIV.2": {
+          "anos": [
+            2021,
+            2022,
+            2023
+          ],
+          "min_anos_validos": 2
+        }
+      }
+    }
+  },
+  "limites": {
+    "D1.1": {
+      "pior": 15.91332102777362,
+      "melhor": 9.48044030657893,
+      "coluna": "tmi_bayes",
+      "sentido": "menor_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    },
+    "D1.2": {
+      "pior": 93.84413082368772,
+      "melhor": 44.345587332823925,
+      "coluna": "rmm_bayes",
+      "sentido": "menor_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    },
+    "D2.2": {
+      "pior": 57.57050836146882,
+      "melhor": 92.59715994020927,
+      "coluna": "pre7_pct",
+      "sentido": "maior_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    },
+    "D2.3": {
+      "pior": 63.31581366816667,
+      "melhor": 100.0,
+      "coluna": "cob_vac_polio",
+      "sentido": "maior_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    },
+    "D3.1": {
+      "pior": 0.0,
+      "melhor": 406.04439438166673,
+      "coluna": "tx_leito_sus",
+      "sentido": "maior_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    },
+    "D3.2": {
+      "pior": 0.5929163708666666,
+      "melhor": 4.998546297866667,
+      "coluna": "tx_med",
+      "sentido": "maior_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    },
+    "D3.3": {
+      "pior": 48.46442332633333,
+      "melhor": 100.0,
+      "coluna": "cob_esf",
+      "sentido": "maior_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    }
+  },
+  "medias": {
+    "nota_geral": 56.62394973070018,
+    "d1_nota": 59.00921005385996,
+    "d2_nota": 62.008617594254936,
+    "d3_nota": 48.85558348294434
+  }
+}

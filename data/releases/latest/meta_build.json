@@ -1,42 +1,43 @@
 {
-  "build_timestamp": "2026-10-23T22:08:34.942486+00:00",
-  "versao_metodologia": "v0.3.0",
-  "status_metodologia": "Rascunho Técnico (Fase 0)",
+  "build_timestamp": "2026-10-24T16:29:46.224953+00:00",
+  "versao_metodologia": "v0.4.0-draft",
+  "status_metodologia": "Preliminar — Normalização Relativa por Percentis (P5–P95)",
   "regras_inegociaveis": [
-    "Proibido inventar dados numéricos ou limites",
-    "Todo número exige rastreabilidade (fonte, vintage, coleta, versão, IC 95% e selo)",
-    "A Nota Geral nunca aparece sem as dimensões D1, D2 e D3 e faixa de sensibilidade",
-    "Recálculo integral de séries históricas em nova versão"
+    "Proibido inventar dados numéricos, metas ou limites sem validação documental",
+    "Zero imputação silenciosa: dado ausente permanece NaN e exige mínimo de componentes por dimensão",
+    "Todo número exige rastreabilidade (fonte, vintage, coleta, versão, IC 95% quando aplicável e selo de precisão)",
+    "A Nota Geral nunca aparece sem as dimensões D1, D2 e D3 e a faixa de posição plausível",
+    "Recálculo integral da série histórica a cada mudança de versão metodológica"
   ],
   "fontes": [
     {
       "id": "sim_do",
-      "nome": "Sistema de Informações sobre Mortalidade (SIM) — Declaração de Óbito",
-      "orgao": "Ministério da Saúde / DATASUS",
-      "url_documentacao": "A_VALIDAR",
-      "url_dados": "A_VALIDAR",
+      "nome": "Sistema de Informações sobre Mortalidade (SIM) — Microdados de Declaração de Óbito por Residência (DORES)",
+      "orgao": "Ministério da Saúde / SVS / DATASUS",
+      "url_documentacao": "https://datasus.saude.gov.br/transferencia-de-arquivos/",
+      "url_dados": "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DORES/",
       "formato": "dbc",
-      "periodicidade_publicacao": "A_VALIDAR",
-      "defasagem_tipica": "A_VALIDAR",
-      "licenca_termos_uso": "A_VALIDAR",
-      "ultima_verificacao": null,
-      "ultimo_periodo_disponivel": null,
-      "status": "em_revisao",
+      "periodicidade_publicacao": "anual",
+      "defasagem_tipica": "12 a 18 meses após encerramento do ano-calendário",
+      "licenca_termos_uso": "Dados Abertos Governamentais (Acesso Público DATASUS)",
+      "ultima_verificacao": "2026-10-24",
+      "ultimo_periodo_disponivel": "2019-2023",
+      "status": "ativo",
       "pendencia_id": "PEND-004"
     },
     {
       "id": "sinasc_nv",
-      "nome": "Sistema de Informações sobre Nascidos Vivos (SINASC) — Declaração de Nascido Vivo",
-      "orgao": "Ministério da Saúde / DATASUS",
-      "url_documentacao": "A_VALIDAR",
-      "url_dados": "A_VALIDAR",
+      "nome": "Sistema de Informações sobre Nascidos Vivos (SINASC) — Microdados de Nascidos Vivos por Residência (DNRES)",
+      "orgao": "Ministério da Saúde / SVS / DATASUS",
+      "url_documentacao": "https://datasus.saude.gov.br/transferencia-de-arquivos/",
+      "url_dados": "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/1996_/Dados/DNRES/",
       "formato": "dbc",
-      "periodicidade_publicacao": "A_VALIDAR",
-      "defasagem_tipica": "A_VALIDAR",
-      "licenca_termos_uso": "A_VALIDAR",
-      "ultima_verificacao": null,
-      "ultimo_periodo_disponivel": null,
-      "status": "em_revisao",
+      "periodicidade_publicacao": "anual",
+      "defasagem_tipica": "12 a 18 meses após encerramento do ano-calendário",
+      "licenca_termos_uso": "Dados Abertos Governamentais (Acesso Público DATASUS)",
+      "ultima_verificacao": "2026-10-24",
+      "ultimo_periodo_disponivel": "2019-2023",
+      "status": "ativo",
       "pendencia_id": "PEND-005"
     },
     {
@@ -161,17 +162,17 @@
     },
     {
       "id": "ieps_data",
-      "nome": "IEPS Data — Base de Indicadores de Saúde e Atenção Primária",
+      "nome": "IEPS Data — Base Consolidada de Indicadores Municipais (agregador intermediário de SI-PNI, CNES e SISAB/e-Gestor AB)",
       "orgao": "Instituto de Estudos para Políticas de Saúde (IEPS)",
       "url_documentacao": "https://iepsdata.org.br",
-      "url_dados": "A_VALIDAR",
+      "url_dados": "https://api.iepsdata.org.br/files/Download_data",
       "formato": "csv",
-      "periodicidade_publicacao": "A_VALIDAR",
-      "defasagem_tipica": "A_VALIDAR",
+      "periodicidade_publicacao": "anual",
+      "defasagem_tipica": "12 meses",
       "licenca_termos_uso": "A_VALIDAR",
-      "ultima_verificacao": null,
-      "ultimo_periodo_disponivel": null,
-      "status": "em_revisao",
+      "ultima_verificacao": "2026-10-24",
+      "ultimo_periodo_disponivel": "2019-2023",
+      "status": "ativo",
       "pendencia_id": "PEND-014"
     },
     {
@@ -193,31 +194,31 @@
   "dimensoes": {
     "D1": {
       "nome": "Resultados em Saúde",
-      "descricao": "Medição de desfechos em saúde (mortalidade infantil, materna, prematura por DCNT e causas evitáveis)",
+      "descricao": "Desfechos epidemiológicos por residência (D1.1 Mortalidade Infantil 2021–2023 ativa na nota; D1.2 Razão de Mortalidade Materna 2019–2023 informativa)",
       "nivel_agregacao": "Município de residência",
       "peso_padrao": 0.3333333333333333
     },
     "D2": {
       "nome": "Atenção Primária",
-      "descricao": "Processos assistenciais e cobertura da atenção primária como ordenadora da rede do SUS",
+      "descricao": "Cobertura e efetividade da APS (D2.2 Pré-natal 7+ consultas SINASC e D2.3 Vacinação Poliomielite SI-PNI, triênio 2021–2023)",
       "nivel_agregacao": "Município de residência",
       "peso_padrao": 0.3333333333333333
     },
     "D3": {
       "nome": "Acesso e Estrutura",
-      "descricao": "Capacidade instalada da rede pública de saúde (leitos na Região de Saúde, médicos e equipes)",
-      "nivel_agregacao": "Região de Saúde / Município",
+      "descricao": "Capacidade instalada do SUS (D3.1 Leitos SUS, D3.2 Médicos e D3.3 Cobertura eSF, triênio 2021–2023)",
+      "nivel_agregacao": "Município / Região de Saúde",
       "peso_padrao": 0.3333333333333333
     },
     "D4": {
       "nome": "Contexto Municipal",
-      "descricao": "Gastos e aspectos socioeconômicos — FORA DA NOTA PRINCIPAL (DEC-001)",
+      "descricao": "Financiamento e determinantes socioeconômicos — FORA DA NOTA PRINCIPAL (DEC-001)",
       "nivel_agregacao": "Município de residência",
       "peso_padrao": 0.0
     },
     "PRIVADA": {
       "nome": "Camada Privada",
-      "descricao": "Cobertura de saúde suplementar e oferta privada não-SUS — FORA DA NOTA PRINCIPAL (DEC-001)",
+      "descricao": "Saúde suplementar e oferta privada não-SUS — FORA DA NOTA PRINCIPAL (DEC-001)",
       "nivel_agregacao": "Município de residência",
       "peso_padrao": 0.0
     }
@@ -227,7 +228,7 @@
       "id": "D1.1",
       "dimensao": "D1",
       "nome": "Mortalidade Infantil",
-      "descricao": "Taxa de mortalidade infantil (óbitos em menores de 1 ano por 1.000 nascidos vivos)",
+      "descricao": "Taxa de mortalidade infantil (óbitos em menores de 1 ano por 1.000 nascidos vivos — janela trienal 2021–2023)",
       "sentido": "menor_melhor",
       "unidade": "óbitos por 1.000 NV",
       "fontes": [
@@ -239,13 +240,13 @@
       "entra_na_nota": true,
       "requer_suavizacao_bayesiana": true,
       "calcula_ic_poisson": true,
-      "pendencia_id": "PEND-028"
+      "pendencia_id": "PEND-035"
     },
     {
       "id": "D1.2",
       "dimensao": "D1",
       "nome": "Razão de Mortalidade Materna",
-      "descricao": "Óbitos maternos por causas obstétricas diretas e indiretas por 100.000 nascidos vivos",
+      "descricao": "Óbitos maternos (CID-10 Cap. XV O00–O99) por 100.000 nascidos vivos (janela quinquenal 2019–2023)",
       "sentido": "menor_melhor",
       "unidade": "óbitos por 100.000 NV",
       "fontes": [
@@ -254,10 +255,10 @@
       ],
       "janela_anos": 5,
       "nivel_agregacao": "residencia",
-      "entra_na_nota": true,
+      "entra_na_nota": false,
       "requer_suavizacao_bayesiana": true,
       "calcula_ic_poisson": true,
-      "pendencia_id": "PEND-016"
+      "pendencia_id": "PEND-038"
     },
     {
       "id": "D1.3",
@@ -317,7 +318,7 @@
       "id": "D2.2",
       "dimensao": "D2",
       "nome": "Pré-natal Adequado (7+ Consultas)",
-      "descricao": "Proporção de nascidos vivos cujas mães realizaram 7 ou mais consultas de pré-natal",
+      "descricao": "Proporção de nascidos vivos cujas mães realizaram 7 ou mais consultas de pré-natal (CONSULTAS=4 ou CONSPRENAT>=7, triênio 2021–2023)",
       "sentido": "maior_melhor",
       "unidade": "%",
       "fontes": [
@@ -333,16 +334,15 @@
     {
       "id": "D2.3",
       "dimensao": "D2",
-      "nome": "Cobertura Vacinal Infantil",
-      "descricao": "Cobertura média das vacinas essenciais do calendário infantil de imunização",
+      "nome": "Cobertura Vacinal Infantil (Poliomielite)",
+      "descricao": "Cobertura vacinal contra Poliomielite em menores de 1 ano (média trienal 2021–2023 via IEPS Data / SI-PNI)",
       "sentido": "maior_melhor",
       "unidade": "%",
       "fontes": [
-        "si_pni",
-        "sinasc_nv",
-        "ibge_pop"
+        "ieps_data",
+        "si_pni"
       ],
-      "janela_anos": 1,
+      "janela_anos": 3,
       "nivel_agregacao": "residencia",
       "entra_na_nota": true,
       "requer_suavizacao_bayesiana": false,
@@ -369,16 +369,16 @@
     {
       "id": "D3.1",
       "dimensao": "D3",
-      "nome": "Leitos SUS por Mil Habitantes (Região de Saúde)",
-      "descricao": "Razão de leitos hospitalares operacionais disponíveis ao SUS por 1.000 habitantes na Região de Saúde",
+      "nome": "Leitos SUS por 100.000 Habitantes",
+      "descricao": "Leitos hospitalares disponíveis ao SUS por 100.000 habitantes (média trienal 2021–2023 via IEPS Data / CNES)",
       "sentido": "maior_melhor",
-      "unidade": "leitos por 1.000 hab",
+      "unidade": "leitos por 100.000 hab",
       "fontes": [
-        "cnes",
-        "ibge_pop"
+        "ieps_data",
+        "cnes"
       ],
-      "janela_anos": 1,
-      "nivel_agregacao": "regiao_saude",
+      "janela_anos": 3,
+      "nivel_agregacao": "residencia",
       "entra_na_nota": true,
       "requer_suavizacao_bayesiana": false,
       "calcula_ic_poisson": false,
@@ -387,15 +387,15 @@
     {
       "id": "D3.2",
       "dimensao": "D3",
-      "nome": "Médicos e Enfermeiros SUS por Mil Habitantes",
-      "descricao": "Número de profissionais médicos e enfermeiros únicos com vínculo ativo no SUS por 1.000 habitantes",
+      "nome": "Médicos por 1.000 Habitantes",
+      "descricao": "Total de médicos por 1.000 habitantes no município (média trienal 2021–2023 via IEPS Data / CNES)",
       "sentido": "maior_melhor",
-      "unidade": "profissionais por 1.000 hab",
+      "unidade": "médicos por 1.000 hab",
       "fontes": [
-        "cnes",
-        "ibge_pop"
+        "ieps_data",
+        "cnes"
       ],
-      "janela_anos": 1,
+      "janela_anos": 3,
       "nivel_agregacao": "residencia",
       "entra_na_nota": true,
       "requer_suavizacao_bayesiana": false,
@@ -406,15 +406,14 @@
       "id": "D3.3",
       "dimensao": "D3",
       "nome": "Cobertura de Equipes de Saúde da Família (eSF)",
-      "descricao": "Percentual estimado da população coberta por Equipes de Saúde da Família no município",
+      "descricao": "Percentual estimado da população coberta por Equipes de Saúde da Família (média trienal 2021–2023 via IEPS Data / SISAB)",
       "sentido": "maior_melhor",
       "unidade": "%",
       "fontes": [
-        "sisab",
-        "cnes",
-        "ibge_pop"
+        "ieps_data",
+        "sisab"
       ],
-      "janela_anos": 1,
+      "janela_anos": 3,
       "nivel_agregacao": "residencia",
       "entra_na_nota": true,
       "requer_suavizacao_bayesiana": false,
@@ -511,13 +510,18 @@
     }
   ],
   "pesos": {
-    "versao_esquema": "v0.1.0-draft",
+    "versao_esquema": "v0.4.0",
     "status_decisao": "A_DECIDIR",
     "pendencia_id": "PEND-034",
     "esquema_padrao": "pesos_iguais",
+    "min_componentes_por_dimensao": {
+      "D1": 1,
+      "D2": 1,
+      "D3": 2
+    },
     "esquemas": {
       "pesos_iguais": {
-        "descricao": "Pesos equivalentes entre as dimensões D1, D2 e D3 (33,33% cada) e pesos iguais entre os indicadores de cada dimensão",
+        "descricao": "Pesos equivalentes entre D1, D2 e D3 (33,33% cada) e entre indicadores ativos de cada dimensão",
         "dimensoes": {
           "D1": 0.3333333333333333,
           "D2": 0.3333333333333333,
@@ -526,13 +530,13 @@
           "PRIVADA": 0.0
         },
         "indicadores": {
-          "D1.1": 0.25,
-          "D1.2": 0.25,
-          "D1.3": 0.25,
-          "D1.4": 0.25,
-          "D2.1": 0.3333333333333333,
-          "D2.2": 0.3333333333333333,
-          "D2.3": 0.3333333333333333,
+          "D1.1": 1.0,
+          "D1.2": 0.0,
+          "D1.3": 0.0,
+          "D1.4": 0.0,
+          "D2.1": 0.0,
+          "D2.2": 0.5,
+          "D2.3": 0.5,
           "D2.4": 0.0,
           "D3.1": 0.3333333333333333,
           "D3.2": 0.3333333333333333,
@@ -541,55 +545,27 @@
         }
       },
       "foco_resultados": {
-        "descricao": "Maior ênfase na Dimensão de Resultados Epidemiológicos (D1=50%, D2=30%, D3=20%)",
+        "descricao": "Maior ênfase em Resultados (D1=50%, D2=30%, D3=20%)",
         "dimensoes": {
           "D1": 0.5,
           "D2": 0.3,
           "D3": 0.2,
           "D4": 0.0,
           "PRIVADA": 0.0
-        },
-        "indicadores": {
-          "D1.1": 0.3,
-          "D1.2": 0.3,
-          "D1.3": 0.2,
-          "D1.4": 0.2,
-          "D2.1": 0.3333333333333333,
-          "D2.2": 0.3333333333333333,
-          "D2.3": 0.3333333333333333,
-          "D2.4": 0.0,
-          "D3.1": 0.3333333333333333,
-          "D3.2": 0.3333333333333333,
-          "D3.3": 0.3333333333333333,
-          "D3.4": 0.0
         }
       },
       "foco_atencao_primaria": {
-        "descricao": "Maior ênfase na Atenção Primária à Saúde como ordenadora do cuidado (D1=30%, D2=50%, D3=20%)",
+        "descricao": "Maior ênfase na Atenção Primária (D1=30%, D2=50%, D3=20%)",
         "dimensoes": {
           "D1": 0.3,
           "D2": 0.5,
           "D3": 0.2,
           "D4": 0.0,
           "PRIVADA": 0.0
-        },
-        "indicadores": {
-          "D1.1": 0.25,
-          "D1.2": 0.25,
-          "D1.3": 0.25,
-          "D1.4": 0.25,
-          "D2.1": 0.4,
-          "D2.2": 0.3,
-          "D2.3": 0.3,
-          "D2.4": 0.0,
-          "D3.1": 0.3333333333333333,
-          "D3.2": 0.3333333333333333,
-          "D3.3": 0.3333333333333333,
-          "D3.4": 0.0
         }
       },
       "pca_estatistico": {
-        "descricao": "Pesos derivados empiricamente por Análise de Componentes Principais (PCA)",
+        "descricao": "Pesos derivados empiricamente por PCA",
         "status": "A_VALIDAR",
         "dimensoes": null,
         "indicadores": null
@@ -597,148 +573,714 @@
     }
   },
   "limites_referencia": {
-    "versao_limites": "v0.1.0-draft",
-    "status_geral": "A_VALIDAR",
-    "metodo_normalizacao": "min_max_fixo",
-    "limites": {
+    "versao_limites": "v0.4.0",
+    "status_geral": "RELATIVO_POR_PERCENTIS",
+    "pendencia_id": "PEND-033",
+    "metodo_normalizacao": "percentis",
+    "percentil_inferior": 5,
+    "percentil_superior": 95,
+    "sensibilidade_percentis": [
+      [
+        1,
+        99
+      ],
+      [
+        5,
+        95
+      ],
+      [
+        10,
+        90
+      ]
+    ],
+    "indicadores": {
       "D1.1": {
-        "indicador": "Mortalidade Infantil",
+        "nome": "Mortalidade infantil (suavizada)",
+        "coluna": "tmi_bayes",
         "sentido": "menor_melhor",
-        "limite_pior": 30.0,
-        "limite_melhor": 5.0,
-        "fonte_referencia": "Meta ODS 3.2 / Padrão Internacional OCDE / RIPSA",
-        "status": "ativo",
-        "pendencia_id": "PEND-033"
+        "dimensao": "D1",
+        "meta_oficial_confirmada": null
       },
       "D1.2": {
-        "indicador": "Razão de Mortalidade Materna",
+        "nome": "Razão de mortalidade materna (suavizada)",
+        "coluna": "rmm_bayes",
         "sentido": "menor_melhor",
-        "limite_pior": null,
-        "limite_melhor": null,
-        "fonte_referencia": "A_VALIDAR (Meta ODS 3.1 / MS)",
-        "status": "A_VALIDAR",
-        "pendencia_id": "PEND-033"
-      },
-      "D1.3": {
-        "indicador": "Mortalidade Prematura por DCNT",
-        "sentido": "menor_melhor",
-        "limite_pior": null,
-        "limite_melhor": null,
-        "fonte_referencia": "A_VALIDAR (Meta ODS 3.4 / OMS)",
-        "status": "A_VALIDAR",
-        "pendencia_id": "PEND-033"
-      },
-      "D1.4": {
-        "indicador": "Mortalidade por Causas Evitáveis pelo SUS",
-        "sentido": "menor_melhor",
-        "limite_pior": null,
-        "limite_melhor": null,
-        "fonte_referencia": "A_VALIDAR (Lista Brasileira de Evitabilidade / MS)",
-        "status": "A_VALIDAR",
-        "pendencia_id": "PEND-033"
-      },
-      "D2.1": {
-        "indicador": "Internações por Condições Sensíveis à APS (ICSAP)",
-        "sentido": "menor_melhor",
-        "limite_pior": null,
-        "limite_melhor": null,
-        "fonte_referencia": "A_VALIDAR (Portaria SAS/MS nº 221/2008)",
-        "status": "A_VALIDAR",
-        "pendencia_id": "PEND-033"
+        "dimensao": "D1",
+        "meta_oficial_confirmada": null
       },
       "D2.2": {
-        "indicador": "Pré-natal Adequado (7+ Consultas)",
+        "nome": "Pré-natal com 7+ consultas",
+        "coluna": "pre7_pct",
         "sentido": "maior_melhor",
-        "limite_pior": null,
-        "limite_melhor": null,
-        "fonte_referencia": "A_VALIDAR (Parâmetros da Rede Cegonha / Atenção Básica MS)",
-        "status": "A_VALIDAR",
-        "pendencia_id": "PEND-033"
+        "dimensao": "D2",
+        "meta_oficial_confirmada": null
       },
       "D2.3": {
-        "indicador": "Cobertura Vacinal Infantil",
+        "nome": "Cobertura vacinal poliomielite",
+        "coluna": "cob_vac_polio",
         "sentido": "maior_melhor",
-        "limite_pior": null,
-        "limite_melhor": null,
-        "fonte_referencia": "A_VALIDAR (CGPNI / Ministério da Saúde)",
-        "status": "A_VALIDAR",
-        "pendencia_id": "PEND-033"
-      },
-      "D2.4": {
-        "indicador": "Desempenho da Qualidade no Cofinanciamento da APS",
-        "sentido": "maior_melhor",
-        "limite_pior": null,
-        "limite_melhor": null,
-        "fonte_referencia": "A_VALIDAR (Portarias SAPS/MS 2024)",
-        "status": "A_VALIDAR",
-        "pendencia_id": "PEND-022"
+        "dimensao": "D2",
+        "meta_oficial_confirmada": null
       },
       "D3.1": {
-        "indicador": "Leitos SUS por Mil Habitantes",
+        "nome": "Leitos SUS por 100 mil hab.",
+        "coluna": "tx_leito_sus",
         "sentido": "maior_melhor",
-        "limite_pior": null,
-        "limite_melhor": null,
-        "fonte_referencia": "A_VALIDAR (Parâmetros de Planejamento da Atenção Hospitalar / MS)",
-        "status": "A_VALIDAR",
-        "pendencia_id": "PEND-033"
+        "dimensao": "D3",
+        "meta_oficial_confirmada": null
       },
       "D3.2": {
-        "indicador": "Médicos e Enfermeiros SUS por Mil Habitantes",
+        "nome": "Médicos por 1.000 hab.",
+        "coluna": "tx_med",
         "sentido": "maior_melhor",
-        "limite_pior": null,
-        "limite_melhor": null,
-        "fonte_referencia": "A_VALIDAR (Relatório Demografia Médica / OMS)",
-        "status": "A_VALIDAR",
-        "pendencia_id": "PEND-033"
+        "dimensao": "D3",
+        "meta_oficial_confirmada": null
       },
       "D3.3": {
-        "indicador": "Cobertura de Equipes de Saúde da Família (eSF)",
+        "nome": "Cobertura da Estratégia Saúde da Família",
+        "coluna": "cob_esf",
         "sentido": "maior_melhor",
-        "limite_pior": 0.0,
-        "limite_melhor": 100.0,
-        "fonte_referencia": "A_VALIDAR (PNAB / Ministério da Saúde)",
-        "status": "A_VALIDAR",
-        "pendencia_id": "PEND-033"
+        "dimensao": "D3",
+        "meta_oficial_confirmada": null
+      }
+    },
+    "pendentes_sem_calculo": {
+      "D1.3": "Mortalidade prematura por DCNT — exige denominador populacional por faixa etária (30–69 anos)",
+      "D1.4": "Mortalidade por causas evitáveis — exige lista de evitabilidade oficial validada",
+      "D2.1": "ICSAP — exige microdados SIH/SUS (RD) e lista oficial de CID (Portaria SAS/MS 221/2008)",
+      "D2.4": "Desempenho APS — fora até consolidação",
+      "D3.4": "Internações no próprio município — informativo"
+    }
+  },
+  "limites_calculados": {
+    "versao": "v0.4.0-draft",
+    "metodo": "percentis",
+    "gerado_em": "2026-10-24",
+    "limites": {
+      "D1.1": {
+        "pior": 15.91332102777362,
+        "melhor": 9.48044030657893,
+        "coluna": "tmi_bayes",
+        "sentido": "menor_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
       },
-      "D3.4": {
-        "indicador": "Internações no Próprio Município",
-        "sentido": "informativo",
-        "limite_pior": null,
-        "limite_melhor": null,
-        "fonte_referencia": "A_VALIDAR",
-        "status": "A_VALIDAR",
-        "pendencia_id": "PEND-026"
+      "D1.2": {
+        "pior": 93.84413082368772,
+        "melhor": 44.345587332823925,
+        "coluna": "rmm_bayes",
+        "sentido": "menor_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
+      },
+      "D2.2": {
+        "pior": 57.57050836146882,
+        "melhor": 92.59715994020927,
+        "coluna": "pre7_pct",
+        "sentido": "maior_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
+      },
+      "D2.3": {
+        "pior": 63.31581366816667,
+        "melhor": 100.0,
+        "coluna": "cob_vac_polio",
+        "sentido": "maior_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
+      },
+      "D3.1": {
+        "pior": 0.0,
+        "melhor": 406.04439438166673,
+        "coluna": "tx_leito_sus",
+        "sentido": "maior_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
+      },
+      "D3.2": {
+        "pior": 0.5929163708666666,
+        "melhor": 4.998546297866667,
+        "coluna": "tx_med",
+        "sentido": "maior_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
+      },
+      "D3.3": {
+        "pior": 48.46442332633333,
+        "melhor": 100.0,
+        "coluna": "cob_esf",
+        "sentido": "maior_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
       }
     }
   },
+  "janelas": {
+    "versao": "v0.4.0",
+    "status": "A_DECIDIR",
+    "janelas": {
+      "D1.1": {
+        "fonte": "SIM + SINASC (DATASUS, microdados por residência)",
+        "anos": [
+          2021,
+          2022,
+          2023
+        ]
+      },
+      "D1.2": {
+        "fonte": "SIM + SINASC (DATASUS, microdados por residência)",
+        "anos": [
+          2019,
+          2020,
+          2021,
+          2022,
+          2023
+        ]
+      },
+      "D2.2": {
+        "fonte": "SINASC (DATASUS, microdados por residência da mãe)",
+        "anos": [
+          2021,
+          2022,
+          2023
+        ]
+      },
+      "D2.3": {
+        "fonte": "SI-PNI via IEPS Data",
+        "anos": [
+          2021,
+          2022,
+          2023
+        ],
+        "min_anos_validos": 2
+      },
+      "D3.1": {
+        "fonte": "CNES via IEPS Data",
+        "anos": [
+          2021,
+          2022,
+          2023
+        ],
+        "min_anos_validos": 2
+      },
+      "D3.2": {
+        "fonte": "CNES via IEPS Data",
+        "anos": [
+          2021,
+          2022,
+          2023
+        ],
+        "min_anos_validos": 2
+      },
+      "D3.3": {
+        "fonte": "e-Gestor AB / SAPS via IEPS Data",
+        "anos": [
+          2021,
+          2022,
+          2023
+        ],
+        "min_anos_validos": 2
+      },
+      "PRIV.2": {
+        "fonte": "CNES via IEPS Data",
+        "anos": [
+          2021,
+          2022,
+          2023
+        ],
+        "min_anos_validos": 2
+      }
+    }
+  },
+  "qualidade_criterios": {
+    "status": "A_DECIDIR",
+    "pendencia_id": "PEND-037",
+    "precisao": {
+      "eventos_taxa": {
+        "D1.1": {
+          "alta_min": 20,
+          "media_min": 5
+        },
+        "D1.2": {
+          "alta_min": 20,
+          "media_min": 5
+        }
+      },
+      "proporcao_base": {
+        "D2.2": {
+          "alta_min": 100,
+          "media_min": 30
+        }
+      },
+      "ignorado_max_pct": 20,
+      "ieps_anos_alta": 3
+    }
+  },
+  "build_info": {
+    "versao_metodologia": "v0.4.0-draft",
+    "gerado_em": "2026-10-24",
+    "n_municipios": 5570,
+    "n_classificados": 5570,
+    "n_sem_classificacao": 0,
+    "janelas": {
+      "D1.1": [
+        2021,
+        2022,
+        2023
+      ],
+      "D1.2": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023
+      ],
+      "D2.2": [
+        2021,
+        2022,
+        2023
+      ],
+      "D2.3": [
+        2021,
+        2022,
+        2023
+      ],
+      "D3.1": [
+        2021,
+        2022,
+        2023
+      ],
+      "D3.2": [
+        2021,
+        2022,
+        2023
+      ],
+      "D3.3": [
+        2021,
+        2022,
+        2023
+      ],
+      "PRIV.2": [
+        2021,
+        2022,
+        2023
+      ]
+    },
+    "fontes": {
+      "sim_sinasc": {
+        "data_coleta": "2026-10-24",
+        "origem": "ftp.datasus.gov.br (microdados por residência)"
+      },
+      "ieps": {
+        "data_coleta": "2026-10-24",
+        "origem": "iepsdata.org.br (intermediário)",
+        "indicadores": {
+          "D2.3": {
+            "anos": [
+              2021,
+              2022,
+              2023
+            ],
+            "min_anos_validos": 2
+          },
+          "D3.1": {
+            "anos": [
+              2021,
+              2022,
+              2023
+            ],
+            "min_anos_validos": 2
+          },
+          "D3.2": {
+            "anos": [
+              2021,
+              2022,
+              2023
+            ],
+            "min_anos_validos": 2
+          },
+          "D3.3": {
+            "anos": [
+              2021,
+              2022,
+              2023
+            ],
+            "min_anos_validos": 2
+          },
+          "PRIV.2": {
+            "anos": [
+              2021,
+              2022,
+              2023
+            ],
+            "min_anos_validos": 2
+          }
+        }
+      }
+    },
+    "limites": {
+      "D1.1": {
+        "pior": 15.91332102777362,
+        "melhor": 9.48044030657893,
+        "coluna": "tmi_bayes",
+        "sentido": "menor_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
+      },
+      "D1.2": {
+        "pior": 93.84413082368772,
+        "melhor": 44.345587332823925,
+        "coluna": "rmm_bayes",
+        "sentido": "menor_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
+      },
+      "D2.2": {
+        "pior": 57.57050836146882,
+        "melhor": 92.59715994020927,
+        "coluna": "pre7_pct",
+        "sentido": "maior_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
+      },
+      "D2.3": {
+        "pior": 63.31581366816667,
+        "melhor": 100.0,
+        "coluna": "cob_vac_polio",
+        "sentido": "maior_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
+      },
+      "D3.1": {
+        "pior": 0.0,
+        "melhor": 406.04439438166673,
+        "coluna": "tx_leito_sus",
+        "sentido": "maior_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
+      },
+      "D3.2": {
+        "pior": 0.5929163708666666,
+        "melhor": 4.998546297866667,
+        "coluna": "tx_med",
+        "sentido": "maior_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
+      },
+      "D3.3": {
+        "pior": 48.46442332633333,
+        "melhor": 100.0,
+        "coluna": "cob_esf",
+        "sentido": "maior_melhor",
+        "percentis": [
+          5,
+          95
+        ],
+        "n_municipios_base": 5570
+      }
+    },
+    "medias": {
+      "nota_geral": 56.62394973070018,
+      "d1_nota": 59.00921005385996,
+      "d2_nota": 62.008617594254936,
+      "d3_nota": 48.85558348294434
+    }
+  },
+  "auditoria_fontes": {
+    "ano_referencia": 2022,
+    "sim_sinasc_vs_ibge_cartorio": {
+      "brasil_obitos_sim": 32238,
+      "brasil_obitos_cartorio_ibge": 26987,
+      "brasil_diferenca_obitos": 5251,
+      "brasil_nascidos_sinasc": 2561858,
+      "brasil_nascidos_cartorio_ibge": 2601316,
+      "brasil_tmi_sim_sinasc": 12.58,
+      "brasil_tmi_cartorio_ibge": 10.37,
+      "ufs_maior_subregistro_cartorario": [
+        {
+          "uf": "MT",
+          "obitos_sim": 819,
+          "obitos_cartorio_ibge": 312,
+          "diferenca_obitos_sim_menos_ibge": 507,
+          "razao_cartorio_sobre_sim": 0.381,
+          "tmi_sim_sinasc": 14.08,
+          "tmi_cartorio_ibge": 5.29
+        },
+        {
+          "uf": "MA",
+          "obitos_sim": 1500,
+          "obitos_cartorio_ibge": 707,
+          "diferenca_obitos_sim_menos_ibge": 793,
+          "razao_cartorio_sobre_sim": 0.471,
+          "tmi_sim_sinasc": 15.31,
+          "tmi_cartorio_ibge": 7.01
+        },
+        {
+          "uf": "PA",
+          "obitos_sim": 1876,
+          "obitos_cartorio_ibge": 982,
+          "diferenca_obitos_sim_menos_ibge": 894,
+          "razao_cartorio_sobre_sim": 0.523,
+          "tmi_sim_sinasc": 14.66,
+          "tmi_cartorio_ibge": 7.27
+        },
+        {
+          "uf": "AP",
+          "obitos_sim": 246,
+          "obitos_cartorio_ibge": 137,
+          "diferenca_obitos_sim_menos_ibge": 109,
+          "razao_cartorio_sobre_sim": 0.557,
+          "tmi_sim_sinasc": 18.07,
+          "tmi_cartorio_ibge": 9.16
+        },
+        {
+          "uf": "RR",
+          "obitos_sim": 246,
+          "obitos_cartorio_ibge": 138,
+          "diferenca_obitos_sim_menos_ibge": 108,
+          "razao_cartorio_sobre_sim": 0.561,
+          "tmi_sim_sinasc": 18.79,
+          "tmi_cartorio_ibge": 10.57
+        },
+        {
+          "uf": "PI",
+          "obitos_sim": 666,
+          "obitos_cartorio_ibge": 423,
+          "diferenca_obitos_sim_menos_ibge": 243,
+          "razao_cartorio_sobre_sim": 0.635,
+          "tmi_sim_sinasc": 15.77,
+          "tmi_cartorio_ibge": 9.71
+        },
+        {
+          "uf": "AM",
+          "obitos_sim": 1137,
+          "obitos_cartorio_ibge": 819,
+          "diferenca_obitos_sim_menos_ibge": 318,
+          "razao_cartorio_sobre_sim": 0.72,
+          "tmi_sim_sinasc": 15.68,
+          "tmi_cartorio_ibge": 10.38
+        },
+        {
+          "uf": "CE",
+          "obitos_sim": 1317,
+          "obitos_cartorio_ibge": 1017,
+          "diferenca_obitos_sim_menos_ibge": 300,
+          "razao_cartorio_sobre_sim": 0.772,
+          "tmi_sim_sinasc": 11.73,
+          "tmi_cartorio_ibge": 8.84
+        },
+        {
+          "uf": "SE",
+          "obitos_sim": 502,
+          "obitos_cartorio_ibge": 391,
+          "diferenca_obitos_sim_menos_ibge": 111,
+          "razao_cartorio_sobre_sim": 0.779,
+          "tmi_sim_sinasc": 17.6,
+          "tmi_cartorio_ibge": 13.56
+        },
+        {
+          "uf": "PE",
+          "obitos_sim": 1558,
+          "obitos_cartorio_ibge": 1244,
+          "diferenca_obitos_sim_menos_ibge": 314,
+          "razao_cartorio_sobre_sim": 0.798,
+          "tmi_sim_sinasc": 13.27,
+          "tmi_cartorio_ibge": 10.37
+        }
+      ],
+      "municipios_100k_maior_divergencia": [
+        {
+          "ibge7": "2111300",
+          "nome_municipio": "São Luís",
+          "uf_sigla": "MA",
+          "obitos_infantis": 240,
+          "ibge_obitos_2022": 130,
+          "tmi_sim": 17.53,
+          "tmi_ibge": 9.3
+        },
+        {
+          "ibge7": "5103403",
+          "nome_municipio": "Cuiabá",
+          "uf_sigla": "MT",
+          "obitos_infantis": 130,
+          "ibge_obitos_2022": 47,
+          "tmi_sim": 13.63,
+          "tmi_ibge": 4.9
+        },
+        {
+          "ibge7": "2304400",
+          "nome_municipio": "Fortaleza",
+          "uf_sigla": "CE",
+          "obitos_infantis": 348,
+          "ibge_obitos_2022": 276,
+          "tmi_sim": 11.73,
+          "tmi_ibge": 9.12
+        },
+        {
+          "ibge7": "1501402",
+          "nome_municipio": "Belém",
+          "uf_sigla": "PA",
+          "obitos_infantis": 235,
+          "ibge_obitos_2022": 170,
+          "tmi_sim": 14.81,
+          "tmi_ibge": 10.71
+        },
+        {
+          "ibge7": "1600303",
+          "nome_municipio": "Macapá",
+          "uf_sigla": "AP",
+          "obitos_infantis": 150,
+          "ibge_obitos_2022": 91,
+          "tmi_sim": 18.84,
+          "tmi_ibge": 10.79
+        },
+        {
+          "ibge7": "2211001",
+          "nome_municipio": "Teresina",
+          "uf_sigla": "PI",
+          "obitos_infantis": 179,
+          "ibge_obitos_2022": 123,
+          "tmi_sim": 15.48,
+          "tmi_ibge": 10.62
+        },
+        {
+          "ibge7": "1504208",
+          "nome_municipio": "Marabá",
+          "uf_sigla": "PA",
+          "obitos_infantis": 62,
+          "ibge_obitos_2022": 7,
+          "tmi_sim": 14.75,
+          "tmi_ibge": 1.53
+        },
+        {
+          "ibge7": "1500800",
+          "nome_municipio": "Ananindeua",
+          "uf_sigla": "PA",
+          "obitos_infantis": 91,
+          "ibge_obitos_2022": 39,
+          "tmi_sim": 14.49,
+          "tmi_ibge": 6.34
+        },
+        {
+          "ibge7": "5108402",
+          "nome_municipio": "Várzea Grande",
+          "uf_sigla": "MT",
+          "obitos_infantis": 71,
+          "ibge_obitos_2022": 21,
+          "tmi_sim": 15.55,
+          "tmi_ibge": 4.74
+        },
+        {
+          "ibge7": "1506807",
+          "nome_municipio": "Santarém",
+          "uf_sigla": "PA",
+          "obitos_infantis": 106,
+          "ibge_obitos_2022": 66,
+          "tmi_sim": 16.29,
+          "tmi_ibge": 9.64
+        }
+      ]
+    },
+    "sinasc_primario_vs_ieps_prenatal_2022": {
+      "n_municipios_comparados": 5570,
+      "correlacao_pearson_com_denom_total_nv": 1.0,
+      "correlacao_pearson_com_denom_validos": 0.99253,
+      "erro_absoluto_medio_pp_denom_total_nv": 0.0,
+      "erro_absoluto_medio_pp_denom_validos": 0.303,
+      "nota": "O SINASC primário permite distinguir explicitamente consultas ignoradas (código 9) no denominador."
+    }
+  },
   "manifesto_hashes": {
+    "config/metodologia_versao.txt": {
+      "sha256": "64b0f0715086166e68d8a2b3df92806635e22be18fd3b0cf541f1cde21a2e7ec",
+      "bytes": 12
+    },
     "config/indicadores.yaml": {
-      "sha256": "d050d5d50ec128c94eb68e9bcde1843d3b670ee8d41bc77300d1b9cd6a69e0c2",
-      "bytes": 8261
+      "sha256": "cdf682621069d94e52ffd8aca4b2193f76d80659a136be9c3f5781ab4df908be",
+      "bytes": 8548
     },
     "config/pesos.yaml": {
-      "sha256": "90dfb913843b07ec99bd21aeb7fdf2f8bc040b5288f9d8e7b2d6ff3d19c1b2a2",
-      "bytes": 2601
+      "sha256": "5e988170616eafbc5fec985bc5c1d09ab6aa7025fac5fe1c4dc77f5767be5686",
+      "bytes": 2085
     },
     "config/limites_referencia.yaml": {
-      "sha256": "4d4882fa74202042a9200043df1bf687082ae85a94eecb0b8ad8d90555d952b8",
-      "bytes": 4030
+      "sha256": "d00f4f27d8a48452daeeb5222d7e0a2948093b2d18c4208cf083caddbd2a86c0",
+      "bytes": 3249
+    },
+    "config/limites_calculados.json": {
+      "sha256": "fb54a28f1e581203984f437e031073faf2a63314264d3f4390334512ebf33984",
+      "bytes": 1796
+    },
+    "config/janelas.yaml": {
+      "sha256": "27c3ac25a70914ae6baf5ef711aa2eb1bc36da3ef85b38d193a5cc5be98bc489",
+      "bytes": 1565
+    },
+    "config/qualidade.yaml": {
+      "sha256": "835c0eb4809d3fa1f21e14dcfc3be03c983ace9a83c3bb69853a5f8a5cfc168f",
+      "bytes": 814
     },
     "sources/registry.yaml": {
-      "sha256": "1153a70d104665beb71d896fb88f7069b2cc4042d61f169c03ff6673431e1210",
-      "bytes": 6102
+      "sha256": "8a4bcf2eb27d9d559118cc1c785ca6c83a5e824ceed1be9d7e7dddf873485f41",
+      "bytes": 6552
     },
     "data/processed/dim_municipio.parquet": {
       "sha256": "e0d492ed7dbca5d56355f8b6c7be0ea42b54514c394f6631df8ded433bfb87fd",
       "bytes": 202659
     },
-    "data/processed/indicador_d1_1.parquet": {
-      "sha256": "a73a6c82a1bf283d48292de31b621679a9624d4d5e34dd10efbbf36e46acf0f6",
-      "bytes": 327605
+    "data/processed/serie_anual_sim_sinasc.parquet": {
+      "sha256": "db62fa6188d6d1d18110ae6c3c64915402d4836efcb8010794065a85928e9781",
+      "bytes": 338530
+    },
+    "data/processed/indicadores_sim_sinasc.parquet": {
+      "sha256": "9f85a42683270b540a26c433b9d0e750d7d05e1ad438036f47e24894201b2555",
+      "bytes": 627756
     },
     "data/processed/indice_saude_municipal.parquet": {
-      "sha256": "d812a498746f4aaa009f07cd9c095d3511fd9ef56a3f70dedfc3716b39277275",
-      "bytes": 710730
+      "sha256": "f7497120a1b098beff252f860a4fde6dcbf0c4052103a0a22c2a003face5ea24",
+      "bytes": 1296393
+    },
+    "data/processed/relatorio_comparacao_fontes.json": {
+      "sha256": "feb374256a98e34e2479a7fb9bd408bdee3ca34f00099627e54486bf8cdbd06c",
+      "bytes": 5891
     }
   }
 }

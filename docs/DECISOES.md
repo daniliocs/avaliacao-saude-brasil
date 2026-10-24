@@ -85,3 +85,23 @@
   Índices sintéticos consolidados em uma única nota correm o risco de ocultar problemas críticos em dimensões específicas (ex.: bom resultado impulsionado apenas por estrutura, apesar de mortalidade elevada).
 - **Decisão:**
   Na interface, a **Nota Geral de um município nunca será exibida desacompanhada**: ela deve sempre figurar no mesmo bloco com as notas de D1, D2 e D3 e com a faixa de posição plausível (análise de sensibilidade). Além disso, **nenhum indicador numérico pode ser renderizado sem exibir fonte, período vintage, data da coleta, versão metodológica e selo de incerteza/qualidade**.
+
+---
+
+### DEC-009: Migração Definitiva para Microdados Primários do SIM e SINASC (DATASUS FTP) por Residência
+- **Data:** 2026-10-24
+- **Status:** Aprovado
+- **Contexto:**
+  A comparação cruzada de 2022 (`data/processed/relatorio_comparacao_fontes.json`) entre o Registro Civil do IBGE (Tabelas SIDRA 2654/2609) e os microdados do SIM/SINASC (DATASUS) revelou sub-registro severo de óbitos infantis em cartório (26.987 no Cartório IBGE vs. 32.238 no SIM, uma diferença de 5.251 óbitos), especialmente nas regiões Norte e Centro-Oeste (apenas 38,1% dos óbitos do SIM registrados em cartório no MT, 47,1% no MA e 52,3% no PA). Esse sub-registro fazia municípios como Marabá (PA) apresentarem aparente TMI de 1,53 no Cartório IBGE quando a TMI real no SIM era 14,75.
+- **Decisão:**
+  Descontinuar o uso do Registro Civil (Cartório IBGE) para indicadores epidemiológicos e utilizar exclusivamente os microdados primários de Declaração de Óbito por residência (`SIM/CID10/DORES`) e Declaração de Nascido Vivo por residência (`SINASC/DNRES`) extraídos diretamente do FTP do DATASUS para a série 2019–2023.
+
+---
+
+### DEC-010: Normalização Relativa por Percentis Empíricos (P5–P95) Enquanto Metas Normativas Estiverem Pendentes
+- **Data:** 2026-10-24
+- **Status:** Aprovado
+- **Contexto:**
+  Em cumprimento à Regra Inegociável 1 (proibição de inventar metas ou limites de referência não validados em portaria/documento oficial) e para eliminar a saturação artificial de notas 100 decorrente de tetos arbitrários, os limites normativos permanecem como `null` (`PEND-033`).
+- **Decisão:**
+  Enquanto `meta_oficial_confirmada` for `null` em `config/limites_referencia.yaml`, o pipeline adota normalização empírica relativa baseada nos percentis P5 e P95 da distribuição nacional observada na janela vigente, gravando os valores calculados em `config/limites_calculados.json` e realizando análise de sensibilidade cruzando os cortes `[P1, P99]`, `[P5, P95]` e `[P10, P90]` combinados aos esquemas alternativos de pesos para compor `[faixa_posicao_min, faixa_posicao_max]`.

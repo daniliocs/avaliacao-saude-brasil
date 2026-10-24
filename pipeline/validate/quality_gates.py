@@ -192,23 +192,21 @@ def run_all_gates(dim_municipio_path: str = "data/processed/dim_municipio.parque
         print("[QualityGate:FATAL] Falha de completude nas colunas dimensionais. ABORTANDO.")
         sys.exit(1)
 
-    # 3. Gate de validação do Indicador D1.1 (se gerado)
-    d1_parquet = "data/processed/indicador_d1_1.parquet"
-    if os.path.exists(d1_parquet):
-        print("[QualityGate:Indicadores] Validando indicador D1.1 (Mortalidade Infantil)...")
-        df_d1 = pd.read_parquet(d1_parquet)
-        if len(df_d1) != 5570:
-            print(f"[QualityGate:FATAL] Indicador D1.1 não possui 5.570 municípios: {len(df_d1)}")
+    # 3. Gate da série anual primária SIM/SINASC (2019–2023)
+    serie_parquet = "data/processed/serie_anual_sim_sinasc.parquet"
+    if os.path.exists(serie_parquet):
+        print("[QualityGate:Série] Validando série anual primária SIM/SINASC (2019–2023)...")
+        df_s = pd.read_parquet(serie_parquet)
+        anos_presentes = sorted(df_s["ano"].unique().tolist())
+        if len(anos_presentes) < 3:
+            print(f"[QualityGate:FATAL] Série temporal curta demais ({anos_presentes}). Mínimo exigido: 3 anos.")
             sys.exit(1)
-        if not gate_plausible_ranges(df_d1, rate_columns=["tmi_bruta", "tmi_bayes"], proportion_columns=["escore_d1_1"]):
-            print("[QualityGate:FATAL] Valores implausíveis encontrados no indicador D1.1. ABORTANDO.")
+        if not gate_plausible_ranges(df_s, rate_columns=["obitos_total", "obitos_infantis", "obitos_maternos", "nascidos_vivos", "cons_validas", "cons_7mais"]):
+            print("[QualityGate:FATAL] Contagens negativas na série anual SIM/SINASC. ABORTANDO.")
             sys.exit(1)
-        if not gate_completeness(df_d1, ["tmi_bayes", "escore_d1_1", "posicao_nacional"], min_completeness_ratio=1.0):
-            print("[QualityGate:FATAL] Completude incompleta no indicador D1.1. ABORTANDO.")
-            sys.exit(1)
-        print("[QualityGate:Indicadores] OK — Indicador D1.1 validado com 100% de integridade epidemiológica.")
+        print(f"[QualityGate:Série] OK — Anos validados: {anos_presentes} ({len(df_s):,} registros município-ano).")
 
-    # 4. Gate de validação do Índice Sintético Consolidado (se gerado)
+    # 4. Gate de validação do Índice Sintético Consolidado (v0.4.0)
     indice_parquet = "data/processed/indice_saude_municipal.parquet"
     if os.path.exists(indice_parquet):
         print("[QualityGate:Índice] Validando Índice Sintético Consolidado (D1, D2, D3)...")
@@ -216,29 +214,58 @@ def run_all_gates(dim_municipio_path: str = "data/processed/dim_municipio.parque
         if len(df_ind) != 5570:
             print(f"[QualityGate:FATAL] Índice Consolidado não possui 5.570 municípios: {len(df_ind)}")
             sys.exit(1)
-        if not gate_plausible_ranges(df_ind, proportion_columns=["nota_geral", "d1_nota", "d2_nota", "d3_nota"]):
-            print("[QualityGate:FATAL] Escores fora da faixa [0, 100] no Índice Consolidado. ABORTANDO.")
+        if not gate_plausible_ranges(
+            df_ind,
+            rate_columns=["tmi_bruta", "tmi_bayes", "rmm_bruta", "rmm_bayes", "tx_leito_sus", "tx_med"],
+            proportion_columns=["nota_geral", "d1_nota", "d2_nota", "d3_nota", "pre7_pct", "cob_vac_polio", "cob_esf"],
+            pop_col="populacao_censo_2022"
+        ):
+            print("[QualityGate:FATAL] Valores ou escores fora da faixa plausível no Índice Consolidado. ABORTANDO.")
             sys.exit(1)
-        if not gate_completeness(df_ind, ["nota_geral", "d1_nota", "d2_nota", "d3_nota", "posicao_nacional", "posicao_estadual"], min_completeness_ratio=1.0):
-            print("[QualityGate:FATAL] Completude incompleta no Índice Consolidado. ABORTANDO.")
+        if not gate_completeness(df_ind, ["nota_geral", "d1_nota", "d2_nota", "d3_nota"], min_completeness_ratio=0.95):
+            print("[QualityGate:FATAL] Completude abaixo de 95% no Índice Consolidado. ABORTANDO.")
             sys.exit(1)
-        print("[QualityGate:Índice] OK — Índice Consolidado (5.570 municípios) validado com sucesso.")
+
+        # Trava de zero imputação silenciosa
+        for col_val, col_esc in [("cob_vac_polio", "escore_D2_3"), ("tx_leito_sus", "escore_D3_1"), ("tx_med", "escore_D3_2"), ("cob_esf", "escore_D3_3")]:
+            if col_val in df_ind.columns and col_esc in df_ind.columns:
+                imputados = df_ind[df_ind[col_val].isna() & df_ind[col_esc].notna()]
+                if len(imputados) > 0:
+                    print(f"[QualityGate:FATAL] Detectada imputação silenciosa em {col_esc} ({len(imputados)} municípios). ABORTANDO.")
+                    sys.exit(1)
+
+        # Trava de saturação no topo (evitar degeneração do ranking)
+        saturados_100 = int((df_ind["nota_geral"] == 100.0).sum())
+        if saturados_100 > int(0.02 * len(df_ind)):
+            print(f"[QualityGate:FATAL] Saturação excessiva na Nota Geral ({saturados_100} municípios com nota 100). ABORTANDO.")
+            sys.exit(1)
+
+        print(f"[QualityGate:Índice] OK — Índice Consolidado (5.570 municípios, {saturados_100} com nota 100, zero imputação) validado.")
 
     # 5. Gate de reprodutibilidade e proveniência
     input_artifacts = [
+        "config/metodologia_versao.txt",
         "config/indicadores.yaml",
         "config/pesos.yaml",
         "config/limites_referencia.yaml",
+        "config/limites_calculados.json",
+        "config/janelas.yaml",
+        "config/qualidade.yaml",
         "sources/registry.yaml",
-        "data/processed/dim_municipio.parquet"
+        "data/processed/dim_municipio.parquet",
+        "data/processed/serie_anual_sim_sinasc.parquet",
+        "data/processed/indicadores_sim_sinasc.parquet",
+        "data/processed/indice_saude_municipal.parquet",
+        "data/processed/relatorio_comparacao_fontes.json",
     ]
-    if os.path.exists(d1_parquet):
-        input_artifacts.append(d1_parquet)
-    if os.path.exists(indice_parquet):
-        input_artifacts.append(indice_parquet)
+    input_artifacts = [p for p in input_artifacts if os.path.exists(p)]
 
     manifest_path = "data/releases/latest/provenance_manifest.json"
     gate_reproducibility_hashes(input_artifacts, manifest_path)
+    site_manifest_path = "site/data/releases/latest/provenance_manifest.json"
+    os.makedirs(os.path.dirname(site_manifest_path), exist_ok=True)
+    with open(manifest_path, "rb") as fi, open(site_manifest_path, "wb") as fo:
+        fo.write(fi.read())
 
     print("\n[QualityGate:SUCESSO] Todas as travas foram validadas com sucesso. Publicação liberada.\n")
 

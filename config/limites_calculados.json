@@ -1,0 +1,84 @@
+{
+  "versao": "v0.4.0-draft",
+  "metodo": "percentis",
+  "gerado_em": "2026-10-24",
+  "limites": {
+    "D1.1": {
+      "pior": 15.91332102777362,
+      "melhor": 9.48044030657893,
+      "coluna": "tmi_bayes",
+      "sentido": "menor_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    },
+    "D1.2": {
+      "pior": 93.84413082368772,
+      "melhor": 44.345587332823925,
+      "coluna": "rmm_bayes",
+      "sentido": "menor_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    },
+    "D2.2": {
+      "pior": 57.57050836146882,
+      "melhor": 92.59715994020927,
+      "coluna": "pre7_pct",
+      "sentido": "maior_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    },
+    "D2.3": {
+      "pior": 63.31581366816667,
+      "melhor": 100.0,
+      "coluna": "cob_vac_polio",
+      "sentido": "maior_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    },
+    "D3.1": {
+      "pior": 0.0,
+      "melhor": 406.04439438166673,
+      "coluna": "tx_leito_sus",
+      "sentido": "maior_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    },
+    "D3.2": {
+      "pior": 0.5929163708666666,
+      "melhor": 4.998546297866667,
+      "coluna": "tx_med",
+      "sentido": "maior_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    },
+    "D3.3": {
+      "pior": 48.46442332633333,
+      "melhor": 100.0,
+      "coluna": "cob_esf",
+      "sentido": "maior_melhor",
+      "percentis": [
+        5,
+        95
+      ],
+      "n_municipios_base": 5570
+    }
+  }
+}

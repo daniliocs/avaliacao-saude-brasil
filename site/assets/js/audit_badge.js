@@ -77,19 +77,37 @@ export function renderAuditBadge(item, metaConfig = {}) {
         icFormatado = `[${item.ic_95[0].toFixed(1)} – ${item.ic_95[1].toFixed(1)}]`;
     }
 
-    const seloQualidade = item.qualidade_dado === "alta" ? "badge--quality-high" : "badge--quality-warning";
-    const textoQualidade = item.qualidade_dado === "alta" ? "Dado Adequado" : "Alerta de Qualidade";
+    let seloQualidade = "badge--quality-warning";
+    let textoQualidade = "Alerta de Qualidade";
+    if (item.qualidade_dado === "alta") {
+        seloQualidade = "badge--quality-high";
+        textoQualidade = "Precisão Alta";
+    } else if (item.qualidade_dado === "media") {
+        seloQualidade = "badge--quality-high";
+        textoQualidade = "Precisão Moderada";
+    } else if (item.qualidade_dado === "baixa") {
+        seloQualidade = "badge--quality-warning";
+        textoQualidade = "Baixa Precisão (poucos eventos)";
+    }
+
+    const fonteExibicao = item.fonte_detalhe
+        ? `${item.fonte_id} (${item.fonte_detalhe})`
+        : item.fonte_id;
+
+    const papelBadge = item.papel_na_nota === "informativo"
+        ? `<span class="badge badge--pending" style="margin-left: 0.4rem;">Informativo (peso 0)</span>`
+        : "";
 
     return `
         <div class="audit-card" data-indicator="${metaConfig.id || ''}">
             <div class="audit-card__header">
-                <span class="audit-card__title">${escapeHtml(nomeIndicador)}</span>
+                <span class="audit-card__title">${escapeHtml(nomeIndicador)}${papelBadge}</span>
                 <span class="badge ${seloQualidade}">${textoQualidade}</span>
             </div>
             
             <div class="audit-card__metrics">
                 <div class="metric-block metric-block--main">
-                    <span class="metric-label">Taxa Suavizada (Bayes)</span>
+                    <span class="metric-label">Valor / Taxa Suavizada</span>
                     <span class="metric-value">${valorFormatado} <small>${escapeHtml(unidade)}</small></span>
                 </div>
                 <div class="metric-block">
@@ -97,14 +115,14 @@ export function renderAuditBadge(item, metaConfig = {}) {
                     <span class="metric-value">${taxaBrutaFormatada}</span>
                 </div>
                 <div class="metric-block">
-                    <span class="metric-label">IC 95% (Poisson)</span>
+                    <span class="metric-label">IC 95%</span>
                     <span class="metric-value">${icFormatado}</span>
                 </div>
             </div>
 
             <div class="audit-card__provenance">
                 <div class="provenance-grid">
-                    <div><strong>Fonte:</strong> <span class="provenance-val">${escapeHtml(item.fonte_id)}</span></div>
+                    <div><strong>Fonte:</strong> <span class="provenance-val">${escapeHtml(fonteExibicao)}</span></div>
                     <div><strong>Período (Vintage):</strong> <span class="provenance-val">${escapeHtml(item.periodo_vintage)}</span></div>
                     <div><strong>Data de Coleta:</strong> <span class="provenance-val">${escapeHtml(item.data_coleta)}</span></div>
                     <div><strong>Versão Metodologia:</strong> <span class="provenance-val">${escapeHtml(item.versao_metodologia)}</span></div>

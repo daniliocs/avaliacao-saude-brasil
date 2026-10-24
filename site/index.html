@@ -19,7 +19,7 @@
     <div class="header-container">
       <div class="brand-block">
         <h1 class="brand-title">Índice de Saúde Municipal</h1>
-        <span class="brand-badge version-display">v0.3.0</span>
+        <span class="brand-badge version-display">v0.4.0-draft</span>
         <button id="btn-info" class="btn-info-pill" aria-label="Aviso e Metodologia" title="Clique para ver o Aviso de Interpretação e Metodologia">
           ℹ️ Info
         </button>
@@ -91,7 +91,7 @@
             <div class="rankings-modal-header">
               <div>
                 <h3 id="rankings-modal-title" class="rankings-modal-title">🏆 Rankings Consolidados de Saúde Municipal</h3>
-                <p class="rankings-modal-subtitle">Índice Sintético Consolidado de Saúde Pública (D1, D2, D3 / 2022)</p>
+                <p class="rankings-modal-subtitle">Índice Sintético Consolidado de Saúde Pública (D1, D2, D3 — Triênio 2021–2023 / SIM &amp; SINASC DATASUS)</p>
               </div>
               <button id="btn-close-ranking" class="btn-close-modal" aria-label="Fechar painel de rankings">&times;</button>
             </div>
@@ -125,12 +125,13 @@
               </div>
 
               <div class="info-structure-box">
-                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 700; color: #1e293b;">Composição do Índice Sintético Consolidado:</h4>
+                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 700; color: #1e293b;">Composição do Índice Sintético Consolidado (v0.4.0-draft):</h4>
                 <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.84rem; line-height: 1.6; color: #334155;">
-                  <li><strong>D1 — Resultados em Saúde (33,3%):</strong> Mortalidade Infantil suavizada bayesianamente a partir de registros oficiais de óbitos e nascidos vivos (SIM / SINASC / IBGE).</li>
-                  <li><strong>D2 — Atenção Primária (33,3%):</strong> Consultas Pré-Natal 7+ e Cobertura Vacinal contra Poliomielite (SINASC / SI-PNI / DATASUS).</li>
-                  <li><strong>D3 — Acesso e Estrutura (33,3%):</strong> Leitos SUS por 100k hab., Médicos por 1.000 hab. e Cobertura da Estratégia Saúde da Família - ESF (CNES / SISAB / SAPS).</li>
-                  <li><strong>Dimensão 4 (Financiamento SIOPS) e Camada Privada (ANS):</strong> Exibidas separadamente e estritamente fora da nota para garantir equidade federativa.</li>
+                  <li><strong>D1 — Resultados em Saúde (33,3%):</strong> Mortalidade Infantil no triênio 2021–2023 suavizada por Bayes Empírico a partir dos microdados primários por residência do SIM e SINASC (DATASUS FTP). Mortalidade Materna (2019–2023) exibida como informativa.</li>
+                  <li><strong>D2 — Atenção Primária (33,3%):</strong> Pré-Natal Adequado (7+ consultas no SINASC 2021–2023) e Cobertura Vacinal contra Poliomielite (média 2021–2023 via IEPS Data / SI-PNI).</li>
+                  <li><strong>D3 — Acesso e Estrutura (33,3%):</strong> Leitos SUS por 100k hab., Médicos por 1.000 hab. e Cobertura da Estratégia Saúde da Família - ESF (média 2021–2023 via IEPS Data / CNES / SISAB).</li>
+                  <li><strong>Normalização Relativa (P5–P95):</strong> Sem metas arbitrárias — os indicadores são normalizados pelos percentis empíricos P5 e P95 da distribuição nacional observada, com análise de sensibilidade completa.</li>
+                  <li><strong>Dimensão 4 (Financiamento SIOPS) e Camada Privada (ANS/CNES):</strong> Exibidas separadamente e estritamente fora da nota para garantir equidade federativa.</li>
                 </ul>
               </div>
 
@@ -193,6 +194,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   
   <!-- Script Principal da Aplicação com Cache-Buster -->
-  <script type="module" src="assets/js/app.js?v=0.3.0"></script>
+  <script type="module" src="assets/js/app.js?v=0.4.0"></script>
 </body>
 </html>

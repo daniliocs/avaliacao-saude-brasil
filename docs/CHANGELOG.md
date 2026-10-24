@@ -6,6 +6,32 @@ O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [v0.4.0-draft] - 2026-10-24
+
+### Adicionado
+- **Extração Primária de Microdados do DATASUS (SIM e SINASC 2019–2023)**:
+  - Novo extrator `pipeline/extract/datasus_ftp.py` que baixa diretamente do FTP oficial do DATASUS (`ftp.datasus.gov.br`) todos os 270 arquivos `.dbc` estaduais de Declarações de Óbito por residência (`DORES`) e Declarações de Nascidos Vivos por residência (`DNRES`) de 2019 a 2023 (~7,67 milhões de óbitos e ~13,36 milhões de nascidos vivos), gerando manifesto criptográfico SHA-256 (`data/raw/datasus/manifest_extracao.json`).
+  - Extração da série histórica 2019–2023 do IEPS Data (`pipeline/extract/ieps_series.py`) com manifesto SHA-256 (`data/raw/ieps/manifest_ieps.json`).
+- **Módulo Estatístico Puro e Reprodutível (`pipeline/indicators/estatistica.py`)**:
+  - Implementação isolada e testada de `ic_poisson`, `ic_wilson`, `suavizar_eb` (Empirical Bayes de Marshall 1991 por UF), `normalizar` e `limites_percentis`.
+- **Auditoria Cruzada Entre Fontes (`pipeline/validate/cross_check_sources.py`)**:
+  - Geração de `data/processed/relatorio_comparacao_fontes.json` comparando SIM/SINASC vs. Registro Civil IBGE (2022) e SINASC vs. IEPS Data: documentada a causa raiz das distorções anteriores (sub-registro de 5.251 óbitos infantis no Cartório IBGE em 2022, chegando a 61,9% de omissão em MT e 47,7% no PA).
+- **Suíte Automatizada de Testes (`pytest`)**:
+  - 37 testes automatizados em `tests/test_estatistica.py`, `tests/test_sim_sinasc.py`, `tests/test_composite.py` e `tests/test_release.py` validando matemática estatística, integridade da série 2019–2023, ausência de imputação silenciosa, não-saturação da nota geral e paridade de payloads JSON.
+
+### Corrigido e Modificado
+- **Migração para Janelas Plurianuais (2019–2023) e Eliminação de Distorções**:
+  - D1.1 (Mortalidade Infantil) e D2.2 (Pré-natal 7+ consultas) calculados sobre o triênio **2021–2023** a partir dos microdados primários do SIM e SINASC; D1.2 (Razão de Mortalidade Materna) calculada sobre o quinquênio **2019–2023** e mantida como informativa (`peso = 0.0`, `PEND-038`) em nível municipal; D2.3, D3.1, D3.2 e D3.3 calculados pela média trienal **2021–2023**.
+  - Marabá (PA), que no Cartório IBGE aparentava apenas 7 óbitos infantis em 2022 ($TMI = 1,53$), registra 62 óbitos no SIM 2022 ($TMI = 14,75$) e 177 no triênio 2021–2023, passando para `d1_nota = 23,0` e `nota_geral = 17,7` (#5.480).
+- **Normalização Empírica por Percentis (`P5–P95`) e Fim da Saturação em 100**:
+  - Removidos limites arbitrários hardcoded; adotada normalização relativa `P5–P95` congelada em `config/limites_calculados.json` (`PEND-033`), resultando em **0 municípios com nota geral 100,0** (líderes nacionais: São João do Oeste/SC com 96,9, Tunápolis/SC com 95,9 e Ipira/SC com 95,5).
+- **Proibição Estrita de Imputação Silenciosa**:
+  - Removido qualquer preenchimento por mediana ou zero; dimensões sem componentes mínimos recebem `NaN` e `status_classificacao = "sem_classificacao"`.
+- **Rastreabilidade Real de Fontes e Datas de Coleta**:
+  - Distinção transparente entre `fonte_id` (intermediário de extração `ieps_data` vs. primário `sim_do`/`sinasc_nv`) e `fonte_primaria` (`si_pni`, `cnes`, `sisab`), com datas reais de coleta extraídas dos manifestos.
+
+---
+
 ## [v0.3.0] - 2026-10-23
 
 ### Adicionado

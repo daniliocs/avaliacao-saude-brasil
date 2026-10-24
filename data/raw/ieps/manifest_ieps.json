@@ -1,0 +1,37 @@
+{
+  "2019": {
+    "arquivo": "data/raw/ieps/ieps_2019.csv",
+    "url": "https://iepsdata.org.br/wp-json/caleidosapi/get_csv?ano=2019&tipo=municipio&indicador=cob_esf,cob_vac_polio,tx_med,tx_leito_sus,tx_leito_nsus",
+    "sha256": "fed7372e4459e45ae9872532bad2ccd49ae4d7af259574512e98a8c737051362",
+    "bytes": 750560,
+    "data_coleta": "2026-10-24"
+  },
+  "2020": {
+    "arquivo": "data/raw/ieps/ieps_2020.csv",
+    "url": "https://iepsdata.org.br/wp-json/caleidosapi/get_csv?ano=2020&tipo=municipio&indicador=cob_esf,cob_vac_polio,tx_med,tx_leito_sus,tx_leito_nsus",
+    "sha256": "d3130fff64bd705245cfff307457e4195c0d5709332c495c327950ddb908232e",
+    "bytes": 751965,
+    "data_coleta": "2026-10-24"
+  },
+  "2021": {
+    "arquivo": "data/raw/ieps/ieps_2021.csv",
+    "url": "https://iepsdata.org.br/wp-json/caleidosapi/get_csv?ano=2021&tipo=municipio&indicador=cob_esf,cob_vac_polio,tx_med,tx_leito_sus,tx_leito_nsus",
+    "sha256": "dedff547e7ae7add4d969adc7b47f9110cb1d2a6b58a5099e1a903aa7df5833d",
+    "bytes": 766915,
+    "data_coleta": "2026-10-24"
+  },
+  "2022": {
+    "arquivo": "data/raw/ieps/ieps_2022.csv",
+    "url": "https://iepsdata.org.br/wp-json/caleidosapi/get_csv?ano=2022&tipo=municipio&indicador=cob_esf,cob_vac_polio,tx_med,tx_leito_sus,tx_leito_nsus",
+    "sha256": "f15737356440c3e979f38e722dfff2dbfddbfaad9c2a3b133c521b4d09eea9df",
+    "bytes": 759549,
+    "data_coleta": "2026-10-24"
+  },
+  "2023": {
+    "arquivo": "data/raw/ieps/ieps_2023.csv",
+    "url": "https://iepsdata.org.br/wp-json/caleidosapi/get_csv?ano=2023&tipo=municipio&indicador=cob_esf,cob_vac_polio,tx_med,tx_leito_sus,tx_leito_nsus",
+    "sha256": "69a772d6423e990b61391ab816abd5198803b32c81f38038c11c1b2f92a0ea87",
+    "bytes": 754545,
+    "data_coleta": "2026-10-24"
+  }
+}

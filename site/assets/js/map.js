@@ -9,7 +9,7 @@
  * - Disparo da Ficha Lateral (openDrawer)
  */
 
-import { openDrawer } from "./drawer_municipio.js?v=0.3.0";
+import { openDrawer } from "./drawer_municipio.js?v=0.4.0";
 
 let leafletMap = null;
 let mapaResumoData = {};

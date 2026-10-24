@@ -1,5 +1,5 @@
 # Catálogo Paramétrico de Indicadores do Índice de Saúde Municipal
-# Versão: v0.1.0-draft
+# Versão: v0.4.0-draft
 # Regra: Nenhum dado inventado. Campos não confirmados devem ser parametrizados como "A_VALIDAR" ou null.
 
 indicadores:
@@ -7,34 +7,34 @@ indicadores:
   - id: D1.1
     dimensao: D1
     nome: "Mortalidade Infantil"
-    descricao: "Taxa de mortalidade infantil (óbitos em menores de 1 ano por 1.000 nascidos vivos)"
+    descricao: "Taxa de mortalidade infantil (óbitos em menores de 1 ano por 1.000 nascidos vivos — janela trienal 2021–2023)"
     sentido: "menor_melhor"
     unidade: "óbitos por 1.000 NV"
     fontes:
       - sim_do
       - sinasc_nv
-    janela_anos: 3 # A_VALIDAR: 3 a 5 anos
+    janela_anos: 3 # Triênio 2021-2023 (PEND-035)
     nivel_agregacao: "residencia"
     entra_na_nota: true
     requer_suavizacao_bayesiana: true
     calcula_ic_poisson: true
-    pendencia_id: "PEND-028"
+    pendencia_id: "PEND-035"
 
   - id: D1.2
     dimensao: D1
     nome: "Razão de Mortalidade Materna"
-    descricao: "Óbitos maternos por causas obstétricas diretas e indiretas por 100.000 nascidos vivos"
+    descricao: "Óbitos maternos (CID-10 Cap. XV O00–O99) por 100.000 nascidos vivos (janela quinquenal 2019–2023)"
     sentido: "menor_melhor"
     unidade: "óbitos por 100.000 NV"
     fontes:
       - sim_do
       - sinasc_nv
-    janela_anos: 5 # Janela estendida por raridade de evento
+    janela_anos: 5 # Quinquênio 2019-2023 por raridade de evento
     nivel_agregacao: "residencia"
-    entra_na_nota: true
+    entra_na_nota: false # Informativo em nível municipal (93% dos municípios <5 óbitos no quinquênio - PEND-038)
     requer_suavizacao_bayesiana: true
     calcula_ic_poisson: true
-    pendencia_id: "PEND-016"
+    pendencia_id: "PEND-038"
 
   - id: D1.3
     dimensao: D1
@@ -88,7 +88,7 @@ indicadores:
   - id: D2.2
     dimensao: D2
     nome: "Pré-natal Adequado (7+ Consultas)"
-    descricao: "Proporção de nascidos vivos cujas mães realizaram 7 ou mais consultas de pré-natal"
+    descricao: "Proporção de nascidos vivos cujas mães realizaram 7 ou mais consultas de pré-natal (CONSULTAS=4 ou CONSPRENAT>=7, triênio 2021–2023)"
     sentido: "maior_melhor"
     unidade: "%"
     fontes:
@@ -102,15 +102,14 @@ indicadores:
 
   - id: D2.3
     dimensao: D2
-    nome: "Cobertura Vacinal Infantil"
-    descricao: "Cobertura média das vacinas essenciais do calendário infantil de imunização"
+    nome: "Cobertura Vacinal Infantil (Poliomielite)"
+    descricao: "Cobertura vacinal contra Poliomielite em menores de 1 ano (média trienal 2021–2023 via IEPS Data / SI-PNI)"
     sentido: "maior_melhor"
     unidade: "%"
     fontes:
+      - ieps_data
       - si_pni
-      - sinasc_nv
-      - ibge_pop
-    janela_anos: 1 # A_VALIDAR
+    janela_anos: 3 # Triênio 2021-2023 (PEND-035)
     nivel_agregacao: "residencia"
     entra_na_nota: true
     requer_suavizacao_bayesiana: false
@@ -135,15 +134,15 @@ indicadores:
   # DIMENSÃO 3: Acesso e Estrutura
   - id: D3.1
     dimensao: D3
-    nome: "Leitos SUS por Mil Habitantes (Região de Saúde)"
-    descricao: "Razão de leitos hospitalares operacionais disponíveis ao SUS por 1.000 habitantes na Região de Saúde"
+    nome: "Leitos SUS por 100.000 Habitantes"
+    descricao: "Leitos hospitalares disponíveis ao SUS por 100.000 habitantes (média trienal 2021–2023 via IEPS Data / CNES)"
     sentido: "maior_melhor" # A_VALIDAR: Faixa ótima vs linear
-    unidade: "leitos por 1.000 hab"
+    unidade: "leitos por 100.000 hab"
     fontes:
+      - ieps_data
       - cnes
-      - ibge_pop
-    janela_anos: 1
-    nivel_agregacao: "regiao_saude" # Acesso regionalizado
+    janela_anos: 3
+    nivel_agregacao: "residencia" # A_VALIDAR: Agregação por Região de Saúde (PEND-023)
     entra_na_nota: true
     requer_suavizacao_bayesiana: false
     calcula_ic_poisson: false
@@ -151,14 +150,14 @@ indicadores:
 
   - id: D3.2
     dimensao: D3
-    nome: "Médicos e Enfermeiros SUS por Mil Habitantes"
-    descricao: "Número de profissionais médicos e enfermeiros únicos com vínculo ativo no SUS por 1.000 habitantes"
+    nome: "Médicos por 1.000 Habitantes"
+    descricao: "Total de médicos por 1.000 habitantes no município (média trienal 2021–2023 via IEPS Data / CNES)"
     sentido: "maior_melhor"
-    unidade: "profissionais por 1.000 hab"
+    unidade: "médicos por 1.000 hab"
     fontes:
+      - ieps_data
       - cnes
-      - ibge_pop
-    janela_anos: 1
+    janela_anos: 3
     nivel_agregacao: "residencia"
     entra_na_nota: true
     requer_suavizacao_bayesiana: false
@@ -168,14 +167,13 @@ indicadores:
   - id: D3.3
     dimensao: D3
     nome: "Cobertura de Equipes de Saúde da Família (eSF)"
-    descricao: "Percentual estimado da população coberta por Equipes de Saúde da Família no município"
+    descricao: "Percentual estimado da população coberta por Equipes de Saúde da Família (média trienal 2021–2023 via IEPS Data / SISAB)"
     sentido: "maior_melhor"
     unidade: "%"
     fontes:
+      - ieps_data
       - sisab
-      - cnes
-      - ibge_pop
-    janela_anos: 1
+    janela_anos: 3
     nivel_agregacao: "residencia"
     entra_na_nota: true
     requer_suavizacao_bayesiana: false

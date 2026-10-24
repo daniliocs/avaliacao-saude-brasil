@@ -26,12 +26,21 @@ wheels/
 venv/
 ENV/
 
-# Data cache (raw) - manter apenas .gitkeep e insumos oficiais compactos (<100KB)
+# Data cache (raw) - manter apenas .gitkeep, manifestos SHA-256 e insumos compactos
 data/raw/*
 !data/raw/.gitkeep
 !data/raw/ibge_censo2022_pop.json
 !data/raw/ibge_obitos_infantis_2022.json
 !data/raw/ibge_nascidos_vivos_2022.json
+!data/raw/datasus/
+data/raw/datasus/*
+!data/raw/datasus/manifest_extracao.json
+!data/raw/ieps/
+data/raw/ieps/*
+!data/raw/ieps/manifest_ieps.json
+
+# Pytest cache
+.pytest_cache/
 
 # IDE / OS
 .DS_Store

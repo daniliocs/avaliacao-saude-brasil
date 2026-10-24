@@ -4,31 +4,31 @@
 
 fontes:
   - id: sim_do
-    nome: "Sistema de Informações sobre Mortalidade (SIM) — Declaração de Óbito"
-    orgao: "Ministério da Saúde / DATASUS"
-    url_documentacao: "A_VALIDAR"
-    url_dados: "A_VALIDAR"
-    formato: "dbc" # A_VALIDAR: possibilidade de migração para CSV/OpenDataSUS
-    periodicidade_publicacao: "A_VALIDAR"
-    defasagem_tipica: "A_VALIDAR" # Medir empiricamente no pipeline
-    licenca_termos_uso: "A_VALIDAR"
-    ultima_verificacao: null
-    ultimo_periodo_disponivel: null
-    status: "em_revisao"
+    nome: "Sistema de Informações sobre Mortalidade (SIM) — Microdados de Declaração de Óbito por Residência (DORES)"
+    orgao: "Ministério da Saúde / SVS / DATASUS"
+    url_documentacao: "https://datasus.saude.gov.br/transferencia-de-arquivos/"
+    url_dados: "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DORES/"
+    formato: "dbc"
+    periodicidade_publicacao: "anual"
+    defasagem_tipica: "12 a 18 meses após encerramento do ano-calendário"
+    licenca_termos_uso: "Dados Abertos Governamentais (Acesso Público DATASUS)"
+    ultima_verificacao: "2026-10-24"
+    ultimo_periodo_disponivel: "2019-2023"
+    status: "ativo"
     pendencia_id: "PEND-004"
 
   - id: sinasc_nv
-    nome: "Sistema de Informações sobre Nascidos Vivos (SINASC) — Declaração de Nascido Vivo"
-    orgao: "Ministério da Saúde / DATASUS"
-    url_documentacao: "A_VALIDAR"
-    url_dados: "A_VALIDAR"
-    formato: "dbc" # A_VALIDAR
-    periodicidade_publicacao: "A_VALIDAR"
-    defasagem_tipica: "A_VALIDAR"
-    licenca_termos_uso: "A_VALIDAR"
-    ultima_verificacao: null
-    ultimo_periodo_disponivel: null
-    status: "em_revisao"
+    nome: "Sistema de Informações sobre Nascidos Vivos (SINASC) — Microdados de Nascidos Vivos por Residência (DNRES)"
+    orgao: "Ministério da Saúde / SVS / DATASUS"
+    url_documentacao: "https://datasus.saude.gov.br/transferencia-de-arquivos/"
+    url_dados: "ftp://ftp.datasus.gov.br/dissemin/publicos/SINASC/1996_/Dados/DNRES/"
+    formato: "dbc"
+    periodicidade_publicacao: "anual"
+    defasagem_tipica: "12 a 18 meses após encerramento do ano-calendário"
+    licenca_termos_uso: "Dados Abertos Governamentais (Acesso Público DATASUS)"
+    ultima_verificacao: "2026-10-24"
+    ultimo_periodo_disponivel: "2019-2023"
+    status: "ativo"
     pendencia_id: "PEND-005"
 
   - id: sih_rd
@@ -144,17 +144,17 @@ fontes:
     pendencia_id: "PEND-013"
 
   - id: ieps_data
-    nome: "IEPS Data — Base de Indicadores de Saúde e Atenção Primária"
+    nome: "IEPS Data — Base Consolidada de Indicadores Municipais (agregador intermediário de SI-PNI, CNES e SISAB/e-Gestor AB)"
     orgao: "Instituto de Estudos para Políticas de Saúde (IEPS)"
     url_documentacao: "https://iepsdata.org.br"
-    url_dados: "A_VALIDAR"
+    url_dados: "https://api.iepsdata.org.br/files/Download_data"
     formato: "csv"
-    periodicidade_publicacao: "A_VALIDAR"
-    defasagem_tipica: "A_VALIDAR"
+    periodicidade_publicacao: "anual"
+    defasagem_tipica: "12 meses"
     licenca_termos_uso: "A_VALIDAR"
-    ultima_verificacao: null
-    ultimo_periodo_disponivel: null
-    status: "em_revisao"
+    ultima_verificacao: "2026-10-24"
+    ultimo_periodo_disponivel: "2019-2023"
+    status: "ativo"
     pendencia_id: "PEND-014"
 
   - id: ips_brasil

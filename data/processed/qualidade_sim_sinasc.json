@@ -1,0 +1,73 @@
+{
+  "por_ano": [
+    {
+      "ano": 2019,
+      "obitos_total": 1349801,
+      "nascidos_vivos": 2849146,
+      "obitos_sem_municipio_valido": 2539,
+      "nascidos_sem_municipio_valido": 82,
+      "obitos_infantis": 35293,
+      "obitos_maternos": 1561,
+      "pct_consultas_ignoradas": 0.44
+    },
+    {
+      "ano": 2020,
+      "obitos_total": 1556824,
+      "nascidos_vivos": 2730145,
+      "obitos_sem_municipio_valido": 2541,
+      "nascidos_sem_municipio_valido": 95,
+      "obitos_infantis": 31432,
+      "obitos_maternos": 1965,
+      "pct_consultas_ignoradas": 0.51
+    },
+    {
+      "ano": 2021,
+      "obitos_total": 1832649,
+      "nascidos_vivos": 2677101,
+      "obitos_sem_municipio_valido": 2519,
+      "nascidos_sem_municipio_valido": 93,
+      "obitos_infantis": 31850,
+      "obitos_maternos": 3029,
+      "pct_consultas_ignoradas": 0.52
+    },
+    {
+      "ano": 2022,
+      "obitos_total": 1544266,
+      "nascidos_vivos": 2561922,
+      "obitos_sem_municipio_valido": 2525,
+      "nascidos_sem_municipio_valido": 64,
+      "obitos_infantis": 32257,
+      "obitos_maternos": 1370,
+      "pct_consultas_ignoradas": 0.6
+    },
+    {
+      "ano": 2023,
+      "obitos_total": 1465610,
+      "nascidos_vivos": 2537576,
+      "obitos_sem_municipio_valido": 2234,
+      "nascidos_sem_municipio_valido": 65,
+      "obitos_infantis": 32016,
+      "obitos_maternos": 1324,
+      "pct_consultas_ignoradas": 0.41
+    }
+  ],
+  "janelas": {
+    "D1.1": [
+      2021,
+      2022,
+      2023
+    ],
+    "D1.2": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023
+    ],
+    "D2.2": [
+      2021,
+      2022,
+      2023
+    ]
+  }
+}

@@ -1,0 +1,1152 @@
+{
+  "sim_2022": {
+    "data_coleta": "2026-10-24",
+    "ok": true,
+    "linhas": 1544266,
+    "arquivos": {
+      "DOAC2022.dbc": {
+        "sha256": "04a015b690068baeb42e7e83165e3b9de43f2881bebdf46f0eea5ad0b9984a51",
+        "bytes": 330408
+      },
+      "DOAL2022.dbc": {
+        "sha256": "04a27f9a8b57378706463206dbd04c0a321229937f488ff8241795ddb8b96373",
+        "bytes": 1846389
+      },
+      "DOAM2022.dbc": {
+        "sha256": "402aa8a2351b3cd7b181e169bee786d9b76d892961111eec80c531c461fd95d0",
+        "bytes": 1626717
+      },
+      "DOAP2022.dbc": {
+        "sha256": "46af11f2a5349d1d8e7e22493be680fe8f69084f9c94e40ec980294e5e4858c7",
+        "bytes": 309913
+      },
+      "DOBA2022.dbc": {
+        "sha256": "fd15f9bee578224d57d5d38a01870ea20d574a0095b00bbe673536b0a904ef8f",
+        "bytes": 8510675
+      },
+      "DOCE2022.dbc": {
+        "sha256": "b32b4f636e1ec6b9d192b521ae8953ade00b56172f3fe6b0f4e2ee74115c49b5",
+        "bytes": 5218711
+      },
+      "DODF2022.dbc": {
+        "sha256": "dfbc68a7ea414a19181dccfb947b6f6baf3343d80ff30a06eb9595be9e074305",
+        "bytes": 1280969
+      },
+      "DOES2022.dbc": {
+        "sha256": "c6bbb70387e99609e2564d0069b960e03ca8fc4984c6c628010556f6de866fae",
+        "bytes": 2250665
+      },
+      "DOGO2022.dbc": {
+        "sha256": "53c98dcfbd72fb467316c2711680bf02f44f1211d4889461bee6ec2489af4bbc",
+        "bytes": 4405432
+      },
+      "DOMA2022.dbc": {
+        "sha256": "6f44af36318f25134d0ed9f9672377713833f9636ebbe7155b70d3b0e3625957",
+        "bytes": 3202765
+      },
+      "DOMG2022.dbc": {
+        "sha256": "b2f6eb185b62b4b69d530ca3445a3c4fcceae1aa014824125dfba0c110a8fdfc",
+        "bytes": 12967470
+      },
+      "DOMS2022.dbc": {
+        "sha256": "85688dbfdf4e04c9eaf95d933e24a10d8392e149ecf06b80d953055f73076bb2",
+        "bytes": 1650714
+      },
+      "DOMT2022.dbc": {
+        "sha256": "2028b97346224a7ac578f322301fae5ac1a52003b1f1ae62f894222b15ca0e6a",
+        "bytes": 1901733
+      },
+      "DOPA2022.dbc": {
+        "sha256": "d82ecbc07d56748ea9b963189d7e28b7650aa7a0fcf5364fd3899e71f7fcddf2",
+        "bytes": 3749004
+      },
+      "DOPB2022.dbc": {
+        "sha256": "5055059626db01ee64e5b515f64ca01494f821a3329cc399a4251c8f0fbfccd6",
+        "bytes": 2466673
+      },
+      "DOPE2022.dbc": {
+        "sha256": "785cf9b4076addf6f2e47f7859b7308a4d8254b3910624228f9c16ef6b0c1468",
+        "bytes": 5835167
+      },
+      "DOPI2022.dbc": {
+        "sha256": "b5d614215b1e18086fe72c2d0e74731923aefb39862ad1e011fc4efc2b6cb4b2",
+        "bytes": 1949205
+      },
+      "DOPR2022.dbc": {
+        "sha256": "fddf7189051fbab254f4276272eab95704bc3e5006f634c13e0164432d6d3e4c",
+        "bytes": 7612277
+      },
+      "DORJ2022.dbc": {
+        "sha256": "13b942e57ee0cb132c96bc9179cba7c3240f77e67fe117d3ebb4eb061280efa3",
+        "bytes": 11928191
+      },
+      "DORN2022.dbc": {
+        "sha256": "860d409074c3a34b65c9d3205fc39c3f36664451b9ec43698106235a582de64c",
+        "bytes": 1945635
+      },
+      "DORO2022.dbc": {
+        "sha256": "502098fa10876901cfa6bb514f0d1a9fd5413faff968d9bbe413bb4ab8700ab2",
+        "bytes": 855648
+      },
+      "DORR2022.dbc": {
+        "sha256": "6643344fe1ab587d648e5e0ea8cf7e3ef9e5b5b7021a12dcbbc54f5724d2ec65",
+        "bytes": 275221
+      },
+      "DORS2022.dbc": {
+        "sha256": "10a9df31ba332d7645d5cb7c7500d52046574a5232296a141f13c552b328e0cb",
+        "bytes": 8075017
+      },
+      "DOSC2022.dbc": {
+        "sha256": "ccb410b0ff5f20b31910f3493510fb5e610f4297e084d88928d6ea7970f4fb75",
+        "bytes": 4214991
+      },
+      "DOSE2022.dbc": {
+        "sha256": "4fa8cd3667966cf957fa6387c247c7a40fa75ed9e65ed7eceae734aa36c9413c",
+        "bytes": 1264697
+      },
+      "DOSP2022.dbc": {
+        "sha256": "34f6f7aef94545b88748982d0891a2b014c21dd43db8fd3b656643e0d6c17540",
+        "bytes": 28630082
+      },
+      "DOTO2022.dbc": {
+        "sha256": "76e71d061b43ab1db4882ae802154d5ba45e8467c0646b7750955c526f9b7c46",
+        "bytes": 827677
+      }
+    }
+  },
+  "sinasc_2022": {
+    "data_coleta": "2026-10-24",
+    "ok": true,
+    "linhas": 2561922,
+    "arquivos": {
+      "DNAC2022.dbc": {
+        "sha256": "199c1acfe6311d08a421b6df1c30d1dd47f12147393e5a385187020441f8e77d",
+        "bytes": 681675
+      },
+      "DNAL2022.dbc": {
+        "sha256": "95414e6ee34b2da767cf0cf71c4d3ef0b10f9cb33d5ea41de6c141a09371aa80",
+        "bytes": 2249915
+      },
+      "DNAM2022.dbc": {
+        "sha256": "bcf7f2131461b44f941ee069bc8f889fabb12f02fa918ec18e2c040e997fe0b0",
+        "bytes": 3425808
+      },
+      "DNAP2022.dbc": {
+        "sha256": "c5acc64bad18b333f188611d9b8ac8830c2a7f0f24294094b4d9f06feed0c5a1",
+        "bytes": 646655
+      },
+      "DNBA2022.dbc": {
+        "sha256": "07d4660dac918d1735b21ac85abf06453d8c16503b1edebbaefe7f00f7c45325",
+        "bytes": 8459891
+      },
+      "DNCE2022.dbc": {
+        "sha256": "13ce0071d31ef6b627de40da870cc299773c559612121f9690a3a98f6e74ccbc",
+        "bytes": 5401233
+      },
+      "DNDF2022.dbc": {
+        "sha256": "e21e4160f04126e1138ed6e0d9fcd61a3f4ab94a89cd630b4ad1063d199e2c2e",
+        "bytes": 1843124
+      },
+      "DNES2022.dbc": {
+        "sha256": "b3a8411730725aa2d9b01688ebdf1a34f2ac3523fb8c2e923b5e2a2168d5521b",
+        "bytes": 2495761
+      },
+      "DNGO2022.dbc": {
+        "sha256": "b83c8e66e8439039d6973b6d7567dad56d3b279b551529e9a6e385202d68eb2d",
+        "bytes": 4913424
+      },
+      "DNMA2022.dbc": {
+        "sha256": "34451ece20f12b0a2930240a8206d195b1f0f6ec3cef0a6fb77fdfc057f39ea8",
+        "bytes": 4671206
+      },
+      "DNMG2022.dbc": {
+        "sha256": "3f765246faf316705ee68272b0be35acd864b157bcb53e820ac55b2b752107e4",
+        "bytes": 11701773
+      },
+      "DNMS2022.dbc": {
+        "sha256": "85fa6be3d0b9199d2437dc452fae0838895bdbb3f5c9cc699b0c68798af64d4c",
+        "bytes": 2083696
+      },
+      "DNMT2022.dbc": {
+        "sha256": "a874fee119d548c83d9458fa6de1e14325bfca7b33109104c9e56bfc9344a490",
+        "bytes": 2902275
+      },
+      "DNPA2022.dbc": {
+        "sha256": "fc4137080525e5be6030b750216821511a2cbc857c62c23681130fbc952cac59",
+        "bytes": 6138503
+      },
+      "DNPB2022.dbc": {
+        "sha256": "a73ac3c9421de724a72cdf2cef25328dd07e79c543461946e72306599c07ee49",
+        "bytes": 2429336
+      },
+      "DNPE2022.dbc": {
+        "sha256": "0541cb17fc56582266b429406990e5da1e153917084db9b88d9a9dd93742efae",
+        "bytes": 5894169
+      },
+      "DNPI2022.dbc": {
+        "sha256": "3d61accb5c1afb2d67cf53ef4dd517008467621d94896c298eef8a4694e509e6",
+        "bytes": 2039616
+      },
+      "DNPR2022.dbc": {
+        "sha256": "7e747ec3282d6cbb35c7c4ce930368fe19730e03f4591d9292aff0095cc84d7c",
+        "bytes": 7041480
+      },
+      "DNRJ2022.dbc": {
+        "sha256": "eb3bb81f13ece3f1884152b289a38901d5147b7b228f31bb52817f2bbabf38e4",
+        "bytes": 8895577
+      },
+      "DNRN2022.dbc": {
+        "sha256": "cdbe7c8fc7eae3fc93713ed6342673b274ea145a67295bf64d7d475235915a4b",
+        "bytes": 1967335
+      },
+      "DNRO2022.dbc": {
+        "sha256": "d2eb578f92dd3435401642f8b51abcb65acc00e449bc65eb86783dadabc125af",
+        "bytes": 1235315
+      },
+      "DNRR2022.dbc": {
+        "sha256": "55edaa6508cb58cc35e8ce7a74d5950198d91dd3c5c4c64d9e0c8199667601db",
+        "bytes": 641046
+      },
+      "DNRS2022.dbc": {
+        "sha256": "21d160971419a6c69fc44e155f5c69f404fdb1656e39d7020ea9c9e7b212384c",
+        "bytes": 6048820
+      },
+      "DNSC2022.dbc": {
+        "sha256": "7195cb7444bccf7064be6ec2f4d5f7c6c25083b5d34e42d54bf790e125438731",
+        "bytes": 4918847
+      },
+      "DNSE2022.dbc": {
+        "sha256": "3c9d15ef11fe3cd64867a59d6025025ec5b02a55585ce4c3902dbde439570155",
+        "bytes": 1369364
+      },
+      "DNSP2022.dbc": {
+        "sha256": "09c3eed7c97ae81a5d9e44f697964e17f505c8c7b9693d9fdc408a53d48e6a56",
+        "bytes": 25153015
+      },
+      "DNTO2022.dbc": {
+        "sha256": "767a6c05d7646702e94d38360d9a3f05d7bcfc2d117c39562c79e98827384f3a",
+        "bytes": 1127918
+      }
+    }
+  },
+  "sim_2019": {
+    "data_coleta": "2026-10-24",
+    "ok": true,
+    "linhas": 1349801,
+    "arquivos": {
+      "DOAC2019.dbc": {
+        "sha256": "628e3c1915d732ad3a6c8bc9e8b5645f1a8240dece48424dfa9e3ec764e0d6f8",
+        "bytes": 321572
+      },
+      "DOAL2019.dbc": {
+        "sha256": "d7b4c88263a5a117be86c817ec20bb75e3970dfd75f4ef41b93a891d04d2a8f1",
+        "bytes": 1565288
+      },
+      "DOAM2019.dbc": {
+        "sha256": "84b9ca72271a8be5a8889238fa7c04e030937a6ab0da549308b7420b0a1e94f8",
+        "bytes": 1434835
+      },
+      "DOAP2019.dbc": {
+        "sha256": "0b09f37fc88737760e6c4b9e19efd8f6cb9e27eef6538b83294b60eda39c39e7",
+        "bytes": 280911
+      },
+      "DOBA2019.dbc": {
+        "sha256": "b9bb045e618f2874b0d54ccba4075ffc8ec84de35079a1f5b578da67ae5072bb",
+        "bytes": 7173590
+      },
+      "DOCE2019.dbc": {
+        "sha256": "72e943ff8c60d2dc69a1fb668f30325e4f4ed0ac2bc8e6d3b873b26b4d3086ee",
+        "bytes": 4510591
+      },
+      "DODF2019.dbc": {
+        "sha256": "5e93e571c9d3624394c47d7b3a13a9c41c9baa3a006449e02296ec44fb0c021c",
+        "bytes": 1177120
+      },
+      "DOES2019.dbc": {
+        "sha256": "17c241cc2360d74ce687c40b2ade62b68c7a479ff4c215d7370d6442f1485fcf",
+        "bytes": 2060432
+      },
+      "DOGO2019.dbc": {
+        "sha256": "1212d60187ed85d1b872f54d896af6f576fca2cf0cd5b4a4a9308f92831d895d",
+        "bytes": 3832622
+      },
+      "DOMA2019.dbc": {
+        "sha256": "5d03bc66a077d47b254e9d568c9bc08192f2ad1fce69f627d0a6c56146b603da",
+        "bytes": 2766753
+      },
+      "DOMG2019.dbc": {
+        "sha256": "86f0959dd0d2683a96549e1afd1e12119056616c48e8c8e5c527bfc0bdb969c1",
+        "bytes": 11154853
+      },
+      "DOMS2019.dbc": {
+        "sha256": "406734aa755f3a23c5dd0ab3d6c52f5c4b20d1e2a5651a4918bf2a5fcf9944ac",
+        "bytes": 1371910
+      },
+      "DOMT2019.dbc": {
+        "sha256": "4094d8e44b8b72846cff99f4ce65195a472816f878753e0eedf004e6913b8440",
+        "bytes": 1567737
+      },
+      "DOPA2019.dbc": {
+        "sha256": "85265a9364c4d107d72678ebbe77736909631706a7ab4299d6eab875e783dff5",
+        "bytes": 3232579
+      },
+      "DOPB2019.dbc": {
+        "sha256": "6ddb6eda52abded033f3256c7b67bd1d97569c26d2295e8eff5abebfe9254f59",
+        "bytes": 2036171
+      },
+      "DOPE2019.dbc": {
+        "sha256": "49b58a13c252b6188d559315b070b28e59185629eb5fc2de526a70897ef2a537",
+        "bytes": 5353022
+      },
+      "DOPI2019.dbc": {
+        "sha256": "252c8ac528857cecb960cbe3d2392f08fca0a0986f1de61beee7469889f4bfd9",
+        "bytes": 1604450
+      },
+      "DOPR2019.dbc": {
+        "sha256": "424c72fa1de781b04b74d4a89714c615fe8ec7255de39f300080d19167cb0d00",
+        "bytes": 6188115
+      },
+      "DORJ2019.dbc": {
+        "sha256": "6d337e13d8108ecc886508677fe5233abd3e98436794127d86e9f599cab7bdb3",
+        "bytes": 11345460
+      },
+      "DORN2019.dbc": {
+        "sha256": "382583be45caec98ed5c6b8c5a615201998b4baf6a6a8fb76cccf85c2828a3b5",
+        "bytes": 1730249
+      },
+      "DORO2019.dbc": {
+        "sha256": "bd7862c896d791c2d455a866b3291f1980be29730954525b93f3805dcaa8a46a",
+        "bytes": 682101
+      },
+      "DORR2019.dbc": {
+        "sha256": "b1205f5e5deda80d32bd0db1a2748c0c6c8ed5ffe1bab4cb1b17c64d0e09509f",
+        "bytes": 229415
+      },
+      "DORS2019.dbc": {
+        "sha256": "f5d9165d6453295a038f7c12916750635ed136d9db252448187e0df6d54150f6",
+        "bytes": 6885321
+      },
+      "DOSC2019.dbc": {
+        "sha256": "28025b4280ea263bc5be1f9cc57fc85919f7fe973da8743890963537f9878962",
+        "bytes": 3418920
+      },
+      "DOSE2019.dbc": {
+        "sha256": "7722501136f59ab4c1226ffd536e290e3a5ff1cd07af79d0e012b58b5b5b51f6",
+        "bytes": 1125841
+      },
+      "DOSP2019.dbc": {
+        "sha256": "5e1032b376ae5e3d6e763a84513a42e5bb43a2e61ee07da69fa569c9db961527",
+        "bytes": 24068133
+      },
+      "DOTO2019.dbc": {
+        "sha256": "d890ddb89775f25d240afbe54767619a3698f52176dd0293b84330877c463be7",
+        "bytes": 703873
+      }
+    }
+  },
+  "sinasc_2019": {
+    "data_coleta": "2026-10-24",
+    "ok": true,
+    "linhas": 2849146,
+    "arquivos": {
+      "DNAC2019.dbc": {
+        "sha256": "a8de47e7fcd08412bc6a776819e9988836584e01116e68abd12b8cec45a504a7",
+        "bytes": 770010
+      },
+      "DNAL2019.dbc": {
+        "sha256": "3e15e6bd2bfbff7181f732dfa92d759eee8e1d6fe48de99ce72a23cc2f3c7c6a",
+        "bytes": 2281934
+      },
+      "DNAM2019.dbc": {
+        "sha256": "58b0669ce9c6658545b8c11f6634c0766be6009c66c9099702d80c66797bbaf9",
+        "bytes": 3664913
+      },
+      "DNAP2019.dbc": {
+        "sha256": "6058cfe32c93a093c0d101f54eaef47b39b858b6526f70dedb406e88e3a8cef8",
+        "bytes": 709295
+      },
+      "DNBA2019.dbc": {
+        "sha256": "5aad4ac80a8b2b0ae3385ebebd15e892fd5201c72caa25d836bb0a17c0c55f97",
+        "bytes": 9515045
+      },
+      "DNCE2019.dbc": {
+        "sha256": "e4788daaa59f915ade8c0184b691688c71a5163df58f22c42e258fbf9a0ee168",
+        "bytes": 6117610
+      },
+      "DNDF2019.dbc": {
+        "sha256": "5e20645371c6b62757f3265d020897bd4f2f6daee90fd731c3888bda3fe70abd",
+        "bytes": 2216423
+      },
+      "DNES2019.dbc": {
+        "sha256": "8ccab2f2d2fb3aadea5d1894236112e360629cbe6592049556ad8243413e2ecc",
+        "bytes": 2664834
+      },
+      "DNGO2019.dbc": {
+        "sha256": "bc07d35c7ec2ddd605c362d137d26abcbc440459fbe748f022c49176a1d0c939",
+        "bytes": 5281993
+      },
+      "DNMA2019.dbc": {
+        "sha256": "15ee077c76de3e3c2e59d4352a11e9a324748849193121a849634a483587cbaf",
+        "bytes": 5374627
+      },
+      "DNMG2019.dbc": {
+        "sha256": "0a1137df7f694641a2d28b95f3822548fe25bcb49e2f1012ca8e4acb131e3c21",
+        "bytes": 12750904
+      },
+      "DNMS2019.dbc": {
+        "sha256": "ceb4a6035dad19362c49f48fbd610f66bf45376969e772bc5e9ec60f4aaae3e2",
+        "bytes": 2229603
+      },
+      "DNMT2019.dbc": {
+        "sha256": "a1da6d188683ea180320adfd99957ffe843b98cb4c83471eaed80928d0bf6c15",
+        "bytes": 2919907
+      },
+      "DNPA2019.dbc": {
+        "sha256": "3bb286dc26e1f491372b59531efdf3bf31dcb106470f94baa2b6d17bfbcc8374",
+        "bytes": 6590323
+      },
+      "DNPB2019.dbc": {
+        "sha256": "881a6a381a8654da1ccbeb379a8926e835525d2147961878c942e659d5897dc6",
+        "bytes": 2748029
+      },
+      "DNPE2019.dbc": {
+        "sha256": "980686801076d2acd7fb9ec67b4d46b971ed48b12e45070dab3e6d2d0174c9e0",
+        "bytes": 6701467
+      },
+      "DNPI2019.dbc": {
+        "sha256": "18570e6c7e946c0d5fac65d809646fe84c59763ecf8f0445563fa70a74e03ba9",
+        "bytes": 2321429
+      },
+      "DNPR2019.dbc": {
+        "sha256": "fa4c05773771bcf0e61bb32b41ee9f1447b40a2e76c4ec1362aa445ef995c597",
+        "bytes": 7680690
+      },
+      "DNRJ2019.dbc": {
+        "sha256": "9bd1bb461038ee6818b0f229643d891e3b1675ccdbfb81ed7f640d4f15f54f38",
+        "bytes": 10131168
+      },
+      "DNRN2019.dbc": {
+        "sha256": "23a2f543c0724060f53fcd05cbda48f8e41a521b45d8ccc85afd66366ecbbeba",
+        "bytes": 2153186
+      },
+      "DNRO2019.dbc": {
+        "sha256": "5f9703b25dfceb9af248d95fb369de48a01841632976d1c191e0b63823284470",
+        "bytes": 1327854
+      },
+      "DNRR2019.dbc": {
+        "sha256": "9e1e4c55e29cc8c3cec660bf9d2cc51303eb03a67b6c227140b0299184d65371",
+        "bytes": 695769
+      },
+      "DNRS2019.dbc": {
+        "sha256": "10bcb14df033be6e8af0b7993a964ae5b151ef06a16de6a7d13ba6cb5c0c7dc7",
+        "bytes": 6703393
+      },
+      "DNSC2019.dbc": {
+        "sha256": "9a77ccf0929bb83211e944852b4d4dfbb7625ed5c7cd766f12dac113d429ecc1",
+        "bytes": 4858460
+      },
+      "DNSE2019.dbc": {
+        "sha256": "669843abcddab7e396154b0c15d1501d27824c106ec021f9fd0e97098d0a0fb2",
+        "bytes": 1559640
+      },
+      "DNSP2019.dbc": {
+        "sha256": "2e99a556c64a885e32a311f5dbd73ffb75941637ad9996b612b4077572287b80",
+        "bytes": 28609376
+      },
+      "DNTO2019.dbc": {
+        "sha256": "14abf92a9fc33440787736e1df4f9e3aad67c513372959d845f87fd6308477a6",
+        "bytes": 1214962
+      }
+    }
+  },
+  "sim_2020": {
+    "data_coleta": "2026-10-24",
+    "ok": true,
+    "linhas": 1556824,
+    "arquivos": {
+      "DOAC2020.dbc": {
+        "sha256": "bd453d87a2619f09042cf470da9799804a387d0734d988e49042fa52426d6114",
+        "bytes": 367736
+      },
+      "DOAL2020.dbc": {
+        "sha256": "4e3e7b71e23c8a9b65017d6f652489451769f0458905528de1a0f557780a503d",
+        "bytes": 1938203
+      },
+      "DOAM2020.dbc": {
+        "sha256": "e217f3177f7d14f9df27fa30a53a71075b4ff8e9187a199146700e5ec51610f4",
+        "bytes": 1994178
+      },
+      "DOAP2020.dbc": {
+        "sha256": "a17f6cd17bdcf4597e3f1933dc0e55e6a767011678c7729f7d2009f33a37cf1e",
+        "bytes": 378001
+      },
+      "DOBA2020.dbc": {
+        "sha256": "4279c66dbe23e8d4407844b02b91e689b0da4bd68dcf0af299d8eff68718e85c",
+        "bytes": 8852104
+      },
+      "DOCE2020.dbc": {
+        "sha256": "3e7710e06b222c5aff66471272e938a99043b72bd4bf438544f8383670e1b96d",
+        "bytes": 5666305
+      },
+      "DODF2020.dbc": {
+        "sha256": "f36dce169309c6d3c80f3b28b7e6347ceb7ff484d8181b6dd25d33d354119970",
+        "bytes": 1495400
+      },
+      "DOES2020.dbc": {
+        "sha256": "9042fcb96456225f109dcc40e5847c5351b5f2067b3d7b1fa270e3d478a9868d",
+        "bytes": 2400301
+      },
+      "DOGO2020.dbc": {
+        "sha256": "d1dedf622caf6ef99740bc5c7dadf98c551260391272c2096358f67e13375dab",
+        "bytes": 4525166
+      },
+      "DOMA2020.dbc": {
+        "sha256": "0c6599da41944b6b8973b26c2842a45275c7d5938741ee680d4367e1b09437ee",
+        "bytes": 3504776
+      },
+      "DOMG2020.dbc": {
+        "sha256": "8bf6ff29b9a69946e9049ec1d5edae1293af8f3cf6864bbd089cc5209d445478",
+        "bytes": 12696936
+      },
+      "DOMS2020.dbc": {
+        "sha256": "4a7ec66950d5a5ed84d2f43c66d0e15eb3861497803fc5c2b8e5d996d1afc306",
+        "bytes": 1584495
+      },
+      "DOMT2020.dbc": {
+        "sha256": "2dc7f252093e7b12315f2c80cc29d6992314c307a2e1a20fec34690fe2df699d",
+        "bytes": 2053367
+      },
+      "DOPA2020.dbc": {
+        "sha256": "da319e89a31c53ec5046e6f3152520cf1861c52893e6bf201655bccf54d80336",
+        "bytes": 4238879
+      },
+      "DOPB2020.dbc": {
+        "sha256": "b3348b066164971d6bdc661781cca56c3bff812ed63a2bc1d663bcbb94e24437",
+        "bytes": 2456377
+      },
+      "DOPE2020.dbc": {
+        "sha256": "2d7981f7960d9d69b9515e6b5d0ed52b6eba643347a7b8123d007f8b4150d765",
+        "bytes": 6435583
+      },
+      "DOPI2020.dbc": {
+        "sha256": "5d5a231f395bf1495e975319cdaa0b3af4fa8b37cd45a3f79dd098e032bf5975",
+        "bytes": 1924420
+      },
+      "DOPR2020.dbc": {
+        "sha256": "05484c71d32e9b49d6729f821cc629194f7e7a4e4b66185c9aeaa2698d06d886",
+        "bytes": 7195953
+      },
+      "DORJ2020.dbc": {
+        "sha256": "13e5b52c8e946015df3a202dde2a8eaa2d410744b168a40bf3e4a72424666b95",
+        "bytes": 13846460
+      },
+      "DORN2020.dbc": {
+        "sha256": "098024799d2bfe663d053ca62385794be35153f68cac62650dab6ea0f9f03f52",
+        "bytes": 2038604
+      },
+      "DORO2020.dbc": {
+        "sha256": "c0edce9f13e10258d1f8af667c22a1e472e3d02f695b194115fe01c1447eea9f",
+        "bytes": 870685
+      },
+      "DORR2020.dbc": {
+        "sha256": "b10221d1acfe210726de11bc8975cdcb4bb0b4411db2d383184f51f37b0c2b76",
+        "bytes": 297232
+      },
+      "DORS2020.dbc": {
+        "sha256": "7e7018414b105dd1f18b4dfc576da6875b3c5ff1dc08617ffef0dffbcbcc8fec",
+        "bytes": 7517408
+      },
+      "DOSC2020.dbc": {
+        "sha256": "bf97e271a2e1d592f777f9e4059d4c0af404af7573bbecc6086c43fec3a559a3",
+        "bytes": 3944167
+      },
+      "DOSE2020.dbc": {
+        "sha256": "2a94ca706567991872c6f8972862ae8c2df377e71adf2620df9fab19caa3f467",
+        "bytes": 1347734
+      },
+      "DOSP2020.dbc": {
+        "sha256": "efd1370948af0e2f3a54175e2bbb5ad5ba2947fd0d4b81096e1f220d69b74e0d",
+        "bytes": 28711680
+      },
+      "DOTO2020.dbc": {
+        "sha256": "85d43aacfecdfa087f8f37ca66b794123339947524aa7ee94ee5e4a10a015cd9",
+        "bytes": 821151
+      }
+    }
+  },
+  "sinasc_2020": {
+    "data_coleta": "2026-10-24",
+    "ok": true,
+    "linhas": 2730145,
+    "arquivos": {
+      "DNAC2020.dbc": {
+        "sha256": "c7a0adae6bf3a19339bb8eb746ad8972629089b4efa94e5b172ae4e159dcc62e",
+        "bytes": 723052
+      },
+      "DNAL2020.dbc": {
+        "sha256": "b53ebf7d20484dce2d654f8530169989a3bc469c33c1c9136a61d3223daa33db",
+        "bytes": 2366496
+      },
+      "DNAM2020.dbc": {
+        "sha256": "b0971be2b5faa20d4f06bad5edba96276c27ac6885fbc182837513ea4a739393",
+        "bytes": 3578615
+      },
+      "DNAP2020.dbc": {
+        "sha256": "0badb60309bf976bf3b97bb698e92e83f4af2f5388b17defafcf78b86ffd4195",
+        "bytes": 684434
+      },
+      "DNBA2020.dbc": {
+        "sha256": "ec26bc6d04f600785113deacdcea03023ef89d4de001525cfca2b4a9f56c124e",
+        "bytes": 9158512
+      },
+      "DNCE2020.dbc": {
+        "sha256": "35ca7578dbccbf505aaaff941fb96990e47141b047bbd4546cc2c3b05c018994",
+        "bytes": 5827186
+      },
+      "DNDF2020.dbc": {
+        "sha256": "c34d2f3eee1cf2b3348283aa373a08e5869b56e7b10569d05a0b77f37075ac94",
+        "bytes": 2018077
+      },
+      "DNES2020.dbc": {
+        "sha256": "a7ad4a67c8ed69da5dec11b65ebb26f0fe014fbdb057baa25eabf64e2f5a1531",
+        "bytes": 2612944
+      },
+      "DNGO2020.dbc": {
+        "sha256": "2e15bed1b1047860dc3ef8ef2889610ab4b3be659d82dec21c560cc97cc91b6b",
+        "bytes": 5119713
+      },
+      "DNMA2020.dbc": {
+        "sha256": "296e68a2057c45940533cd7c9c7db5b23ad24c81f91de5fccce7d106d7d6b664",
+        "bytes": 4926900
+      },
+      "DNMG2020.dbc": {
+        "sha256": "5029423b252d61010fdecb320a58e333117fc7beded88d31cb350922029242ac",
+        "bytes": 12263882
+      },
+      "DNMS2020.dbc": {
+        "sha256": "3b28fcde8951edd0a88c80745fb869b352bb4dadebc9406c65929f351979b328",
+        "bytes": 2111161
+      },
+      "DNMT2020.dbc": {
+        "sha256": "a60ee9fd9dc5f7939a490529662f213fa7390a857aa1961a7f32d54d75001fba",
+        "bytes": 2819042
+      },
+      "DNPA2020.dbc": {
+        "sha256": "7405d94a0e050e336da5566253e1922a4c89e07578914b67b79a94f326fc7774",
+        "bytes": 6345660
+      },
+      "DNPB2020.dbc": {
+        "sha256": "ea7ba583c0a9d71a9c62e6e39c992c5c8ab3ac25cd4bdeb9f69e01264ff37591",
+        "bytes": 2673986
+      },
+      "DNPE2020.dbc": {
+        "sha256": "70a77c70b891a7255dade1bdf7213c9efcb4a45eb3b762594ffc98335eaadd58",
+        "bytes": 6445729
+      },
+      "DNPI2020.dbc": {
+        "sha256": "d97023b5d6c2302d028c72b2a3f26f4baad1eca080e46fa449755d4ea8f104cc",
+        "bytes": 2183499
+      },
+      "DNPR2020.dbc": {
+        "sha256": "b3b23278eb5d6dd244f7a233d2ebe172178cf1b4e2238b4747189f44c7f0402f",
+        "bytes": 7353352
+      },
+      "DNRJ2020.dbc": {
+        "sha256": "8530f4fd346d7b0f7c19187859329339cfa17a67246a703e0fc475c5f89310fc",
+        "bytes": 9773190
+      },
+      "DNRN2020.dbc": {
+        "sha256": "100b507a04c0474cdbad7d66bd6d1d0acf523ef7fd34caaedcf5c8b36269b83b",
+        "bytes": 2138623
+      },
+      "DNRO2020.dbc": {
+        "sha256": "5d44087af8779c60e40f60124285e3d46b6ebd060eb4808ea1f8980900d27aa7",
+        "bytes": 1270903
+      },
+      "DNRR2020.dbc": {
+        "sha256": "760c3a174bca368d0cf1bf8250a05d684209b9d6aee58ebd757b65539cbf3f78",
+        "bytes": 659650
+      },
+      "DNRS2020.dbc": {
+        "sha256": "fa3198cedbbad419c0e7dff4acab43d944587305722720d7787de04edefa4985",
+        "bytes": 6525888
+      },
+      "DNSC2020.dbc": {
+        "sha256": "95874ee90871ae042f9d6799c8035fb1d4855a34593c64fa2016a70045228661",
+        "bytes": 4877045
+      },
+      "DNSE2020.dbc": {
+        "sha256": "a282acb19032dcf0dbd4ced94d6bacaf3d78d87927f01a92cd53353ed010ceed",
+        "bytes": 1512492
+      },
+      "DNSP2020.dbc": {
+        "sha256": "a534aca9eccdf981d907e578d09f3555e35287fc365f882ec5ddd03a76b6ca3f",
+        "bytes": 27048789
+      },
+      "DNTO2020.dbc": {
+        "sha256": "3e95a8ce226cac07e0361bad4274c97c6ab1d8fa79bfb42094f732f7b4f3d420",
+        "bytes": 1173006
+      }
+    }
+  },
+  "sim_2021": {
+    "data_coleta": "2026-10-24",
+    "ok": true,
+    "linhas": 1832649,
+    "arquivos": {
+      "DOAC2021.dbc": {
+        "sha256": "fccc5b937a9ae6d2bcf6c1137f8961aabdb89907eeef9ac258e322f5d8285426",
+        "bytes": 401605
+      },
+      "DOAL2021.dbc": {
+        "sha256": "4851db0500fa5653ba099c8e00892552d093881ba29d672f120bc6434157c2da",
+        "bytes": 1986865
+      },
+      "DOAM2021.dbc": {
+        "sha256": "10208b3a40cbce2dd0e3e3fe83d16a07de4d0021be08155cdf79fbf5fad9ebe2",
+        "bytes": 2264253
+      },
+      "DOAP2021.dbc": {
+        "sha256": "018f6a28ac98a1ef3e50da360a6ecfa60561c89010f49c32161a5ff461204757",
+        "bytes": 383429
+      },
+      "DOBA2021.dbc": {
+        "sha256": "fcd659ab78a7dbb1387abeb3ed6269e76142505f189219d9f9a9e49c3b1ca253",
+        "bytes": 9099551
+      },
+      "DOCE2021.dbc": {
+        "sha256": "38679c784d04d524cd633202a18bd4e3463d72fba939fc3ea3cd55a1618c5979",
+        "bytes": 5828296
+      },
+      "DODF2021.dbc": {
+        "sha256": "133432bbef1fd20cc1704481a35c0170af4d52c7bb6cef2744e6c1ddb7e2de4f",
+        "bytes": 1656454
+      },
+      "DOES2021.dbc": {
+        "sha256": "5c5b9a8c903f6cdaba197665bce7e19fb67e3d367b04d4c3a86ec4ae5f482821",
+        "bytes": 2631773
+      },
+      "DOGO2021.dbc": {
+        "sha256": "83d0bbcc30fc711a2efe96ffc54185367e21d3980da22b0a1c739c2720ad28ce",
+        "bytes": 5576449
+      },
+      "DOMA2021.dbc": {
+        "sha256": "0dcd34227463633da6a8d0340292df54658d651ddfde3e25a5cc1b39866e130e",
+        "bytes": 3516582
+      },
+      "DOMG2021.dbc": {
+        "sha256": "30e94704315a9ed38fac99783b6960a79faf59856ff6c369469677abda20d308",
+        "bytes": 14923308
+      },
+      "DOMS2021.dbc": {
+        "sha256": "7715011f9483337a6be7ee27169e510b4f3ed1d399a2511b0b5b66ae5b7157de",
+        "bytes": 1994204
+      },
+      "DOMT2021.dbc": {
+        "sha256": "00e52d88590f693edc110b203ed4a924c8bb99a9a11da1b2abd7cc6ae5f7d430",
+        "bytes": 2403729
+      },
+      "DOPA2021.dbc": {
+        "sha256": "1f9cf9d7fa5877bcc325c35108be5d0e19fad1547912b2b10264e54c58ddd7f5",
+        "bytes": 4221926
+      },
+      "DOPB2021.dbc": {
+        "sha256": "b70a9f91a46628c4b506640dadd4c678dfdeda6f5008451dd1031ad52343a1ca",
+        "bytes": 2582679
+      },
+      "DOPE2021.dbc": {
+        "sha256": "91bce32783958db287b36b5c6fbf9b9483d73eac88752dd04de9016effbc8be6",
+        "bytes": 6600054
+      },
+      "DOPI2021.dbc": {
+        "sha256": "a6a0b9a664af63d6be83e60084e03d3d3aef1d6f40c3f86681dd702c479a42a6",
+        "bytes": 2063567
+      },
+      "DOPR2021.dbc": {
+        "sha256": "c4509be9dfd337aad9089430d22d00ff1d66bfba546daded35d413497af544dc",
+        "bytes": 9286331
+      },
+      "DORJ2021.dbc": {
+        "sha256": "1dea8b9aa1853e9ed22ec19590ac8af790e7298cb404ae001f0902c34abba768",
+        "bytes": 14952529
+      },
+      "DORN2021.dbc": {
+        "sha256": "dc6e58beb38af16fb23c181b6777f614f2200466d71bff935cfc2bd4135170c4",
+        "bytes": 2119418
+      },
+      "DORO2021.dbc": {
+        "sha256": "426a930b96187aa62524ab17d56b847306887aabbb847081a60a4a85a4459ed7",
+        "bytes": 1112051
+      },
+      "DORR2021.dbc": {
+        "sha256": "600b8af449468fec082e4e7ab6e852abae188cac73743c64dd470d122a41213a",
+        "bytes": 355267
+      },
+      "DORS2021.dbc": {
+        "sha256": "ff30f3c99045276feb88b10c2efdf77f54f70e085297c73a0c32cc97174e207a",
+        "bytes": 8941031
+      },
+      "DOSC2021.dbc": {
+        "sha256": "4a0575b2d336a5223d5fdc7d44c6a1a447d7c050cca86ed92b68aca4d7695093",
+        "bytes": 4838791
+      },
+      "DOSE2021.dbc": {
+        "sha256": "6edaaabc70f96682036d52e5a4788d8ff3c47ed448943d8b4790cac2edc3d997",
+        "bytes": 1408404
+      },
+      "DOSP2021.dbc": {
+        "sha256": "93ce405bddec508c432bc06a0f32b2f50de4ac4201bdd75aa3434ddd22782f51",
+        "bytes": 34255626
+      },
+      "DOTO2021.dbc": {
+        "sha256": "43a4b9782adeba463337379bd5dcce346605bda928e1cc3277a9199688ce9517",
+        "bytes": 1007775
+      }
+    }
+  },
+  "sinasc_2021": {
+    "data_coleta": "2026-10-24",
+    "ok": true,
+    "linhas": 2677101,
+    "arquivos": {
+      "DNAC2021.dbc": {
+        "sha256": "08c2bfe41768109e83558ada20881a4247d11c2c11c47354818013821357aac2",
+        "bytes": 739297
+      },
+      "DNAL2021.dbc": {
+        "sha256": "695b1fe7fdc5ff0c44d0fc3b2cba9e8e945e0084534e6f56aaf8efc193b8c42c",
+        "bytes": 2384458
+      },
+      "DNAM2021.dbc": {
+        "sha256": "91ffd05215dca2aa1418d548887c947f269b5503e57ed41920a2b544280cbedf",
+        "bytes": 3705733
+      },
+      "DNAP2021.dbc": {
+        "sha256": "bfcc4dfbfeb03b7daab6184096b1d548478d65eb08525a502a008b2101f1defb",
+        "bytes": 711100
+      },
+      "DNBA2021.dbc": {
+        "sha256": "d78c386b73c85d7a0e79acc87e4b8d2a47b365b342d2f7b0028a27975508d980",
+        "bytes": 8884910
+      },
+      "DNCE2021.dbc": {
+        "sha256": "5cf64a95b406ff8e85e82f2e27f34a526d77412016de085ca20c1f73ad2ec7bc",
+        "bytes": 5720901
+      },
+      "DNDF2021.dbc": {
+        "sha256": "ac5ec5cf8b22e2f312c68ae1089c44637205e4027ebf951a0d8a170ad786cdb9",
+        "bytes": 1944717
+      },
+      "DNES2021.dbc": {
+        "sha256": "3af7d15e2123122348c78537ec6a6ea4cfc2d11462a8153fc5a57b45a9fd6005",
+        "bytes": 2547705
+      },
+      "DNGO2021.dbc": {
+        "sha256": "d1e5ea9ade7ff940460dbc99cb5d8a4ab2792cfb38705d56f6f09e7e780497a8",
+        "bytes": 5010029
+      },
+      "DNMA2021.dbc": {
+        "sha256": "0beefa3678d94c820df2c307d604097d2c3e733f250189e720f6dfb654d8f78a",
+        "bytes": 5049185
+      },
+      "DNMG2021.dbc": {
+        "sha256": "12830cf592cea2f89a600b41b64006023c512a36d542b77ca901a19cca754db6",
+        "bytes": 12040074
+      },
+      "DNMS2021.dbc": {
+        "sha256": "b19cd152d08c25bf7610734978e6d2e6c698e68bb150dba45442a94a37e59667",
+        "bytes": 2162293
+      },
+      "DNMT2021.dbc": {
+        "sha256": "6b492b79fe6b8bc670a757246ef69c918203aba537f2a798f9a8af2ba0f93299",
+        "bytes": 2865816
+      },
+      "DNPA2021.dbc": {
+        "sha256": "cf78aa7c9dfa8ff5f2a9a5bd664dbbbff731a1896f28fc962be1acafdaa0522f",
+        "bytes": 6536086
+      },
+      "DNPB2021.dbc": {
+        "sha256": "225795a69d3f221d380be61fd2f25ff9660e91de05494192ca34d04f9ea45435",
+        "bytes": 2650332
+      },
+      "DNPE2021.dbc": {
+        "sha256": "7c9e782e2616a4618a78794cedeefbd60469cee0ed9905ffbeee760763377d59",
+        "bytes": 6331295
+      },
+      "DNPI2021.dbc": {
+        "sha256": "60471abad812aa89cc365c68977d938fb55ff23ca99ba9f53b3082f44276ee99",
+        "bytes": 2218541
+      },
+      "DNPR2021.dbc": {
+        "sha256": "7ad549d46b6842d579d9380bd82e162f6d2074ec95c788dac10424a849c4a448",
+        "bytes": 7116364
+      },
+      "DNRJ2021.dbc": {
+        "sha256": "2ec1c3457363c561fa9f680bb6e25d3126da62c6dc227eb4ee4ec3ffb37446ed",
+        "bytes": 9333732
+      },
+      "DNRN2021.dbc": {
+        "sha256": "898c53dac8bc453b12530e70dc4bd0db5ec555a2faf776c283a98a79306f0a1d",
+        "bytes": 2134865
+      },
+      "DNRO2021.dbc": {
+        "sha256": "0e195fcd052abc5d444cf7bddd5764dcd0633e5ff4c853bbf96ce3ea2e7744a0",
+        "bytes": 1258609
+      },
+      "DNRR2021.dbc": {
+        "sha256": "1067955287fd08a5e14af64624b63a33f4154af84becafac23a89b740823e7ad",
+        "bytes": 670493
+      },
+      "DNRS2021.dbc": {
+        "sha256": "6eff8462df09ad9ece5e4dad13607538d6d708e7c6119326e63cf66072c08bce",
+        "bytes": 6203343
+      },
+      "DNSC2021.dbc": {
+        "sha256": "100bcee7494594e10a300c52ace6635e4dd08122ff3c1ef30159e4d8dafeae5e",
+        "bytes": 4789562
+      },
+      "DNSE2021.dbc": {
+        "sha256": "59a20c0c7418256b9477fea5a1e039835ead161e494a861ceccdd7f3e0734c68",
+        "bytes": 1481899
+      },
+      "DNSP2021.dbc": {
+        "sha256": "13fbccce112f24b94b03ad5bcce576826acd83e718e7bf887329517ca9f5fa62",
+        "bytes": 25696926
+      },
+      "DNTO2021.dbc": {
+        "sha256": "6d2a98c575dff0142e53ba8f8f52b6cb5cec2421c6251f8c8a1b8f4c360a8442",
+        "bytes": 1181549
+      }
+    }
+  },
+  "sim_2023": {
+    "data_coleta": "2026-10-24",
+    "ok": true,
+    "linhas": 1465610,
+    "arquivos": {
+      "DOAC2023.dbc": {
+        "sha256": "9cd3410cf12490d24acd9adaa6667bfd94fb2216f0b63801c9a7d438f75ef40a",
+        "bytes": 356443
+      },
+      "DOAL2023.dbc": {
+        "sha256": "47f66941128d0a8044fc24ccfa77bc64f4dfcd3f7d60f657d6f0bbfe5b0b00d9",
+        "bytes": 1869612
+      },
+      "DOAM2023.dbc": {
+        "sha256": "7b40bbf806440da7d272cc9a5a9bf7249d76bbed2e9a6b1543190c4fd499954a",
+        "bytes": 1720075
+      },
+      "DOAP2023.dbc": {
+        "sha256": "4c4971dbb5d824b02289cdba7770a9df7a534964df6d96a8573c76cf614c659a",
+        "bytes": 328976
+      },
+      "DOBA2023.dbc": {
+        "sha256": "8d5df8bd7813d61ef6fc38bec700a763598f437b57f064246e7460c4641e7286",
+        "bytes": 8746195
+      },
+      "DOCE2023.dbc": {
+        "sha256": "46de0e893c9131ba00d085eb28763704e36b5e5a3146a31aa0d501a689d2e411",
+        "bytes": 5153239
+      },
+      "DODF2023.dbc": {
+        "sha256": "0756e0cdd95c573f4683d7efbfc30ef18b68e0efa8b483721f6e0ff8d05d22f3",
+        "bytes": 1238797
+      },
+      "DOES2023.dbc": {
+        "sha256": "bfc52857f2efc3e2d8aec46248fce6c9ea58ccf8fa85aad8d117bc5a31d49acd",
+        "bytes": 2373068
+      },
+      "DOGO2023.dbc": {
+        "sha256": "79dde91da58c0e280f04d84d33417270d9dda911542e64a8e1dd249c9930090e",
+        "bytes": 4178667
+      },
+      "DOMA2023.dbc": {
+        "sha256": "1150385e8d0897f24f1657791168a9386c709f4de4883ce36c2b23d794652000",
+        "bytes": 3308845
+      },
+      "DOMG2023.dbc": {
+        "sha256": "fb4c338c2b782054de30eb3989e5be2746db91dbd4ca4849fe4b8749f41aab89",
+        "bytes": 13059607
+      },
+      "DOMS2023.dbc": {
+        "sha256": "a4d98e948408988914be4fbdf70f6891494e13525d29685d60a8eaa68d4bb09a",
+        "bytes": 1642561
+      },
+      "DOMT2023.dbc": {
+        "sha256": "31bcd4fd9355b851bcf31afb31b21c3b48921d58adc28324c4761e2ef0f95e62",
+        "bytes": 2003853
+      },
+      "DOPA2023.dbc": {
+        "sha256": "96af0c3be4dce9586069442b9d63bc4c1a69d6718241c2253b483bb96cca0a1e",
+        "bytes": 3751208
+      },
+      "DOPB2023.dbc": {
+        "sha256": "73a0ad67a764ccfbd8155f58f5d190b9ee56f3b07a672493425e0fe383862545",
+        "bytes": 2400665
+      },
+      "DOPE2023.dbc": {
+        "sha256": "d5b5600d544cd82a7dfb13663b21c68ccfc004680d50c8dec72a26f97d219451",
+        "bytes": 5779997
+      },
+      "DOPI2023.dbc": {
+        "sha256": "410d966af8e339313e08cbfdb5a7713226ad255bdce35b1a735dc219444d197d",
+        "bytes": 1933690
+      },
+      "DOPR2023.dbc": {
+        "sha256": "c2332170cec3ebba6acab9f918f962433c1369354f76eacafbbdc0adeacf36c1",
+        "bytes": 7368805
+      },
+      "DORJ2023.dbc": {
+        "sha256": "c988dd824c5c1be7cb7d6266fb828c289a4806b069feaed1c84133069fa20d07",
+        "bytes": 11382859
+      },
+      "DORN2023.dbc": {
+        "sha256": "a744a9e73f6cbda359ff9f429cd8292ea1ca19f5f03800cdf36cd21598bb0906",
+        "bytes": 1916710
+      },
+      "DORO2023.dbc": {
+        "sha256": "87b36fa745305589d15b47857202ff9422bc35ec089ded4591e10a21e39fccc1",
+        "bytes": 878235
+      },
+      "DORR2023.dbc": {
+        "sha256": "15b5203507161b7c35f9c69a52c955bdac133629549099b85a88e03a9a45baf0",
+        "bytes": 288798
+      },
+      "DORS2023.dbc": {
+        "sha256": "3dae23288087e5fa2c17e0370311ad9cb8132b89efff1a5f36cd9b6e7801b150",
+        "bytes": 7756155
+      },
+      "DOSC2023.dbc": {
+        "sha256": "1be70f99d8f8ec656b35ab4ddeac65a0b588806fe47db6c07e398b79d0a989fa",
+        "bytes": 4214177
+      },
+      "DOSE2023.dbc": {
+        "sha256": "97f198889b3d0143e2bd819f3dcb112a9ea62d0fb5586dd4a77c812527ffe157",
+        "bytes": 1227638
+      },
+      "DOSP2023.dbc": {
+        "sha256": "7743903b55efa96c3da9457fdfd300e2081051a3dc01afe0685544d51cf823e2",
+        "bytes": 27790415
+      },
+      "DOTO2023.dbc": {
+        "sha256": "242ccc486d8e831348747d9f19635afdea9a47f2b7b8189bcf8fc2362627409a",
+        "bytes": 817587
+      }
+    }
+  },
+  "sinasc_2023": {
+    "data_coleta": "2026-10-24",
+    "ok": true,
+    "linhas": 2537576,
+    "arquivos": {
+      "DNAC2023.dbc": {
+        "sha256": "51a81b22b3c7d9da506481a93ec1353b4597bdc3f2e076a6b493f59bb8fd720b",
+        "bytes": 691137
+      },
+      "DNAL2023.dbc": {
+        "sha256": "0b930b7edce7755e41ab4ba26f07c32812f7f01b76479b6f325c50ee096c10d3",
+        "bytes": 2287097
+      },
+      "DNAM2023.dbc": {
+        "sha256": "5edb739e22a206b07074f2ab5e686da494b75bf554228a2af25c624db79841c8",
+        "bytes": 3339551
+      },
+      "DNAP2023.dbc": {
+        "sha256": "f937bd20df28eb73e6994637098fd024fff131e8b27dab9b167df079dc540263",
+        "bytes": 622119
+      },
+      "DNBA2023.dbc": {
+        "sha256": "0bde1450850b72d9612402cbc74cfd61e02e711cefc4b397fbf422fe2900b15b",
+        "bytes": 8326718
+      },
+      "DNCE2023.dbc": {
+        "sha256": "e8b3f2801ba9a5179e515db72b7653977d07818bb2757729bc04be5d71e54d3c",
+        "bytes": 5341806
+      },
+      "DNDF2023.dbc": {
+        "sha256": "0d91f96ca46d8ff0f21aee550dcbc71c9e8a34652ebe75c0eee8d4d84c913a75",
+        "bytes": 1821233
+      },
+      "DNES2023.dbc": {
+        "sha256": "ea9891b779f65e4fb749ffe6a020fba9ad22aaa383777e931fe13385ac92bdc7",
+        "bytes": 2517700
+      },
+      "DNGO2023.dbc": {
+        "sha256": "f2df15fe3ca2df9dfeddc7f27cfee823f586807f66f32ecd55416f76845bbf66",
+        "bytes": 5002669
+      },
+      "DNMA2023.dbc": {
+        "sha256": "81495e4ffe209d4cfe6e4a3f1e63d6c7d267a4079ed1fb1f0d9e8a15458fe920",
+        "bytes": 4672581
+      },
+      "DNMG2023.dbc": {
+        "sha256": "e5734375a60a35b91c607fff4894f0febbf4ed527b462e9a174c92913676296c",
+        "bytes": 11644910
+      },
+      "DNMS2023.dbc": {
+        "sha256": "6bf6a14b2369b535ec6e164eba8184dfbf4cb89e64575f30580560cd889f3dc1",
+        "bytes": 2070161
+      },
+      "DNMT2023.dbc": {
+        "sha256": "c8ebdea2518c7a5c7dffbbffaeff7578c9a0ce93b30e1b54b34f6dd10833f941",
+        "bytes": 2909928
+      },
+      "DNPA2023.dbc": {
+        "sha256": "9172ce0753da33ab77c0a42635fe02e43e67f6472caaded669f4ed93ce7ec6ff",
+        "bytes": 6052477
+      },
+      "DNPB2023.dbc": {
+        "sha256": "6740a3e93d6f44c084f5dd643272ac3f17b26678b7c3434f9317c951134e6623",
+        "bytes": 2461616
+      },
+      "DNPE2023.dbc": {
+        "sha256": "ec0915c38460490f7f568acc3564c3e38a9a0e347e46f173634b7d0956547817",
+        "bytes": 5810363
+      },
+      "DNPI2023.dbc": {
+        "sha256": "1b068be76356daa52aa77155ae21d21b9985d58dd9a22d116ae89fbf1542efa2",
+        "bytes": 2031934
+      },
+      "DNPR2023.dbc": {
+        "sha256": "637c1318a8d24ac6766174b0333aff0e2ed7b3349994fa8029128dadd876a687",
+        "bytes": 7012576
+      },
+      "DNRJ2023.dbc": {
+        "sha256": "8166af21f83cbd30a610f32bae208184e0bf1fa59fe204d2d427ef6d3b92f3fb",
+        "bytes": 8740093
+      },
+      "DNRN2023.dbc": {
+        "sha256": "2e48398343da0e79ffd7f6ea9c6de6edb5ce0e3aa87f05bd752beb7fdd280f73",
+        "bytes": 1927831
+      },
+      "DNRO2023.dbc": {
+        "sha256": "61e9cf636032ffe78f9d34086ee614cba18712e4210e43c6a859b95d7b77373d",
+        "bytes": 1188753
+      },
+      "DNRR2023.dbc": {
+        "sha256": "3b9c5cb07b3981e735bea9bc9c7967906af13047b202cc85550b92c885e82a3c",
+        "bytes": 627526
+      },
+      "DNRS2023.dbc": {
+        "sha256": "cd90645b1fc4e2fb55c5aea91dc18d65edff1d1ed937af8ba27530982b410b9d",
+        "bytes": 6049828
+      },
+      "DNSC2023.dbc": {
+        "sha256": "001bc03c1c26653f615e1661d00db9e1fdfc3e92b0984f61bb8a11a99db91959",
+        "bytes": 4845780
+      },
+      "DNSE2023.dbc": {
+        "sha256": "a9dbdf9c9d7f1273c67bc10afeada8478054183c11b9fc0819d9fbc47323b842",
+        "bytes": 1404355
+      },
+      "DNSP2023.dbc": {
+        "sha256": "99db1eef810115189eb76fbabe8bafd4825c94c0a7b959f464367a1e69b4aeda",
+        "bytes": 24768225
+      },
+      "DNTO2023.dbc": {
+        "sha256": "89f150c67d5ce9e13fe1d2ff2b9f98e2e2cbffa8f6170f043d208764bcba4c1c",
+        "bytes": 1162468
+      }
+    }
+  }
+}

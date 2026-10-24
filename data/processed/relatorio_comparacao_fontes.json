@@ -1,0 +1,204 @@
+{
+  "ano_referencia": 2022,
+  "sim_sinasc_vs_ibge_cartorio": {
+    "brasil_obitos_sim": 32238,
+    "brasil_obitos_cartorio_ibge": 26987,
+    "brasil_diferenca_obitos": 5251,
+    "brasil_nascidos_sinasc": 2561858,
+    "brasil_nascidos_cartorio_ibge": 2601316,
+    "brasil_tmi_sim_sinasc": 12.58,
+    "brasil_tmi_cartorio_ibge": 10.37,
+    "ufs_maior_subregistro_cartorario": [
+      {
+        "uf": "MT",
+        "obitos_sim": 819,
+        "obitos_cartorio_ibge": 312,
+        "diferenca_obitos_sim_menos_ibge": 507,
+        "razao_cartorio_sobre_sim": 0.381,
+        "tmi_sim_sinasc": 14.08,
+        "tmi_cartorio_ibge": 5.29
+      },
+      {
+        "uf": "MA",
+        "obitos_sim": 1500,
+        "obitos_cartorio_ibge": 707,
+        "diferenca_obitos_sim_menos_ibge": 793,
+        "razao_cartorio_sobre_sim": 0.471,
+        "tmi_sim_sinasc": 15.31,
+        "tmi_cartorio_ibge": 7.01
+      },
+      {
+        "uf": "PA",
+        "obitos_sim": 1876,
+        "obitos_cartorio_ibge": 982,
+        "diferenca_obitos_sim_menos_ibge": 894,
+        "razao_cartorio_sobre_sim": 0.523,
+        "tmi_sim_sinasc": 14.66,
+        "tmi_cartorio_ibge": 7.27
+      },
+      {
+        "uf": "AP",
+        "obitos_sim": 246,
+        "obitos_cartorio_ibge": 137,
+        "diferenca_obitos_sim_menos_ibge": 109,
+        "razao_cartorio_sobre_sim": 0.557,
+        "tmi_sim_sinasc": 18.07,
+        "tmi_cartorio_ibge": 9.16
+      },
+      {
+        "uf": "RR",
+        "obitos_sim": 246,
+        "obitos_cartorio_ibge": 138,
+        "diferenca_obitos_sim_menos_ibge": 108,
+        "razao_cartorio_sobre_sim": 0.561,
+        "tmi_sim_sinasc": 18.79,
+        "tmi_cartorio_ibge": 10.57
+      },
+      {
+        "uf": "PI",
+        "obitos_sim": 666,
+        "obitos_cartorio_ibge": 423,
+        "diferenca_obitos_sim_menos_ibge": 243,
+        "razao_cartorio_sobre_sim": 0.635,
+        "tmi_sim_sinasc": 15.77,
+        "tmi_cartorio_ibge": 9.71
+      },
+      {
+        "uf": "AM",
+        "obitos_sim": 1137,
+        "obitos_cartorio_ibge": 819,
+        "diferenca_obitos_sim_menos_ibge": 318,
+        "razao_cartorio_sobre_sim": 0.72,
+        "tmi_sim_sinasc": 15.68,
+        "tmi_cartorio_ibge": 10.38
+      },
+      {
+        "uf": "CE",
+        "obitos_sim": 1317,
+        "obitos_cartorio_ibge": 1017,
+        "diferenca_obitos_sim_menos_ibge": 300,
+        "razao_cartorio_sobre_sim": 0.772,
+        "tmi_sim_sinasc": 11.73,
+        "tmi_cartorio_ibge": 8.84
+      },
+      {
+        "uf": "SE",
+        "obitos_sim": 502,
+        "obitos_cartorio_ibge": 391,
+        "diferenca_obitos_sim_menos_ibge": 111,
+        "razao_cartorio_sobre_sim": 0.779,
+        "tmi_sim_sinasc": 17.6,
+        "tmi_cartorio_ibge": 13.56
+      },
+      {
+        "uf": "PE",
+        "obitos_sim": 1558,
+        "obitos_cartorio_ibge": 1244,
+        "diferenca_obitos_sim_menos_ibge": 314,
+        "razao_cartorio_sobre_sim": 0.798,
+        "tmi_sim_sinasc": 13.27,
+        "tmi_cartorio_ibge": 10.37
+      }
+    ],
+    "municipios_100k_maior_divergencia": [
+      {
+        "ibge7": "2111300",
+        "nome_municipio": "São Luís",
+        "uf_sigla": "MA",
+        "obitos_infantis": 240,
+        "ibge_obitos_2022": 130,
+        "tmi_sim": 17.53,
+        "tmi_ibge": 9.3
+      },
+      {
+        "ibge7": "5103403",
+        "nome_municipio": "Cuiabá",
+        "uf_sigla": "MT",
+        "obitos_infantis": 130,
+        "ibge_obitos_2022": 47,
+        "tmi_sim": 13.63,
+        "tmi_ibge": 4.9
+      },
+      {
+        "ibge7": "2304400",
+        "nome_municipio": "Fortaleza",
+        "uf_sigla": "CE",
+        "obitos_infantis": 348,
+        "ibge_obitos_2022": 276,
+        "tmi_sim": 11.73,
+        "tmi_ibge": 9.12
+      },
+      {
+        "ibge7": "1501402",
+        "nome_municipio": "Belém",
+        "uf_sigla": "PA",
+        "obitos_infantis": 235,
+        "ibge_obitos_2022": 170,
+        "tmi_sim": 14.81,
+        "tmi_ibge": 10.71
+      },
+      {
+        "ibge7": "1600303",
+        "nome_municipio": "Macapá",
+        "uf_sigla": "AP",
+        "obitos_infantis": 150,
+        "ibge_obitos_2022": 91,
+        "tmi_sim": 18.84,
+        "tmi_ibge": 10.79
+      },
+      {
+        "ibge7": "2211001",
+        "nome_municipio": "Teresina",
+        "uf_sigla": "PI",
+        "obitos_infantis": 179,
+        "ibge_obitos_2022": 123,
+        "tmi_sim": 15.48,
+        "tmi_ibge": 10.62
+      },
+      {
+        "ibge7": "1504208",
+        "nome_municipio": "Marabá",
+        "uf_sigla": "PA",
+        "obitos_infantis": 62,
+        "ibge_obitos_2022": 7,
+        "tmi_sim": 14.75,
+        "tmi_ibge": 1.53
+      },
+      {
+        "ibge7": "1500800",
+        "nome_municipio": "Ananindeua",
+        "uf_sigla": "PA",
+        "obitos_infantis": 91,
+        "ibge_obitos_2022": 39,
+        "tmi_sim": 14.49,
+        "tmi_ibge": 6.34
+      },
+      {
+        "ibge7": "5108402",
+        "nome_municipio": "Várzea Grande",
+        "uf_sigla": "MT",
+        "obitos_infantis": 71,
+        "ibge_obitos_2022": 21,
+        "tmi_sim": 15.55,
+        "tmi_ibge": 4.74
+      },
+      {
+        "ibge7": "1506807",
+        "nome_municipio": "Santarém",
+        "uf_sigla": "PA",
+        "obitos_infantis": 106,
+        "ibge_obitos_2022": 66,
+        "tmi_sim": 16.29,
+        "tmi_ibge": 9.64
+      }
+    ]
+  },
+  "sinasc_primario_vs_ieps_prenatal_2022": {
+    "n_municipios_comparados": 5570,
+    "correlacao_pearson_com_denom_total_nv": 1.0,
+    "correlacao_pearson_com_denom_validos": 0.99253,
+    "erro_absoluto_medio_pp_denom_total_nv": 0.0,
+    "erro_absoluto_medio_pp_denom_validos": 0.303,
+    "nota": "O SINASC primário permite distinguir explicitamente consultas ignoradas (código 9) no denominador."
+  }
+}
