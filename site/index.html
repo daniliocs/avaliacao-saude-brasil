@@ -251,6 +251,36 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   
+  <!-- Detecção de Abertura Direta via file:// (Aviso de CORS) -->
+  <script>
+    if (window.location.protocol === "file:") {
+      document.addEventListener("DOMContentLoaded", function() {
+        var loader = document.getElementById("map-loading");
+        if (loader) {
+          loader.innerHTML = `
+            <div style="background:#ffffff; border:2px solid #ef4444; border-radius:10px; padding:1.5rem; max-width:540px; box-shadow:0 12px 24px rgba(0,0,0,0.18); text-align:left; color:#1e293b;">
+              <div style="font-size:1.15rem; font-weight:800; color:#b91c1c; margin-bottom:0.6rem; display:flex; align-items:center; gap:0.5rem;">
+                <span style="font-size:1.4rem;">⚠️</span> Execução Local via Arquivo (file://)
+              </div>
+              <p style="font-size:0.875rem; color:#334155; line-height:1.55; margin-bottom:0.85rem;">
+                Navegadores modernos (Chrome, Edge, Firefox) bloqueiam módulos JavaScript e arquivos de dados JSON locais quando abertos diretamente com dois cliques por razões de segurança (<strong>política de CORS</strong>).
+              </p>
+              <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:0.85rem; border-radius:8px; font-size:0.825rem; line-height:1.6;">
+                <strong>Como visualizar corretamente:</strong><br>
+                1. Dê dois cliques no arquivo <strong><code>iniciar_site.bat</code></strong> na pasta do projeto.<br>
+                <em>OU</em><br>
+                2. No terminal (PowerShell / CMD), execute:<br>
+                <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-weight:700; color:#0369a1;">python -m http.server 8000</code><br>
+                e acesse: <a href="http://localhost:8000/site/index.html" style="color:#0284c7; font-weight:700; text-decoration:underline;">http://localhost:8000/site/index.html</a>
+              </div>
+            </div>
+          `;
+          loader.style.background = "rgba(15, 23, 42, 0.55)";
+        }
+      });
+    }
+  </script>
+
   <!-- Script Principal da Aplicação com Cache-Buster -->
   <script type="module" src="assets/js/app.js?v=0.5.4"></script>
 </body>

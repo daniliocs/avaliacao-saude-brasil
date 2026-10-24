@@ -8,7 +8,7 @@
  * - D4 (Contexto) e Camada Privada exibidos em blocos separados fora da nota (DEC-001).
  */
 
-import { renderAuditBadge } from "./audit_badge.js?v=0.5.0";
+import { renderAuditBadge } from "./audit_badge.js?v=0.5.4";
 
 let metaConfigCache = null;
 
