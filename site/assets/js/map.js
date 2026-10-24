@@ -834,7 +834,7 @@ function renderRankingsContent(selectedUf = "") {
     const activeLabel = dimLabelMap[activeRankDim] || "Nota Geral Consolidada";
     const allMun = Object.values(mapaResumoData);
 
-    const renderMunicipalityList = (items) => {
+    const renderMunicipalityList = (items, isPiores = false) => {
         if (!items || items.length === 0) {
             return "<p style='color:var(--color-text-subtle);'>Nenhum município listado.</p>";
         }
@@ -847,10 +847,16 @@ function renderRankingsContent(selectedUf = "") {
                     const score = typeof m[activeRankDim] === "number" ? m[activeRankDim] : (typeof m.escore === "number" ? m.escore : m.nota_geral);
                     const scoreFmt = typeof score === "number" ? score.toFixed(1) : "—";
 
+                    const posDisplay = isPiores
+                        ? (activeRankDim === "nota_geral" && m.posicao_nacional
+                            ? `<span style="font-weight:700; color:#dc2626; margin-right:4px;">#${m.posicao_nacional}º</span><span style="font-size:0.72rem; color:#dc2626; font-weight:600; margin-right:4px;">(${idx + 1}º menor)</span>`
+                            : `<span style="font-weight:700; color:#dc2626; margin-right:4px;">#${idx + 1}º menor</span>`)
+                        : `<span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${idx + 1}</span>`;
+
                     return `
                         <div class="ranking-row-item" data-ibge="${m.ibge7}" style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0.65rem; border:1px solid var(--color-border); border-radius:6px; background:var(--color-surface); cursor:pointer;">
                             <div>
-                                <span style="font-weight:700; color:var(--color-primary-dark); margin-right:4px;">#${idx + 1}</span>
+                                ${posDisplay}
                                 <strong>${m.nome} (${m.uf})</strong>
                                 ${m.eh_capital ? `<span class="badge badge--quality-high" style="margin-left:4px;">Capital</span>` : ""}
                                 <div style="font-size:0.75rem; color:var(--color-text-subtle); margin-top:1px;">
@@ -870,7 +876,7 @@ function renderRankingsContent(selectedUf = "") {
         `;
     };
 
-    // ESCOPO 1: TOP 100 BRASIL
+    // ESCOPO 1: TOP 100 BRASIL (MELHORES NOTAS)
     if (activeRankScope === "brasil") {
         let brasilTop100 = [];
         if (activeRankDim === "nota_geral" && rankingsData.top100_brasil_melhores) {
@@ -885,9 +891,30 @@ function renderRankingsContent(selectedUf = "") {
         container.innerHTML = `
             <div>
                 <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:0.65rem; color:#1e293b;">
-                    🇧🇷 Top 100 Municípios do Brasil — ${activeLabel}
+                    🇧🇷 Top 100 Municípios do Brasil (Melhores Notas) — ${activeLabel}
                 </h4>
-                ${renderMunicipalityList(brasilTop100)}
+                ${renderMunicipalityList(brasilTop100, false)}
+            </div>
+        `;
+    }
+    // ESCOPO 1B: 100 PIORES MUNICÍPIOS DO BRASIL (MENORES NOTAS)
+    else if (activeRankScope === "brasil_piores") {
+        let pioresTop100 = [];
+        if (activeRankDim === "nota_geral" && rankingsData.top100_brasil_piores) {
+            pioresTop100 = rankingsData.top100_brasil_piores;
+        } else {
+            pioresTop100 = allMun
+                .filter(m => typeof m[activeRankDim] === "number")
+                .sort((a, b) => (a[activeRankDim] - b[activeRankDim]) || ((b.populacao || 0) - (a.populacao || 0)))
+                .slice(0, 100);
+        }
+
+        container.innerHTML = `
+            <div>
+                <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:0.65rem; color:#dc2626;">
+                    ⚠️ 100 Municípios com Menores Notas do Brasil — ${activeLabel}
+                </h4>
+                ${renderMunicipalityList(pioresTop100, true)}
             </div>
         `;
     }

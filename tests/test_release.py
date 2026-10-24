@@ -167,6 +167,7 @@ def test_rankings_top100_estados_e_capitais():
     with open(RANK, encoding="utf-8") as f:
         r = json.load(f)
     assert len(r.get("top100_brasil_melhores", [])) == 100
+    assert len(r.get("top100_brasil_piores", [])) == 100
     assert len(r.get("ranking_estados", [])) == 27
     assert len(r.get("ranking_capitais", [])) == 27
     for est in r["ranking_estados"]:

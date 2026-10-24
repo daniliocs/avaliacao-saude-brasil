@@ -494,7 +494,7 @@ function renderEstadosComparison() {
                     <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0.4rem; margin-top:0.75rem; background:var(--color-bg); padding:0.5rem; border-radius:6px; text-align:center; font-size:0.75rem;">
                         <div><span style="color:var(--color-text-subtle); display:block;">Posição entre UFs</span><strong>#${estA.posicao_uf}º de 27</strong></div>
                         <div><span style="color:var(--color-text-subtle); display:block;">Média Ponderada Pop.</span><strong>${fmtNum(estA.media_ponderada_uf, 1)} pts</strong></div>
-                        <div><span style="color:var(--color-text-subtle); display:block;">Mediana TMI</span><strong>${fmtNum(estA.mediana_tmi_uf, 2)}‰</strong></div>
+                        <div title="Mediana da Taxa de Mortalidade Infantil (óbitos de menores de 1 ano por 1.000 nascidos vivos) entre todos os municípios do estado"><span style="color:var(--color-text-subtle); display:block; cursor:help;">Mediana TMI ⓘ</span><strong>${fmtNum(estA.mediana_tmi_uf, 2)}‰</strong></div>
                     </div>
                 </div>
 
@@ -513,7 +513,7 @@ function renderEstadosComparison() {
                     <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0.4rem; margin-top:0.75rem; background:var(--color-bg); padding:0.5rem; border-radius:6px; text-align:center; font-size:0.75rem;">
                         <div><span style="color:var(--color-text-subtle); display:block;">Posição entre UFs</span><strong>#${estB.posicao_uf}º de 27</strong></div>
                         <div><span style="color:var(--color-text-subtle); display:block;">Média Ponderada Pop.</span><strong>${fmtNum(estB.media_ponderada_uf, 1)} pts</strong></div>
-                        <div><span style="color:var(--color-text-subtle); display:block;">Mediana TMI</span><strong>${fmtNum(estB.mediana_tmi_uf, 2)}‰</strong></div>
+                        <div title="Mediana da Taxa de Mortalidade Infantil (óbitos de menores de 1 ano por 1.000 nascidos vivos) entre todos os municípios do estado"><span style="color:var(--color-text-subtle); display:block; cursor:help;">Mediana TMI ⓘ</span><strong>${fmtNum(estB.mediana_tmi_uf, 2)}‰</strong></div>
                     </div>
                 </div>
             </div>
