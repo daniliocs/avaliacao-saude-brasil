@@ -9,8 +9,8 @@
  * - Modal de Rankings com 4 escopos separados: Top 100 Brasil, Por Estado (isolado), 27 Estados e 27 Capitais
  */
 
-import { openDrawer } from "./drawer_municipio.js?v=0.5.0";
-import { updateCompareData } from "./compare_view.js?v=0.5.0";
+import { openDrawer } from "./drawer_municipio.js?v=0.5.2";
+import { updateCompareData } from "./compare_view.js?v=0.5.2";
 
 let leafletMap = null;
 let canvasRenderer = null;
@@ -19,7 +19,7 @@ let mapaResumoData = {};
 let rankingsData = {};
 let activeLayerKey = "nota_geral"; // 'nota_geral' | 'd1_nota' | 'd2_nota' | 'd3_nota'
 let activeRankDim = "nota_geral";  // 'nota_geral' | 'd1_nota' | 'd2_nota' | 'd3_nota'
-let activeRankScope = "brasil";    // 'brasil' | 'uf' | 'estados' | 'capitais'
+let activeRankScope = "brasil";    // 'brasil' | 'brasil_piores' | 'uf' | 'estados' | 'capitais'
 let activeMarkerMode = "none";     // 'none' | 'estados' | 'capitais'
 let geoJsonLayer = null;
 let overlayMarkersLayer = null;
@@ -178,9 +178,9 @@ export async function initMap(metaConfig) {
 
 async function loadRankings() {
     const candidatePaths = [
-        "data/releases/latest/rankings_resumo.json",
-        "./data/releases/latest/rankings_resumo.json",
-        "../data/releases/latest/rankings_resumo.json"
+        "data/releases/latest/rankings_resumo.json?v=0.5.2",
+        "./data/releases/latest/rankings_resumo.json?v=0.5.2",
+        "../data/releases/latest/rankings_resumo.json?v=0.5.2"
     ];
 
     for (const path of candidatePaths) {
@@ -200,9 +200,9 @@ async function loadRankings() {
 
 async function loadMapaResumo() {
     const candidatePaths = [
-        "data/releases/latest/mapa_resumo.json",
-        "./data/releases/latest/mapa_resumo.json",
-        "../data/releases/latest/mapa_resumo.json"
+        "data/releases/latest/mapa_resumo.json?v=0.5.2",
+        "./data/releases/latest/mapa_resumo.json?v=0.5.2",
+        "../data/releases/latest/mapa_resumo.json?v=0.5.2"
     ];
 
     for (const path of candidatePaths) {
@@ -714,7 +714,8 @@ function setupSearchAndFilters() {
 
 function syncScopeTabs() {
     document.querySelectorAll(".rank-scope-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.rankScope === activeRankScope);
+        const scope = btn.dataset.rankScope || btn.getAttribute("data-rank-scope");
+        btn.classList.toggle("active", scope === activeRankScope);
     });
     const ufWrap = document.getElementById("modal-uf-selector-wrap");
     if (ufWrap) {
@@ -758,7 +759,7 @@ function setupRankingsModal() {
 
     rankScopeButtons.forEach(btn => {
         btn.addEventListener("click", () => {
-            activeRankScope = btn.dataset.rankScope || "brasil";
+            activeRankScope = btn.dataset.rankScope || btn.getAttribute("data-rank-scope") || "brasil";
             syncScopeTabs();
             const ufFilter = document.getElementById("uf-filter");
             const modalUfSelect = document.getElementById("modal-uf-select");
@@ -820,8 +821,11 @@ function setupInfoModal() {
 
 function renderRankingsContent(selectedUf = "") {
     const container = document.getElementById("rankings-modal-body");
-    if (!container || !rankingsData) {
-        if (container) container.innerHTML = `<p style="color:var(--color-text-subtle);">Carregando rankings oficiais...</p>`;
+    if (!container) return;
+    container.scrollTop = 0;
+
+    if (!rankingsData || Object.keys(rankingsData).length === 0) {
+        container.innerHTML = `<p style="color:var(--color-text-subtle); padding:1rem;">Carregando rankings oficiais...</p>`;
         return;
     }
 
