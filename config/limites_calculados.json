@@ -26,8 +26,8 @@
       "n_municipios_base": 5570
     },
     "D1.3": {
-      "pior": 206.50325641862526,
-      "melhor": 102.66903684378755,
+      "pior": 412.9556439317973,
+      "melhor": 223.36566914815515,
       "coluna": "dcnt_bayes",
       "sentido": "menor_melhor",
       "percentis": [
@@ -37,8 +37,8 @@
       "n_municipios_base": 5570
     },
     "D1.4": {
-      "pior": 175.77859121166668,
-      "melhor": 67.74949587233333,
+      "pior": 177.35500000000002,
+      "melhor": 57.645,
       "coluna": "tx_mort_evit",
       "sentido": "menor_melhor",
       "percentis": [
@@ -81,8 +81,8 @@
       "n_municipios_base": 5570
     },
     "D3.1": {
-      "pior": 91.67244625906409,
-      "melhor": 251.14189769004287,
+      "pior": 103.99881041374417,
+      "melhor": 318.8037993771162,
       "coluna": "tx_leito_sus_reg",
       "sentido": "maior_melhor",
       "percentis": [
@@ -103,7 +103,7 @@
       "n_municipios_base": 5570
     },
     "D3.3": {
-      "pior": 48.46442332633333,
+      "pior": 56.945,
       "melhor": 100.0,
       "coluna": "cob_esf",
       "sentido": "maior_melhor",

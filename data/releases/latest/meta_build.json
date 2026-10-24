@@ -1,5 +1,5 @@
 {
-  "build_timestamp": "2026-10-24T18:01:21.859692+00:00",
+  "build_timestamp": "2026-10-24T18:49:14.132099+00:00",
   "versao_metodologia": "v0.5.0-draft",
   "status_metodologia": "Experimental — Normalização Relativa por Percentis (P5–P95)",
   "regras_inegociaveis": [
@@ -702,14 +702,14 @@
         "meta_oficial_confirmada": null
       },
       "D1.3": {
-        "nome": "Mortalidade prematura (30–69a) por DCNT (suavizada)",
+        "nome": "Mortalidade prematura (30–69a) por DCNT (padronizada por idade e causas mal definidas)",
         "coluna": "dcnt_bayes",
         "sentido": "menor_melhor",
         "dimensao": "D1",
         "meta_oficial_confirmada": null
       },
       "D1.4": {
-        "nome": "Mortalidade por causas evitáveis pelo SUS",
+        "nome": "Mortalidade por causas evitáveis pelo SUS (padronizada por idade e causas mal definidas)",
         "coluna": "tx_mort_evit",
         "sentido": "menor_melhor",
         "dimensao": "D1",
@@ -737,7 +737,7 @@
         "meta_oficial_confirmada": null
       },
       "D3.1": {
-        "nome": "Leitos SUS na Região de Saúde por 100 mil hab.",
+        "nome": "Leitos SUS na Região de Saúde por 100 mil hab. SUS-dependentes",
         "coluna": "tx_leito_sus_reg",
         "sentido": "maior_melhor",
         "dimensao": "D3",
@@ -751,7 +751,7 @@
         "meta_oficial_confirmada": null
       },
       "D3.3": {
-        "nome": "Cobertura da Estratégia Saúde da Família (eSF)",
+        "nome": "Cobertura de Atenção Básica (eSF com ajuste de saúde suplementar)",
         "coluna": "cob_esf",
         "sentido": "maior_melhor",
         "dimensao": "D3",
@@ -791,8 +791,8 @@
         "n_municipios_base": 5570
       },
       "D1.3": {
-        "pior": 206.50325641862526,
-        "melhor": 102.66903684378755,
+        "pior": 412.9556439317973,
+        "melhor": 223.36566914815515,
         "coluna": "dcnt_bayes",
         "sentido": "menor_melhor",
         "percentis": [
@@ -802,8 +802,8 @@
         "n_municipios_base": 5570
       },
       "D1.4": {
-        "pior": 175.77859121166668,
-        "melhor": 67.74949587233333,
+        "pior": 177.35500000000002,
+        "melhor": 57.645,
         "coluna": "tx_mort_evit",
         "sentido": "menor_melhor",
         "percentis": [
@@ -846,8 +846,8 @@
         "n_municipios_base": 5570
       },
       "D3.1": {
-        "pior": 91.67244625906409,
-        "melhor": 251.14189769004287,
+        "pior": 103.99881041374417,
+        "melhor": 318.8037993771162,
         "coluna": "tx_leito_sus_reg",
         "sentido": "maior_melhor",
         "percentis": [
@@ -868,7 +868,7 @@
         "n_municipios_base": 5570
       },
       "D3.3": {
-        "pior": 48.46442332633333,
+        "pior": 56.945,
         "melhor": 100.0,
         "coluna": "cob_esf",
         "sentido": "maior_melhor",
@@ -1234,8 +1234,8 @@
         "n_municipios_base": 5570
       },
       "D1.3": {
-        "pior": 206.50325641862526,
-        "melhor": 102.66903684378755,
+        "pior": 412.9556439317973,
+        "melhor": 223.36566914815515,
         "coluna": "dcnt_bayes",
         "sentido": "menor_melhor",
         "percentis": [
@@ -1245,8 +1245,8 @@
         "n_municipios_base": 5570
       },
       "D1.4": {
-        "pior": 175.77859121166668,
-        "melhor": 67.74949587233333,
+        "pior": 177.35500000000002,
+        "melhor": 57.645,
         "coluna": "tx_mort_evit",
         "sentido": "menor_melhor",
         "percentis": [
@@ -1289,8 +1289,8 @@
         "n_municipios_base": 5570
       },
       "D3.1": {
-        "pior": 91.67244625906409,
-        "melhor": 251.14189769004287,
+        "pior": 103.99881041374417,
+        "melhor": 318.8037993771162,
         "coluna": "tx_leito_sus_reg",
         "sentido": "maior_melhor",
         "percentis": [
@@ -1311,7 +1311,7 @@
         "n_municipios_base": 5570
       },
       "D3.3": {
-        "pior": 48.46442332633333,
+        "pior": 56.945,
         "melhor": 100.0,
         "coluna": "cob_esf",
         "sentido": "maior_melhor",
@@ -1323,10 +1323,10 @@
       }
     },
     "medias": {
-      "nota_geral": 58.341921005386,
-      "d1_nota": 55.18163375224417,
+      "nota_geral": 58.548563734290845,
+      "d1_nota": 56.60786355475763,
       "d2_nota": 64.24856373429084,
-      "d3_nota": 55.59597845601436
+      "d3_nota": 54.79012567324955
     }
   },
   "auditoria_fontes": {

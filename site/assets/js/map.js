@@ -314,9 +314,11 @@ function renderGeoJson(geoData) {
             const ibge = feature.properties?.id || feature.properties?.codarea || feature.properties?.ibge7;
             const mun = mapaResumoData[ibge] || { nome: feature.properties?.name || "Município", ibge7: ibge };
 
-            // Tooltip sob demanda via função (não cria 5.564 strings HTML na memória)
+            // Tooltip sob demanda via função (afastado 24px do cursor para não cobrir o polígono do município)
             layer.bindTooltip(() => getTooltipHtml(mun), {
-                sticky: true
+                sticky: true,
+                offset: [24, -15],
+                direction: "auto"
             });
 
             layer.on({

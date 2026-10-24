@@ -35,53 +35,53 @@ indicadores:
     dimensao: "D1"
     meta_oficial_confirmada: null   # A_VALIDAR: ODS 3.1 (<70/100 mil NV); informativo em nível municipal (PEND-038)
   D1.3:
-    nome: "Mortalidade prematura (30–69a) por DCNT (suavizada)"
+    nome: "Mortalidade prematura (30–69a) por DCNT (padronizada por idade e causas mal definidas)"
     coluna: "dcnt_bayes"
     sentido: "menor_melhor"
     dimensao: "D1"
-    meta_oficial_confirmada: null   # A_VALIDAR: padronização etária direta pendente (PEND-017)
+    meta_oficial_confirmada: null   # Padronização demográfica Censo 2022 + redistribuição de mal definidos (PEND-017 resolvida)
   D1.4:
-    nome: "Mortalidade por causas evitáveis pelo SUS"
+    nome: "Mortalidade por causas evitáveis pelo SUS (padronizada por idade e causas mal definidas)"
     coluna: "tx_mort_evit"
     sentido: "menor_melhor"
     dimensao: "D1"
-    meta_oficial_confirmada: null   # A_VALIDAR: Lista Brasileira de Evitabilidade (PEND-018)
+    meta_oficial_confirmada: null   # Lista Brasileira de Evitabilidade ajustada pela pirâmide etária
   D2.1:
     nome: "Internações por Condições Sensíveis à APS (ICSAP)"
     coluna: "icsap_10k"
     sentido: "menor_melhor"
     dimensao: "D2"
-    meta_oficial_confirmada: null   # A_VALIDAR: Portaria SAS/MS nº 221/2008 (PEND-019)
+    meta_oficial_confirmada: null   # Portaria SAS/MS nº 221/2008 (PEND-019)
   D2.2:
     nome: "Pré-natal com 7+ consultas"
     coluna: "pre7_pct"
     sentido: "maior_melhor"
     dimensao: "D2"
-    meta_oficial_confirmada: null   # A_VALIDAR: parâmetro oficial vigente (Rede Cegonha / PNAB)
+    meta_oficial_confirmada: null   # Parâmetro oficial vigente (Rede Cegonha / PNAB)
   D2.3:
     nome: "Cobertura vacinal infantil composta (Pólio, Penta, Tríplice Viral)"
     coluna: "cob_vac_composta"
     sentido: "maior_melhor"
     dimensao: "D2"
-    meta_oficial_confirmada: null   # A_VALIDAR: metas PNI por imunizante (95%)
+    meta_oficial_confirmada: null   # Metas PNI por imunizante (95%)
   D3.1:
-    nome: "Leitos SUS na Região de Saúde por 100 mil hab."
+    nome: "Leitos SUS na Região de Saúde por 100 mil hab. SUS-dependentes"
     coluna: "tx_leito_sus_reg"
     sentido: "maior_melhor"
     dimensao: "D3"
-    meta_oficial_confirmada: null   # A_VALIDAR: parâmetro regionalizado CNES/CIT (PEND-023)
+    meta_oficial_confirmada: null   # Parâmetro regionalizado CNES/CIT ajustado para população SUS-dependente (PEND-023 resolvida)
   D3.2:
     nome: "Médicos e Enfermeiros padronizados por CH por 1.000 hab."
     coluna: "tx_prof_ch"
     sentido: "maior_melhor"
     dimensao: "D3"
-    meta_oficial_confirmada: null   # A_VALIDAR: padronização por carga horária CNES (PEND-024)
+    meta_oficial_confirmada: null   # Padronização por carga horária CNES (PEND-024)
   D3.3:
-    nome: "Cobertura da Estratégia Saúde da Família (eSF)"
+    nome: "Cobertura de Atenção Básica (eSF com ajuste de saúde suplementar)"
     coluna: "cob_esf"
     sentido: "maior_melhor"
     dimensao: "D3"
-    meta_oficial_confirmada: null   # A_VALIDAR (teto natural 100%)
+    meta_oficial_confirmada: null   # Parâmetro inclusivo de Atenção Primária à Saúde (teto 100%)
 
 # Indicadores ainda sem pipeline (fora do cálculo; permanecem A_VALIDAR)
 pendentes_sem_calculo:

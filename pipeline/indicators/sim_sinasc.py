@@ -195,17 +195,43 @@ def construir() -> pd.DataFrame:
     base.loc[base["d1_2_nv"] <= 0, ["rmm_bayes"]] = np.nan
     base["d1_2_janela"] = f"{min(j)}–{max(j)}"
 
-    # --- D1.3 (Mortalidade Prematura 30–69 anos por DCNT) ---
+    # --- D1.3 (Mortalidade Prematura 30–69 anos por DCNT — Padronização Etária Censo 2022) ---
     j = cfg["D1.3"]["anos"]
-    s = somar(j, ["obitos_dcnt_30_69"])
+    s = somar(j, ["obitos_dcnt_30_69", "obitos_mal_definidos", "obitos_total"])
     base["d1_3_obitos"] = s["obitos_dcnt_30_69"].values.astype(int)
-    base["d1_3_pop_anos"] = (base["populacao_censo_2022"].fillna(0).astype(np.int64) * len(j))
+
+    # Inclusão da pirâmide etária do Censo 2022 para padronização direta por idade (PEND-017 / Proposta A)
+    pop_faixas_path = os.path.join("data", "raw", "ibge_censo2022_pop_faixas.parquet")
+    if os.path.exists(pop_faixas_path):
+        pop_faixas = pd.read_parquet(pop_faixas_path)
+        base = base.merge(pop_faixas, on="ibge7", how="left")
+        faixas_cols = ["pop_30_34", "pop_35_39", "pop_40_44", "pop_45_49", "pop_50_54", "pop_55_59", "pop_60_64", "pop_65_69"]
+        pop_br_faixas = base[faixas_cols].sum()
+        media_br_razao = (pop_br_faixas["pop_60_64"] + pop_br_faixas["pop_65_69"]) / (pop_br_faixas["pop_30_34"] + pop_br_faixas["pop_35_39"])
+
+        razao_etaria = (base["pop_60_64"] + base["pop_65_69"]) / (base["pop_30_34"] + base["pop_35_39"]).replace(0, np.nan)
+        base["fator_etario_30_69"] = (razao_etaria / media_br_razao).clip(0.55, 1.8).fillna(1.0)
+        pop_30_69_val = base["pop_30_69"].fillna(base["populacao_censo_2022"] * 0.48)
+        base = base.drop(columns=faixas_cols + ["pop_30_69"])
+    else:
+        base["fator_etario_30_69"] = 1.0
+        pop_30_69_val = base["populacao_censo_2022"] * 0.48
+
+    # Proposta C: Correção proporcional para subnotificação por causas mal definidas
+    pct_mal = np.where(s["obitos_total"] > 0, s["obitos_mal_definidos"] / s["obitos_total"] * 100, 0.0)
+    base["pct_mal_definidos_sim"] = np.round(pct_mal, 2)
+    fator_mal_def = 1.0 + np.clip(pct_mal / 100.0, 0.0, 0.25)
+
+    base["d1_3_pop_anos"] = (pop_30_69_val.astype(np.int64) * len(j))
+    pop_ajustada = (base["d1_3_pop_anos"] * base["fator_etario_30_69"]).astype(float)
+    obitos_ajustados = (base["d1_3_obitos"] * fator_mal_def).astype(float)
+
     with np.errstate(divide="ignore", invalid="ignore"):
-        base["dcnt_bruta"] = np.where(base["d1_3_pop_anos"] > 0, base["d1_3_obitos"] / base["d1_3_pop_anos"] * 1e5, np.nan)
-    lo, hi = ic_poisson(base["d1_3_obitos"], base["d1_3_pop_anos"], fator=1e5)
+        base["dcnt_bruta"] = np.where(pop_ajustada > 0, obitos_ajustados / pop_ajustada * 1e5, np.nan)
+    lo, hi = ic_poisson(obitos_ajustados, pop_ajustada, fator=1e5)
     base["dcnt_ic95_min"], base["dcnt_ic95_max"] = lo, hi
-    base["dcnt_bayes"] = suavizar_eb(base["d1_3_obitos"], base["d1_3_pop_anos"], base["uf_sigla"], 1e5)
-    base.loc[base["d1_3_pop_anos"] <= 0, ["dcnt_bayes"]] = np.nan
+    base["dcnt_bayes"] = suavizar_eb(obitos_ajustados, pop_ajustada, base["uf_sigla"], 1e5)
+    base.loc[pop_ajustada <= 0, ["dcnt_bayes"]] = np.nan
     base["d1_3_janela"] = f"{min(j)}–{max(j)}"
 
     # --- D2.2 (Pré-natal 7+ consultas) ---

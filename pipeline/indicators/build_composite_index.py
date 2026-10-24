@@ -175,18 +175,27 @@ def agregar_ieps(janelas: dict, dim_pop: pd.DataFrame) -> tuple[pd.DataFrame, di
 
     saida_df = saida.reset_index()
 
-    # Calcula taxa regionalizada de Leitos SUS por Região de Saúde (média ponderada pela população Censo 2022 da CIR)
+    # Calcula taxa regionalizada de Leitos SUS por Região de Saúde (ponderada pela população SUS-dependente da CIR — Proposta B)
     tmp = saida_df.merge(dim_pop[["ibge6", "populacao_censo_2022"]], on="ibge6", how="left")
     tmp["leitos_abs_est"] = tmp["tx_leito_sus"] * tmp["populacao_censo_2022"] / 1e5
+    cob_priv_pct = tmp["cob_priv"].fillna(0)
+    # População SUS-dependente (descontando beneficiários de planos de saúde privados, mínimo 20% para segurança de cálculo)
+    tmp["pop_sus_dependente"] = tmp["populacao_censo_2022"] * (1.0 - cob_priv_pct / 100.0).clip(0.2, 1.0)
+
     por_reg = tmp.groupby("regiao_saude_id_ieps", dropna=False).agg(
         leitos_reg=("leitos_abs_est", "sum"),
+        pop_sus_reg=("pop_sus_dependente", "sum"),
         pop_reg=("populacao_censo_2022", "sum"),
     )
-    por_reg["tx_leito_sus_reg"] = np.where(por_reg["pop_reg"] > 0, por_reg["leitos_reg"] / por_reg["pop_reg"] * 1e5, np.nan)
+    por_reg["tx_leito_sus_reg"] = np.where(por_reg["pop_sus_reg"] > 0, por_reg["leitos_reg"] / por_reg["pop_sus_reg"] * 1e5, np.nan)
     saida_df = saida_df.merge(por_reg[["tx_leito_sus_reg"]], left_on="regiao_saude_id_ieps", right_index=True, how="left")
     # Se o município não tiver leitos SUS válidos no período, mantém NaN
     saida_df.loc[saida_df["tx_leito_sus"].isna(), "tx_leito_sus_reg"] = np.nan
     saida_df["tx_leito_sus_reg_n_anos"] = saida_df["tx_leito_sus_n_anos"]
+
+    # Proposta B: Ajuste de Atenção Básica pela complementariedade da Saúde Suplementar (evita zerar capitais e metrópoles)
+    saida_df["cob_esf_bruta"] = saida_df["cob_esf"]
+    saida_df["cob_esf"] = np.minimum(100.0, saida_df["cob_esf_bruta"] + saida_df["cob_priv"].fillna(0) * 0.4).round(1)
 
     return saida_df, meta
 
@@ -329,6 +338,13 @@ def construir() -> pd.DataFrame:
     jan = serie[serie["ano"].isin(janelas["D1.1"]["anos"])].groupby("ibge6")[["obitos_total", "obitos_mal_definidos"]].sum()
     jan["pct_obitos_mal_definidos"] = (jan["obitos_mal_definidos"] / jan["obitos_total"].replace(0, np.nan) * 100).round(2)
     df = df.merge(jan[["pct_obitos_mal_definidos"]], left_on="ibge6", right_index=True, how="left")
+
+    # Proposta A e C: Padronização etária e correção por causas mal definidas em D1.4 (Mortalidade por Causas Evitáveis)
+    fator_et = df.get("fator_etario_30_69", pd.Series(1.0, index=df.index)).fillna(1.0)
+    pct_mal = df["pct_obitos_mal_definidos"].fillna(0.0)
+    fator_md = 1.0 + np.clip(pct_mal / 100.0, 0.0, 0.25)
+    df["tx_mort_evit_bruta"] = df["tx_mort_evit"]
+    df["tx_mort_evit"] = np.where(df["tx_mort_evit"].notna(), (df["tx_mort_evit_bruta"] * fator_md / fator_et).round(1), np.nan)
 
     limites = obter_limites(df, cfg_lim, versao)
     df = escores_componentes(df, limites)
