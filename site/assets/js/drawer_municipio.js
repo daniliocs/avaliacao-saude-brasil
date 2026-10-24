@@ -89,15 +89,18 @@ export function openDrawer(municipioData) {
             <div class="rankings-grid">
                 <div>
                     <span style="color: var(--color-text-subtle);">Ranking Nacional</span>
-                    <span class="rank-val">${municipioData.posicao_nacional ? `#${municipioData.posicao_nacional} de 5.570` : '—'}</span>
+                    <span class="rank-val">${municipioData.posicao_nacional ? `#${municipioData.posicao_nacional.toLocaleString("pt-BR")} de 5.570` : '—'}</span>
                 </div>
                 <div>
                     <span style="color: var(--color-text-subtle);">Ranking Estadual (${municipioData.uf})</span>
-                    <span class="rank-val">${municipioData.posicao_estadual ? `#${municipioData.posicao_estadual}` : '—'}</span>
+                    <span class="rank-val">${municipioData.posicao_estadual ? `#${municipioData.posicao_estadual.toLocaleString("pt-BR")} de ${(municipioData.total_uf || '—').toLocaleString("pt-BR")}` : '—'}</span>
                 </div>
                 <div>
-                    <span style="color: var(--color-text-subtle);">Grupo de Pares</span>
-                    <span class="rank-val">${municipioData.posicao_grupo_pares ? `#${municipioData.posicao_grupo_pares}` : '—'}</span>
+                    <span style="color: var(--color-text-subtle); display: inline-flex; align-items: center; gap: 4px;">
+                        Grupo de Pares
+                        <span class="info-tooltip-trigger" tabindex="0" role="button" aria-label="Informações sobre o Grupo de Pares" title="O que é o Grupo de Pares?&#10;Compara este município apenas com outros municípios do mesmo porte populacional (${municipioData.porte || 'mesmo porte'}, Censo 2022).&#10;Isso permite uma avaliação mais justa entre cidades de estrutura e capacidade orçamentária semelhantes.">ℹ️</span>
+                    </span>
+                    <span class="rank-val">${municipioData.posicao_grupo_pares ? `#${municipioData.posicao_grupo_pares.toLocaleString("pt-BR")} de ${(municipioData.total_grupo_pares || '—').toLocaleString("pt-BR")}` : '—'}</span>
                 </div>
             </div>
         </section>

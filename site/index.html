@@ -81,7 +81,22 @@
             <button id="btn-toggle-ranking" class="btn-ranking-toggle" aria-label="Abrir Painel de Rankings">
               🏆 Top 100 &amp; Rankings
             </button>
+
+            <!-- Botão de Ocultar Menus / Expandir Mapa -->
+            <button id="btn-toggle-map-expand" class="btn-expand-toolbar" aria-label="Expandir Mapa" title="Ocultar cabeçalho e menus para maximizar o mapa na tela">
+              ⛶ Expandir Mapa
+            </button>
           </div>
+        </div>
+
+        <!-- Barra Flutuante de Controle no Modo Expandido -->
+        <div id="floating-map-bar" class="floating-map-bar" aria-label="Controles Flutuantes do Mapa">
+          <button id="btn-restore-menus" class="btn-floating-pill" title="Restaurar menus superiores">
+            🔽 Restaurar Menus
+          </button>
+          <button id="btn-floating-ranking" class="btn-floating-pill" title="Abrir Top 100 e Rankings">
+            🏆 Top 100
+          </button>
         </div>
 
         <!-- Canvas do Mapa Leaflet -->
@@ -166,10 +181,13 @@
           </div>
         </div>
 
-        <!-- Legenda Fixa no Mapa -->
-        <div class="map-legend" aria-hidden="true">
-          <div class="legend-title">Escala de Desempenho (0–100)</div>
-          <div class="legend-scale">
+        <!-- Legenda Fixa / Recolhível no Mapa -->
+        <div id="map-legend" class="map-legend" aria-label="Legenda de Escala de Desempenho">
+          <div class="legend-header">
+            <span class="legend-title">Escala (0–100)</span>
+            <button id="btn-toggle-legend" class="btn-legend-min" aria-label="Minimizar legenda" title="Minimizar ou expandir legenda">−</button>
+          </div>
+          <div id="legend-scale-body" class="legend-scale">
             <div class="legend-item"><span class="legend-swatch" style="background:#15803d;"></span> 80 – 100 (Muito Alto)</div>
             <div class="legend-item"><span class="legend-swatch" style="background:#22c55e;"></span> 65 – 79.9 (Alto)</div>
             <div class="legend-item"><span class="legend-swatch" style="background:#eab308;"></span> 50 – 64.9 (Médio)</div>

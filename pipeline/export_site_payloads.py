@@ -200,6 +200,8 @@ def build_mapa_resumo_payload(meta_build: dict):
 
     print(f"[export_site_payloads] Gerando mapa_resumo.json a partir do índice {meta_build['versao_metodologia']}...")
     df = pd.read_parquet(comp_path)
+    total_uf_map = df["uf_sigla"].value_counts().to_dict()
+    total_porte_map = df["porte_populacional"].value_counts().to_dict()
 
     versao = meta_build["versao_metodologia"]
     binfo = meta_build.get("build_info", {})
@@ -388,8 +390,11 @@ def build_mapa_resumo_payload(meta_build: dict):
             "faixa_posicao_min": int(row["faixa_posicao_min"]) if pd.notna(row.get("faixa_posicao_min")) else None,
             "faixa_posicao_max": int(row["faixa_posicao_max"]) if pd.notna(row.get("faixa_posicao_max")) else None,
             "posicao_nacional": int(row["posicao_nacional"]) if pd.notna(row.get("posicao_nacional")) else None,
+            "total_brasil": 5570,
             "posicao_estadual": int(row["posicao_estadual"]) if pd.notna(row.get("posicao_estadual")) else None,
+            "total_uf": int(total_uf_map.get(row["uf_sigla"], 0)),
             "posicao_grupo_pares": int(row["posicao_grupo_pares"]) if pd.notna(row.get("posicao_grupo_pares")) else None,
+            "total_grupo_pares": int(total_porte_map.get(row.get("porte_populacional"), 0)),
             "pct_obitos_mal_definidos": num_or_none(row.get("pct_obitos_mal_definidos"), 1),
             "indicadores": indicadores_dict,
             "d4_contexto": {
@@ -458,6 +463,8 @@ def build_mapa_resumo_payload(meta_build: dict):
 def build_rankings_payload(df: pd.DataFrame):
     print("[export_site_payloads] Compilando rankings sintéticos consolidados (Top 100, UFs e Capitais)...")
     cls = df[df["status"] == "classificado"].copy()
+    total_uf_map = df["uf_sigla"].value_counts().to_dict()
+    total_porte_map = df["porte_populacional"].value_counts().to_dict()
 
     def format_mun(row):
         ibge7 = str(row["ibge7"])
@@ -478,7 +485,11 @@ def build_rankings_payload(df: pd.DataFrame):
             "faixa_min": int(row["faixa_posicao_min"]) if pd.notna(row.get("faixa_posicao_min")) else None,
             "faixa_max": int(row["faixa_posicao_max"]) if pd.notna(row.get("faixa_posicao_max")) else None,
             "posicao_nacional": int(row["posicao_nacional"]) if pd.notna(row.get("posicao_nacional")) else None,
-            "posicao_estadual": int(row["posicao_estadual"]) if pd.notna(row.get("posicao_estadual")) else None
+            "total_brasil": 5570,
+            "posicao_estadual": int(row["posicao_estadual"]) if pd.notna(row.get("posicao_estadual")) else None,
+            "total_uf": int(total_uf_map.get(row["uf_sigla"], 0)),
+            "posicao_grupo_pares": int(row["posicao_grupo_pares"]) if pd.notna(row.get("posicao_grupo_pares")) else None,
+            "total_grupo_pares": int(total_porte_map.get(row.get("porte_populacional"), 0))
         }
 
     df_sorted = cls.sort_values(by=["nota_geral", "populacao_censo_2022"], ascending=[False, False])

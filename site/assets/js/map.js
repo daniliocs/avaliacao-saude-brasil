@@ -116,12 +116,13 @@ export async function initMap(metaConfig) {
         if (leafletMap) leafletMap.invalidateSize();
     }, 150);
 
-    // 3. Configura controles de busca, filtros, seletor de camada, marcadores, rankings e modal de info
+    // 3. Configura controles de busca, filtros, seletor de camada, marcadores, rankings, layout e modal de info
     setupLayerSelector();
     setupMarkerModeSelector();
     setupSearchAndFilters();
     setupRankingsModal();
     setupInfoModal();
+    setupLayoutControls();
 
     // 4. Carrega os dados e malha de forma assíncrona
     Promise.all([loadMapaResumo(), loadRankings()]).then(() => {
@@ -248,8 +249,9 @@ function renderGeoJson(geoData) {
                         </div>
                     </div>
                     <div style="font-size:0.78rem; line-height:1.45; color:#334155;">
-                        <span>🏆 Ranking Nacional: <strong>#${mun.posicao_nacional}</strong> de 5.570</span><br>
-                        <span>🥇 Ranking Estadual (${mun.uf}): <strong>#${mun.posicao_estadual}º</strong></span><br>
+                        <span>🏆 Ranking Nacional: <strong>#${mun.posicao_nacional ? mun.posicao_nacional.toLocaleString("pt-BR") : '—'}</strong> de 5.570</span><br>
+                        <span>🥇 Ranking Estadual (${mun.uf}): <strong>#${mun.posicao_estadual ? mun.posicao_estadual.toLocaleString("pt-BR") : '—'}</strong> de ${(mun.total_uf || '—').toLocaleString("pt-BR")}</span><br>
+                        <span>👥 Grupo de Pares: <strong>#${mun.posicao_grupo_pares ? mun.posicao_grupo_pares.toLocaleString("pt-BR") : '—'}</strong> de ${(mun.total_grupo_pares || '—').toLocaleString("pt-BR")}</span><br>
                         <span>🏥 Região de Saúde: <strong>${mun.regiao_saude || '—'}</strong></span>
                     </div>
                 `;
@@ -450,6 +452,72 @@ function renderMapOverlayMarkers() {
             marker.addTo(overlayMarkersLayer);
         });
     }
+}
+
+function setupLayoutControls() {
+    const btnExpand = document.getElementById("btn-toggle-map-expand");
+    const btnRestore = document.getElementById("btn-restore-menus");
+    const btnFloatingRank = document.getElementById("btn-floating-ranking");
+    const btnToggleLegend = document.getElementById("btn-toggle-legend");
+    const legendEl = document.getElementById("map-legend");
+
+    function setMapExpanded(expanded) {
+        if (expanded) {
+            document.body.classList.add("map-expanded");
+            if (btnExpand) {
+                btnExpand.innerHTML = "🔼 Ocultar Menus";
+                btnExpand.title = "Restaurar menus superiores";
+            }
+        } else {
+            document.body.classList.remove("map-expanded");
+            if (btnExpand) {
+                btnExpand.innerHTML = "⛶ Expandir Mapa";
+                btnExpand.title = "Ocultar cabeçalho e menus para maximizar o mapa na tela";
+            }
+        }
+        setTimeout(() => {
+            if (leafletMap) leafletMap.invalidateSize();
+        }, 180);
+    }
+
+    if (btnExpand) {
+        btnExpand.addEventListener("click", () => {
+            const isExp = document.body.classList.contains("map-expanded");
+            setMapExpanded(!isExp);
+        });
+    }
+
+    if (btnRestore) {
+        btnRestore.addEventListener("click", () => {
+            setMapExpanded(false);
+        });
+    }
+
+    if (btnFloatingRank) {
+        btnFloatingRank.addEventListener("click", () => {
+            const modalRanking = document.getElementById("rankings-modal");
+            if (modalRanking) {
+                modalRanking.classList.add("active");
+                renderRankingsContent();
+            }
+        });
+    }
+
+    if (btnToggleLegend && legendEl) {
+        btnToggleLegend.addEventListener("click", (e) => {
+            e.stopPropagation();
+            legendEl.classList.toggle("minimized");
+            const isMin = legendEl.classList.contains("minimized");
+            btnToggleLegend.textContent = isMin ? "+" : "−";
+            btnToggleLegend.title = isMin ? "Expandir legenda" : "Minimizar legenda";
+        });
+    }
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && document.body.classList.contains("map-expanded")) {
+            setMapExpanded(false);
+        }
+    });
 }
 
 function setupSearchAndFilters() {
