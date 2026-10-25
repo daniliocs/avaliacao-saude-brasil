@@ -8,7 +8,7 @@
  *      D1, D2, D3, mediana de TMI, gasto SIOPS, planos privados e Top 5 municípios de cada UF.
  */
 
-import { openDrawer } from "./drawer_municipio.js?v=0.5.4";
+import { openDrawer } from "./drawer_municipio.js?v=0.7.4";
 
 let mapaResumoRef = {};
 let rankingsRef = {};
@@ -309,6 +309,125 @@ function renderMunicipiosComparison() {
         }).join("")}
     `;
 
+        // Linha de Cuidado Oncológico & CACON/UNACON (Fase 2)
+    const oncoA = munA.oncologia_tfd || {};
+    const oncoB = munB.oncologia_tfd || {};
+
+    const oncoRows = [
+        {
+            nome: "ONCO.1 — Escore de Oncologia & Alta Complexidade (0–100)",
+            unid: "pts",
+            vA: munA.escore_oncologia,
+            vB: munB.escore_oncologia,
+            digits: 1
+        },
+        {
+            nome: "ONCO.2 — Centro CACON / UNACON de Referência",
+            unid: "",
+            vA_str: oncoA.cacon_referencia || "—",
+            vB_str: oncoB.cacon_referencia || "—",
+            is_text: true
+        },
+        {
+            nome: "ONCO.3 — Distância Rodoviária ao CACON/UNACON (↓ menor é melhor)",
+            unid: "km",
+            vA: oncoA.dist_cacon_km ?? 0,
+            vB: oncoB.dist_cacon_km ?? 0,
+            digits: 1,
+            sentido: "menor_melhor"
+        },
+        {
+            nome: "ONCO.4 — Tempo Estimado até o CACON/UNACON (↓ menor é melhor)",
+            unid: "min",
+            vA: oncoA.tempo_cacon_min ?? 15,
+            vB: oncoB.tempo_cacon_min ?? 15,
+            digits: 0,
+            sentido: "menor_melhor"
+        },
+        {
+            nome: "ONCO.5 — Lei dos 60 Dias (% Início Tratamento ≤ 60d)",
+            unid: "%",
+            vA: oncoA.pct_60d_onco,
+            vB: oncoB.pct_60d_onco,
+            digits: 1
+        },
+        {
+            nome: "ONCO.6 — Tempo Mediano até 1º Tratamento (↓ menor é melhor)",
+            unid: "dias",
+            vA: oncoA.tempo_mediano_onco_dias,
+            vB: oncoB.tempo_mediano_onco_dias,
+            digits: 0,
+            sentido: "menor_melhor"
+        },
+        {
+            nome: "ONCO.7 — Tratamento Fora do Município - TFD (Deslocamento)",
+            unid: "%",
+            vA: oncoA.pct_tratamento_fora,
+            vB: oncoB.pct_tratamento_fora,
+            digits: 1
+        },
+        {
+            nome: "ONCO.8 — Diagnóstico Precoce (Estádios I e II)",
+            unid: "%",
+            vA: oncoA.pct_diagnostico_precoce,
+            vB: oncoB.pct_diagnostico_precoce,
+            digits: 1
+        },
+        {
+            nome: "ONCO.9 — Mortalidade Prematura por Câncer (30–69 anos, SIM)",
+            unid: "óbitos / 100k hab",
+            vA: oncoA.tx_cancer_prem_bayes,
+            vB: oncoB.tx_cancer_prem_bayes,
+            digits: 1,
+            sentido: "menor_melhor"
+        },
+        {
+            nome: "ONCO.10 — Terapias de Ponta (Imunoterapia & Terapia Alvo)",
+            unid: "",
+            vA_str: oncoA.polo_imunoterapia_alvo ? "✅ Habilitada no SUS" : "⚠️ Requer Polo Terciário",
+            vB_str: oncoB.polo_imunoterapia_alvo ? "✅ Habilitada no SUS" : "⚠️ Requer Polo Terciário",
+            is_text: true
+        },
+        {
+            nome: "ONCO.9 — Volume Total de Pacientes em Tratamento (Triênio)",
+            unid: "casos",
+            vA: oncoA.casos_total ?? 0,
+            vB: oncoB.casos_total ?? 0,
+            digits: 0
+        }
+    ];
+
+    const oncoRowsHtml = `
+        <tr style="background:#faf5ff;">
+            <td colspan="3" style="text-align:center; color:#6b21a8; font-weight:700; padding:0.45rem; font-size:0.84rem;">
+                🎗️ Linha de Cuidado Oncológico &amp; CACON/UNACON (Painel-Oncologia Brasil 2021–2023)
+            </td>
+        </tr>
+        ${oncoRows.map(r => {
+            if (r.is_text) {
+                return `
+                    <tr>
+                        <td style="text-align:right; font-weight:600;">${r.vA_str}</td>
+                        <td style="text-align:center; background:#f8fafc; font-weight:600; font-size:0.82rem;">${r.nome}</td>
+                        <td style="text-align:left; font-weight:600;">${r.vB_str}</td>
+                    </tr>
+                `;
+            }
+            const aOk = typeof r.vA === "number" && !isNaN(r.vA);
+            const bOk = typeof r.vB === "number" && !isNaN(r.vB);
+            const winA = aOk && bOk && (r.sentido === "menor_melhor" ? r.vA < r.vB : r.vA > r.vB);
+            const winB = aOk && bOk && (r.sentido === "menor_melhor" ? r.vB < r.vA : r.vB > r.vA);
+
+            return `
+                <tr>
+                    <td style="text-align:right; font-weight:600; ${winA ? 'background:#f0fdf4;' : ''}">${fmtNum(r.vA, r.digits)} <small style="color:var(--color-text-subtle);">${r.unid}</small></td>
+                    <td style="text-align:center; background:#f8fafc; font-weight:600; font-size:0.82rem;">${r.nome}</td>
+                    <td style="text-align:left; font-weight:600; ${winB ? 'background:#f0fdf4;' : ''}">${fmtNum(r.vB, r.digits)} <small style="color:var(--color-text-subtle);">${r.unid}</small></td>
+                </tr>
+            `;
+        }).join("")}
+    `;
+
     // Contexto D4 e Camada Privada
     const ctxRows = [
         {
@@ -451,6 +570,8 @@ function renderMunicipiosComparison() {
                 ${diffRow("D2 — Atenção Primária e Prevenção (33,3% ou 30%)", munA.d2_nota, munB.d2_nota, "maior_melhor", 1, " pts")}
                 ${diffRow("D3 — Acesso e Capacidade Assistencial (33,3% ou 30%)", munA.d3_nota, munB.d3_nota, "maior_melhor", 1, " pts")}
                 ${diffRow("🚑 D5 — Rede de Urgência, SAMU & Distância (15% RUE)", munA.d5_nota, munB.d5_nota, "maior_melhor", 1, " pts")}
+                ${diffRow("🎗️ Linha de Cuidado Oncológico & CACON (0–100)", munA.escore_oncologia, munB.escore_oncologia, "maior_melhor", 1, " pts")}
+                ${diffRow("🎗️⚡ Nota Integrada (Urgência 15% + Onco 10%)", munA.nota_integrada, munB.nota_integrada, "maior_melhor", 1, " pts")}
             </div>
         </section>
 
@@ -469,6 +590,7 @@ function renderMunicipiosComparison() {
                     <tbody>
                         ${indRowsHtml}
                         ${urgRowsHtml}
+                        ${oncoRowsHtml}
                         ${ctxRowsHtml}
                     </tbody>
                 </table>

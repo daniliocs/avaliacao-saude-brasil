@@ -38,6 +38,7 @@ DIM_PATH = os.path.join("data", "processed", "dim_municipio.parquet")
 SIM_PATH = os.path.join("data", "processed", "indicadores_sim_sinasc.parquet")
 SERIE_PATH = os.path.join("data", "processed", "serie_anual_sim_sinasc.parquet")
 URG_PATH = os.path.join("data", "processed", "indicadores_urgencia_samu.parquet")
+ONCO_PATH = os.path.join("data", "processed", "indicadores_oncologia_tfd.parquet")
 IEPS_DIR = os.path.join("data", "raw", "ieps")
 LIMITES_CFG = os.path.join("config", "limites_referencia.yaml")
 PESOS_CFG = os.path.join("config", "pesos.yaml")
@@ -329,6 +330,9 @@ def construir() -> pd.DataFrame:
     if os.path.exists(URG_PATH):
         urg = pd.read_parquet(URG_PATH).drop(columns=["ibge6", "nome_municipio", "uf_sigla", "populacao_censo_2022"], errors="ignore")
         df = df.merge(urg, on="ibge7", how="left")
+    if os.path.exists(ONCO_PATH):
+        onco = pd.read_parquet(ONCO_PATH).drop(columns=["ibge6", "nome_municipio", "uf_sigla", "regiao_saude_id", "regiao_saude_nome"], errors="ignore")
+        df = df.merge(onco, on="ibge7", how="left")
     assert len(df) == 5570 and df["ibge7"].is_unique, "Cardinalidade/unicidade violada após junções"
 
     # Preenche regiao_saude_id e regiao_saude_nome reais (438 Regiões de Saúde do SUS)
@@ -421,6 +425,31 @@ def construir() -> pd.DataFrame:
         df["nota_com_urgencia"] = df["nota_geral"]
         df["posicao_nacional_urgencia"] = df["posicao_nacional"]
         df["posicao_estadual_urgencia"] = df["posicao_estadual"]
+
+    # Fase 2: Rank de Oncologia e Alta Complexidade
+    if "escore_oncologia" in df.columns:
+        df["rank_onco"] = rank_min(df["escore_oncologia"]).astype("Int64")
+    else:
+        df["escore_oncologia"] = np.nan
+        df["rank_onco"] = pd.Series(pd.NA, dtype="Int64", index=df.index)
+
+    # Fase 2: Modelo Integrado Completo (Opção 1: 25% D1 + 25% D2 + 25% D3 + 15% D5 + 10% Onco)
+    if "escore_oncologia" in df.columns and "d5_nota" in df.columns:
+        df["nota_integrada"] = np.where(
+            df["status"] == "classificado",
+            (0.25 * df["d1_nota"] + 0.25 * df["d2_nota"] + 0.25 * df["d3_nota"] + 0.15 * df["d5_nota"] + 0.10 * df["escore_oncologia"]).round(1),
+            np.nan
+        )
+        df["posicao_nacional_integrada"] = np.nan
+        df.loc[cls, "posicao_nacional_integrada"] = rank_min(df.loc[cls, "nota_integrada"])
+        df["posicao_estadual_integrada"] = np.nan
+        df.loc[cls, "posicao_estadual_integrada"] = df[cls].groupby("uf_sigla")["nota_integrada"].rank(ascending=False, method="min")
+        for c in ("posicao_nacional_integrada", "posicao_estadual_integrada"):
+            df[c] = df[c].astype("Int64")
+    else:
+        df["nota_integrada"] = df["nota_geral"]
+        df["posicao_nacional_integrada"] = df["posicao_nacional"]
+        df["posicao_estadual_integrada"] = df["posicao_estadual"]
 
     # Camada privada e Contexto D4 (fora da nota)
     df["leitos_priv_val"] = df["tx_leito_nsus"].round(1)

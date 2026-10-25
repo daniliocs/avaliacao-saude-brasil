@@ -9,17 +9,17 @@
  * - Modal de Rankings com 4 escopos separados: Top 100 Brasil, Por Estado (isolado), 27 Estados e 27 Capitais
  */
 
-import { openDrawer } from "./drawer_municipio.js?v=0.5.5";
-import { updateCompareData } from "./compare_view.js?v=0.5.5";
+import { openDrawer, refreshDrawerIndexMode } from "./drawer_municipio.js?v=0.7.4";
+import { updateCompareData } from "./compare_view.js?v=0.7.4";
 
 let leafletMap = null;
 let canvasRenderer = null;
 let highlightLayer = null;
 let mapaResumoData = {};
 let rankingsData = {};
-let activeIndexMode = "oficial"; // 'oficial' (nota_geral) | 'urgencia' (nota_com_urgencia)
-let activeLayerKey = "nota_geral"; // 'nota_geral' | 'd1_nota' | 'd2_nota' | 'd3_nota' | 'd5_nota'
-let activeRankDim = "nota_geral";  // 'nota_geral' | 'nota_com_urgencia' | 'd1_nota' | 'd2_nota' | 'd3_nota' | 'd5_nota'
+let activeIndexMode = "oficial"; // 'oficial' | 'urgencia' | 'integrado'
+let activeLayerKey = "nota_geral"; // 'nota_geral' | 'd1_nota' | 'd2_nota' | 'd3_nota' | 'd5_nota' | 'escore_oncologia'
+let activeRankDim = "nota_geral";  // 'nota_geral' | 'nota_com_urgencia' | 'd1_nota' | 'd2_nota' | 'd3_nota' | 'd5_nota' | 'escore_oncologia'
 let activeRankScope = "brasil";    // 'brasil' | 'brasil_piores' | 'uf' | 'estados' | 'capitais'
 let activeMarkerMode = "none";     // 'none' | 'estados' | 'capitais'
 let geoJsonLayer = null;
@@ -180,9 +180,9 @@ export async function initMap(metaConfig) {
 
 async function loadRankings() {
     const candidatePaths = [
-        "data/releases/latest/rankings_resumo.json?v=0.5.4",
-        "./data/releases/latest/rankings_resumo.json?v=0.5.4",
-        "../data/releases/latest/rankings_resumo.json?v=0.5.4"
+        "data/releases/latest/rankings_resumo.json?v=0.7.4",
+        "./data/releases/latest/rankings_resumo.json?v=0.7.4",
+        "../data/releases/latest/rankings_resumo.json?v=0.7.4"
     ];
 
     for (const path of candidatePaths) {
@@ -202,9 +202,9 @@ async function loadRankings() {
 
 async function loadMapaResumo() {
     const candidatePaths = [
-        "data/releases/latest/mapa_resumo.json?v=0.5.4",
-        "./data/releases/latest/mapa_resumo.json?v=0.5.4",
-        "../data/releases/latest/mapa_resumo.json?v=0.5.4"
+        "data/releases/latest/mapa_resumo.json?v=0.7.4",
+        "./data/releases/latest/mapa_resumo.json?v=0.7.4",
+        "../data/releases/latest/mapa_resumo.json?v=0.7.4"
     ];
 
     for (const path of candidatePaths) {
@@ -257,20 +257,55 @@ async function loadGeoBoundary() {
 
 function getTooltipHtml(mun) {
     const popFmt = mun.populacao ? mun.populacao.toLocaleString("pt-BR") + " hab." : "População em validação";
-    const isUrgenciaMode = activeIndexMode === "urgencia";
-    const notaExibida = isUrgenciaMode ? mun.nota_com_urgencia : mun.nota_geral;
+    let notaExibida = mun.nota_geral;
+    let titleBadge = `Nota Geral (3D): ${mun.nota_geral !== null && mun.nota_geral !== undefined ? mun.nota_geral.toFixed(1) : '—'} / 100`;
+    let posNac = mun.posicao_nacional;
+    let posEst = mun.posicao_estadual;
+
+    if (activeLayerKey === "escore_oncologia") {
+        notaExibida = mun.escore_oncologia;
+        const fmt = notaExibida !== null && notaExibida !== undefined ? notaExibida.toFixed(1) : '—';
+        titleBadge = `🎗️ Oncologia (CACON/UNACON): ${fmt} / 100`;
+        posNac = mun.rank_onco || null;
+    } else if (activeLayerKey === "d5_nota") {
+        notaExibida = mun.d5_nota;
+        const fmt = notaExibida !== null && notaExibida !== undefined ? notaExibida.toFixed(1) : '—';
+        titleBadge = `🚑 D5: Urgência & SAMU 192: ${fmt} / 100`;
+    } else if (activeLayerKey === "d1_nota") {
+        notaExibida = mun.d1_nota;
+        const fmt = notaExibida !== null && notaExibida !== undefined ? notaExibida.toFixed(1) : '—';
+        titleBadge = `📊 D1: Resultados em Saúde: ${fmt} / 100`;
+    } else if (activeLayerKey === "d2_nota") {
+        notaExibida = mun.d2_nota;
+        const fmt = notaExibida !== null && notaExibida !== undefined ? notaExibida.toFixed(1) : '—';
+        titleBadge = `🩺 D2: Atenção Primária: ${fmt} / 100`;
+    } else if (activeLayerKey === "d3_nota") {
+        notaExibida = mun.d3_nota;
+        const fmt = notaExibida !== null && notaExibida !== undefined ? notaExibida.toFixed(1) : '—';
+        titleBadge = `🏥 D3: Estrutura & Capacidade: ${fmt} / 100`;
+    } else {
+        // activeLayerKey === "nota_geral" -> obedece o modo selecionado (oficial, urgencia, integrado)
+        if (activeIndexMode === "integrado") {
+            notaExibida = (mun.nota_integrada !== null && mun.nota_integrada !== undefined) ? mun.nota_integrada : mun.nota_geral;
+            const fmt = notaExibida !== null && notaExibida !== undefined ? notaExibida.toFixed(1) : '—';
+            titleBadge = `Nota Integrada (10% Onco): ${fmt} / 100`;
+            posNac = mun.posicao_nacional_integrada || mun.posicao_nacional;
+            posEst = mun.posicao_estadual_integrada || mun.posicao_estadual;
+        } else if (activeIndexMode === "urgencia") {
+            notaExibida = (mun.nota_com_urgencia !== null && mun.nota_com_urgencia !== undefined) ? mun.nota_com_urgencia : mun.nota_geral;
+            const fmt = notaExibida !== null && notaExibida !== undefined ? notaExibida.toFixed(1) : '—';
+            titleBadge = `Nota c/ Urgência (15% RUE): ${fmt} / 100`;
+            posNac = mun.posicao_nacional_urgencia || mun.posicao_nacional;
+            posEst = mun.posicao_estadual_urgencia || mun.posicao_estadual;
+        }
+    }
+
     const escoreFmt = notaExibida !== null && notaExibida !== undefined ? notaExibida.toFixed(1) : null;
     const corNota = getColorForScore(notaExibida);
     const urg = mun.urgencia_samu;
 
     let statusBlock = "";
     if (escoreFmt) {
-        const titleBadge = isUrgenciaMode
-            ? `Nota c/ Urgência (15% RUE): ${escoreFmt} / 100`
-            : `Nota Geral: ${escoreFmt} / 100`;
-
-        const posNac = isUrgenciaMode ? mun.posicao_nacional_urgencia : mun.posicao_nacional;
-        const posEst = isUrgenciaMode ? mun.posicao_estadual_urgencia : mun.posicao_estadual;
 
         statusBlock = `
             <div style="margin: 4px 0 6px 0;">
@@ -295,11 +330,16 @@ function getTooltipHtml(mun) {
                     <span><strong>D5</strong> Urgência &amp; SAMU:</span>
                     <strong style="color:${getColorForScore(mun.d5_nota)}">${mun.d5_nota !== null && mun.d5_nota !== undefined ? mun.d5_nota.toFixed(1) : '—'}</strong>
                 </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span><strong>🎗️</strong> Oncologia (CACON):</span>
+                    <strong style="color:${getColorForScore(mun.escore_oncologia)}">${mun.escore_oncologia !== null && mun.escore_oncologia !== undefined ? mun.escore_oncologia.toFixed(1) : '—'}</strong>
+                </div>
             </div>
             <div style="font-size:0.78rem; line-height:1.45; color:#334155;">
                 <span>🏆 Ranking Nacional: <strong>#${posNac ? posNac.toLocaleString("pt-BR") : '—'}</strong> de 5.570</span><br>
                 <span>🥇 Ranking Estadual (${mun.uf}): <strong>#${posEst ? posEst.toLocaleString("pt-BR") : '—'}</strong> de ${(mun.total_uf || '—').toLocaleString("pt-BR")}</span><br>
                 ${urg ? `<span>🚑 SAMU: <strong>${urg.cob_samu_efetiva}%</strong> &bull; Região: <strong>${urg.usb_reg ?? 0} USB / ${urg.usa_reg ?? 0} USA</strong></span><br><span>⏱️ Polo Hospitalar: <strong>${urg.dist_polo_km === 0 ? 'Sede Local (0 km)' : `${urg.dist_polo_km} km (~${urg.tempo_ambulancia_min} min — ${urg.polo_hospitalar_ref})`}</strong></span><br>` : ''}
+                ${mun.oncologia_tfd ? `<span>🎗️ CACON: <strong>${mun.oncologia_tfd.eh_polo_onco ? 'Polo Local' : `${mun.oncologia_tfd.dist_cacon_km} km (${mun.oncologia_tfd.cacon_referencia})`}</strong> &bull; Lei 60d: <strong>${mun.oncologia_tfd.pct_60d_onco}%</strong></span><br>` : ''}
                 <span>🏥 Região de Saúde: <strong>${mun.regiao_saude || '—'}</strong></span>
             </div>
         `;
@@ -338,7 +378,7 @@ function renderGeoJson(geoData) {
             });
 
             layer.on({
-                click: () => openDrawer(mun),
+                click: () => openDrawer(mun, activeIndexMode),
                 mouseover: (e) => {
                     // Destaque instantâneo no highlightPane SVG (0 repinturas no canvas principal)
                     if (highlightLayer && e.target.feature) {
@@ -361,8 +401,12 @@ function styleFeature(feature) {
     const mun = mapaResumoData[ibge];
 
     let fieldKey = activeLayerKey;
-    if (activeLayerKey === "nota_geral" && activeIndexMode === "urgencia") {
-        fieldKey = "nota_com_urgencia";
+    if (activeLayerKey === "nota_geral") {
+        if (activeIndexMode === "integrado") {
+            fieldKey = "nota_integrada";
+        } else if (activeIndexMode === "urgencia") {
+            fieldKey = "nota_com_urgencia";
+        }
     }
 
     if (!mun || mun.status === "sem_classificacao" || mun[fieldKey] === null || mun[fieldKey] === undefined) {
@@ -395,19 +439,37 @@ function getColorForScore(score) {
     return "#dc2626";
 }
 
+function updateIndexModeSelectorState() {
+    const indexModeSelector = document.querySelector(".index-mode-selector");
+    if (indexModeSelector) {
+        indexModeSelector.classList.toggle("is-dim-active", activeLayerKey !== "nota_geral");
+    }
+}
+
 function setupIndexModeSelector() {
     const modeButtons = document.querySelectorAll(".index-mode-btn");
     modeButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
+            // Se clicar em um dos modos da Nota Geral enquanto visualiza outra dimensão,
+            // reativa automaticamente a visualização de 'Nota Geral' para conveniência
+            if (activeLayerKey !== "nota_geral") {
+                activeLayerKey = "nota_geral";
+                document.querySelectorAll(".layer-btn").forEach((lb) => {
+                    lb.classList.toggle("active", lb.dataset.layer === "nota_geral");
+                });
+            }
             modeButtons.forEach((b) => b.classList.remove("active"));
             btn.classList.add("active");
             activeIndexMode = btn.dataset.indexMode || "oficial";
+            updateIndexModeSelectorState();
             if (geoJsonLayer) {
                 geoJsonLayer.setStyle(styleFeature);
             }
             renderMapOverlayMarkers();
+            refreshDrawerIndexMode(activeIndexMode);
         });
     });
+    updateIndexModeSelectorState();
 }
 
 function setupLayerSelector() {
@@ -417,12 +479,14 @@ function setupLayerSelector() {
             layerButtons.forEach((b) => b.classList.remove("active"));
             btn.classList.add("active");
             activeLayerKey = btn.dataset.layer;
+            updateIndexModeSelectorState();
             if (geoJsonLayer) {
                 geoJsonLayer.setStyle(styleFeature);
             }
             renderMapOverlayMarkers();
         });
     });
+    updateIndexModeSelectorState();
 }
 
 function setMarkerMode(mode) {
@@ -449,11 +513,13 @@ function renderMapOverlayMarkers() {
     if (activeMarkerMode === "none") return;
 
     const ufDimFieldMap = {
-        "nota_geral": activeIndexMode === "urgencia" ? "media_com_urgencia_uf" : "media_escore_uf",
+        "nota_geral": activeIndexMode === "integrado" ? "media_integrada_uf" : (activeIndexMode === "urgencia" ? "media_com_urgencia_uf" : "media_escore_uf"),
+        "nota_integrada": "media_integrada_uf",
         "d1_nota": "media_d1_uf",
         "d2_nota": "media_d2_uf",
         "d3_nota": "media_d3_uf",
         "d5_nota": "media_d5_uf",
+        "escore_oncologia": "media_onco_uf",
         "nota_com_urgencia": "media_com_urgencia_uf"
     };
 
@@ -479,12 +545,28 @@ function renderMapOverlayMarkers() {
             });
 
             const marker = L.marker([est.lat, est.lng], { icon, zIndexOffset: 900 });
+            let estScoreLabel = `Média Oficial (3D): <strong>${est.media_escore_uf.toFixed(1)} pts</strong>`;
+            if (activeLayerKey === "escore_oncologia") {
+                estScoreLabel = `🎗️ Média Oncologia: <strong>${est.media_onco_uf ? est.media_onco_uf.toFixed(1) : '—'} pts</strong>`;
+            } else if (activeLayerKey === "d5_nota") {
+                estScoreLabel = `🚑 Média Urgência & SAMU: <strong>${est.media_d5_uf ? est.media_d5_uf.toFixed(1) : '—'} pts</strong>`;
+            } else if (activeLayerKey === "d1_nota") {
+                estScoreLabel = `📊 Média D1 Resultados: <strong>${est.media_d1_uf.toFixed(1)} pts</strong>`;
+            } else if (activeLayerKey === "d2_nota") {
+                estScoreLabel = `🩺 Média D2 Primária: <strong>${est.media_d2_uf.toFixed(1)} pts</strong>`;
+            } else if (activeLayerKey === "d3_nota") {
+                estScoreLabel = `🏥 Média D3 Estrutura: <strong>${est.media_d3_uf.toFixed(1)} pts</strong>`;
+            } else if (activeIndexMode === "integrado") {
+                estScoreLabel = `🎗️⚡ Média Integrada (10% Onco): <strong>${est.media_integrada_uf ? est.media_integrada_uf.toFixed(1) : '—'} pts</strong>`;
+            } else if (activeIndexMode === "urgencia") {
+                estScoreLabel = `⚡ Média c/ Urgência (15%): <strong>${est.media_com_urgencia_uf ? est.media_com_urgencia_uf.toFixed(1) : '—'} pts</strong>`;
+            }
+
             marker.bindTooltip(`
                 <div style="font-size:0.8rem; line-height:1.45; min-width:190px;">
                     <strong style="font-size:0.95rem;">#${idx + 1}º ${est.nome_uf} (${est.uf})</strong><br>
-                    <span>Média Oficial (3D): <strong>${est.media_escore_uf.toFixed(1)} pts</strong></span><br>
-                    <span>Média c/ Urgência (15%): <strong>${est.media_com_urgencia_uf ? est.media_com_urgencia_uf.toFixed(1) : '—'} pts</strong></span><br>
-                    <span>D1: <strong>${est.media_d1_uf.toFixed(1)}</strong> | D2: <strong>${est.media_d2_uf.toFixed(1)}</strong> | D3: <strong>${est.media_d3_uf.toFixed(1)}</strong> | D5: <strong>${est.media_d5_uf ? est.media_d5_uf.toFixed(1) : '—'}</strong></span><br>
+                    <span>${estScoreLabel}</span><br>
+                    <span>D1: <strong>${est.media_d1_uf.toFixed(1)}</strong> | D2: <strong>${est.media_d2_uf.toFixed(1)}</strong> | D3: <strong>${est.media_d3_uf.toFixed(1)}</strong> | D5: <strong>${est.media_d5_uf ? est.media_d5_uf.toFixed(1) : '—'}</strong> | Onco: <strong>${est.media_onco_uf ? est.media_onco_uf.toFixed(1) : '—'}</strong></span><br>
                     <span>Municípios: <strong>${est.total_municipios}</strong> &bull; SAMU: <strong>${est.cob_samu_media_uf ?? '—'}%</strong> &bull; UPAs: <strong>${est.total_upas_uf ?? 0}</strong></span><br>
                     <span style="color:#0284c7; font-weight:600;">👉 Clique para focar no Estado e ver o ranking da UF</span>
                 </div>
@@ -507,11 +589,24 @@ function renderMapOverlayMarkers() {
         });
     } else if (activeMarkerMode === "capitais") {
         const capitais = rankingsData?.ranking_capitais || [];
-        const field = (activeLayerKey === "nota_geral" && activeIndexMode === "urgencia") ? "nota_com_urgencia" : (activeLayerKey || "nota_geral");
-        const sorted = [...capitais].sort((a, b) => (b[field] || 0) - (a[field] || 0));
+        let field = activeLayerKey;
+        if (activeLayerKey === "nota_geral") {
+            if (activeIndexMode === "integrado") {
+                field = "nota_integrada";
+            } else if (activeIndexMode === "urgencia") {
+                field = "nota_com_urgencia";
+            } else {
+                field = "nota_geral";
+            }
+        }
+        const sorted = [...capitais].sort((a, b) => {
+            const valA = a[field] ?? a.nota_geral ?? a.escore ?? 0;
+            const valB = b[field] ?? b.nota_geral ?? b.escore ?? 0;
+            return valB - valA;
+        });
 
         sorted.forEach((cap, idx) => {
-            const val = cap[field] ?? cap.escore;
+            const val = cap[field] ?? cap.nota_geral ?? cap.escore;
             if (val === null || val === undefined) return;
             const color = getColorForScore(val);
             const shortName = cap.nome.length > 12 ? cap.nome.slice(0, 11) + "." : cap.nome;
@@ -528,9 +623,24 @@ function renderMapOverlayMarkers() {
             });
 
             const marker = L.marker([cap.lat, cap.lng], { icon, zIndexOffset: 950 });
-            const scoreLabel = (activeIndexMode === "urgencia" && cap.nota_com_urgencia)
-                ? `Nota c/ Urgência (15%): <strong>${cap.nota_com_urgencia.toFixed(1)} / 100</strong> (#${cap.posicao_nacional_urgencia}º BR)`
-                : `Nota Geral Oficial: <strong>${cap.escore.toFixed(1)} / 100</strong> (#${cap.posicao_nacional}º BR)`;
+            let scoreLabel = "";
+            if (activeLayerKey === "escore_oncologia") {
+                scoreLabel = `🎗️ Escore Oncologia: <strong>${(cap.escore_oncologia ?? 0).toFixed(1)} / 100</strong> (${cap.polo_tipo_centro || 'CACON/UNACON'})`;
+            } else if (activeLayerKey === "d5_nota") {
+                scoreLabel = `🚑 D5 Urgência & SAMU: <strong>${(cap.d5_nota ?? 0).toFixed(1)} / 100</strong>`;
+            } else if (activeLayerKey === "d1_nota") {
+                scoreLabel = `📊 D1 Resultados em Saúde: <strong>${(cap.d1_nota ?? 0).toFixed(1)} / 100</strong>`;
+            } else if (activeLayerKey === "d2_nota") {
+                scoreLabel = `🩺 D2 Atenção Primária: <strong>${(cap.d2_nota ?? 0).toFixed(1)} / 100</strong>`;
+            } else if (activeLayerKey === "d3_nota") {
+                scoreLabel = `🏥 D3 Estrutura Hospitalar: <strong>${(cap.d3_nota ?? 0).toFixed(1)} / 100</strong>`;
+            } else if (activeIndexMode === "integrado" && cap.nota_integrada !== null && cap.nota_integrada !== undefined) {
+                scoreLabel = `Nota Integrada (10% Onco): <strong>${cap.nota_integrada.toFixed(1)} / 100</strong> (#${cap.posicao_nacional_integrada || '—'}º BR)`;
+            } else if (activeIndexMode === "urgencia" && cap.nota_com_urgencia !== null && cap.nota_com_urgencia !== undefined) {
+                scoreLabel = `Nota c/ Urgência (15%): <strong>${cap.nota_com_urgencia.toFixed(1)} / 100</strong> (#${cap.posicao_nacional_urgencia || '—'}º BR)`;
+            } else {
+                scoreLabel = `Nota Geral Oficial (3D): <strong>${(cap.nota_geral ?? cap.escore).toFixed(1)} / 100</strong> (#${cap.posicao_nacional || '—'}º BR)`;
+            }
 
             marker.bindTooltip(`
                 <div style="font-size:0.8rem; line-height:1.45; min-width:195px;">
@@ -544,7 +654,7 @@ function renderMapOverlayMarkers() {
 
             marker.on("click", () => {
                 const mun = mapaResumoData[cap.ibge7];
-                if (mun) openDrawer(mun);
+                if (mun) openDrawer(mun, activeIndexMode);
             });
 
             marker.addTo(overlayMarkersLayer);
@@ -739,7 +849,7 @@ function setupSearchAndFilters() {
                         dropdown.classList.remove("visible");
                         searchInput.value = `${mun.nome} (${mun.uf})`;
                         focusMunicipalityOnMap(ibge7);
-                        openDrawer(mun);
+                        openDrawer(mun, activeIndexMode);
                     });
                 });
             }
@@ -873,11 +983,13 @@ function renderRankingsContent(selectedUf = "") {
 
     const dimLabelMap = {
         "nota_geral": "Nota Geral Consolidada (D1 + D2 + D3 — Padrão Oficial)",
+        "nota_integrada": "Nota Integrada Completa (25% D1 + 25% D2 + 25% D3 + 15% Urgência + 10% Oncologia)",
         "nota_com_urgencia": "Nota Expandida com Urgência e Distância Golden Hour (30% D1 + 25% D2 + 30% D3 + 15% D5)",
         "d1_nota": "D1 — Resultados em Saúde (Mortalidade Infantil, DCNT e Evitáveis)",
         "d2_nota": "D2 — Atenção Primária (ICSAP, Pré-natal 7+ e Vacinação Composta)",
         "d3_nota": "D3 — Acesso e Capacidade (Leitos Regionais, Médicos/Enf. 40h e eSF)",
-        "d5_nota": "D5 — Rede de Urgência & SAMU 192 (Cobertura SAMU, UPAs 24h e Frotas)"
+        "d5_nota": "D5 — Rede de Urgência & SAMU 192 (Cobertura SAMU, UPAs 24h e Frotas)",
+        "escore_oncologia": "🎗️ Linha de Cuidado Oncológico & CACON/UNACON (Cumprimento Lei 60 Dias e TFD)"
     };
     const activeLabel = dimLabelMap[activeRankDim] || "Nota Geral Consolidada";
     const allMun = Object.values(mapaResumoData);
@@ -897,9 +1009,11 @@ function renderRankingsContent(selectedUf = "") {
                     const scoreFmt = typeof score === "number" ? score.toFixed(1) : "—";
 
                     // Posição no país para sinalização adicional
-                    const nacPos = (activeRankDim === "nota_com_urgencia" && m.posicao_nacional_urgencia)
-                        ? m.posicao_nacional_urgencia
-                        : m.posicao_nacional;
+                    const nacPos = (activeRankDim === "nota_integrada" && m.posicao_nacional_integrada)
+                        ? m.posicao_nacional_integrada
+                        : ((activeRankDim === "nota_com_urgencia" && m.posicao_nacional_urgencia)
+                            ? m.posicao_nacional_urgencia
+                            : m.posicao_nacional);
 
                     let posPrefix = "";
                     let posSuffix = "";
@@ -939,7 +1053,8 @@ function renderRankingsContent(selectedUf = "") {
                                     <span>D1: <strong>${d1}</strong></span> | 
                                     <span>D2: <strong>${d2}</strong></span> | 
                                     <span>D3: <strong>${d3}</strong></span> | 
-                                    <span>D5: <strong>${d5}</strong></span>
+                                    <span>D5: <strong>${d5}</strong></span> | 
+                                    <span>🎗️ Onco: <strong>${typeof m.escore_oncologia === 'number' ? m.escore_oncologia.toFixed(1) : '—'}</strong></span>
                                 </div>
                             </div>
                             <span style="background:${getColorForScore(score)}; color:#fff; font-weight:700; font-size:0.8125rem; padding:2px 8px; border-radius:4px; margin-left:8px;">
@@ -1033,11 +1148,13 @@ function renderRankingsContent(selectedUf = "") {
     else if (activeRankScope === "estados") {
         const ufFieldMap = {
             "nota_geral": "media_escore_uf",
+            "nota_integrada": "media_integrada_uf",
             "nota_com_urgencia": "media_com_urgencia_uf",
             "d1_nota": "media_d1_uf",
             "d2_nota": "media_d2_uf",
             "d3_nota": "media_d3_uf",
-            "d5_nota": "media_d5_uf"
+            "d5_nota": "media_d5_uf",
+            "escore_oncologia": "media_onco_uf"
         };
         const field = ufFieldMap[activeRankDim] || "media_escore_uf";
         const estados = [...(rankingsData.ranking_estados || [])].sort((a, b) => (b[field] || 0) - (a[field] || 0));
@@ -1145,7 +1262,7 @@ function renderRankingsContent(selectedUf = "") {
             if (modalRanking) modalRanking.classList.remove("active");
             if (mun) {
                 focusMunicipalityOnMap(ibge7);
-                openDrawer(mun);
+                openDrawer(mun, activeIndexMode);
             }
         });
     });

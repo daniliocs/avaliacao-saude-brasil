@@ -1,6 +1,6 @@
 {
-  "build_timestamp": "2026-10-25T01:54:54.280722+00:00",
-  "versao_metodologia": "v0.5.0-draft",
+  "build_timestamp": "2026-10-25T15:56:58.604014+00:00",
+  "versao_metodologia": "v0.7.3",
   "status_metodologia": "Experimental — Normalização Relativa por Percentis (P5–P95)",
   "regras_inegociaveis": [
     "Proibido inventar dados numéricos, metas ou limites sem validação documental",
@@ -764,7 +764,7 @@
     }
   },
   "limites_calculados": {
-    "versao": "v0.5.0-draft",
+    "versao": "v0.7.3",
     "metodo": "percentis",
     "gerado_em": "2026-10-24",
     "limites": {
@@ -1039,8 +1039,8 @@
     }
   },
   "build_info": {
-    "versao_metodologia": "v0.5.0-draft",
-    "gerado_em": "2026-10-24",
+    "versao_metodologia": "v0.7.3",
+    "gerado_em": "2026-10-25",
     "n_municipios": 5570,
     "n_classificados": 5570,
     "n_sem_classificacao": 0,

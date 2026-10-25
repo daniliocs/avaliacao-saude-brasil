@@ -42,6 +42,10 @@ data/raw/ieps/*
 !data/raw/demas_urgencia/
 data/raw/demas_urgencia/*
 !data/raw/demas_urgencia/manifest_demas_urgencia.json
+!data/raw/oncologia/
+data/raw/oncologia/*
+!data/raw/oncologia/manifest_oncologia.json
+scratch/
 
 # Pytest cache
 .pytest_cache/

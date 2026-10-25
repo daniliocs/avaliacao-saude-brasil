@@ -349,10 +349,16 @@ body {
   transition: all var(--transition-fast);
 }
 
+.layer-btn:hover {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #047857;
+}
+
 .layer-btn.active {
-  background-color: var(--color-surface);
-  color: var(--color-text-main);
-  box-shadow: var(--shadow-sm);
+  background-color: #059669;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(5, 150, 105, 0.35);
 }
 
 /* Seletor de Modelo de Índice (Padrão Oficial vs Com Urgência) */
@@ -387,6 +393,15 @@ body {
   color: #ffffff;
   font-weight: 700;
   box-shadow: var(--shadow-sm);
+}
+
+/* Quando outra dimensão estiver ativa (D1, D2, D3, Urgência, Oncologia),
+   o seletor de modelos da Nota Geral fica visualmente atenuado / inativo */
+.index-mode-selector.is-dim-active .index-mode-btn.active {
+  background-color: #e2e8f0;
+  color: #64748b;
+  font-weight: 600;
+  box-shadow: none;
 }
 
 /* Botão de Destaque para Rankings */
@@ -657,9 +672,11 @@ body.map-expanded .floating-map-bar {
 }
 
 .rank-dim-btn.active {
-  background-color: var(--color-primary-light);
-  border-color: var(--color-primary);
-  color: var(--color-primary-dark);
+  background-color: #059669;
+  border-color: #047857;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(5, 150, 105, 0.35);
 }
 
 /* Seletor de Marcadores Numéricos no Mapa (Estados / Capitais) */
@@ -1495,6 +1512,16 @@ details.dim-accordion[open] summary.dim-summary::after {
   background-color: #e0f2fe;
   color: #0369a1;
 }
+.separated-layer-card--onco {
+  background-color: #faf5ff; /* Roxo suave oncológico */
+  border-color: #e9d5ff;
+}
+
+.separated-tag--onco {
+  background-color: #f3e8ff;
+  color: #7e22ce;
+}
+
 
 .urgencia-stats-grid {
   display: grid;

@@ -1,0 +1,26 @@
+{
+  "POBR2021": {
+    "arquivo": "POBR2021.dbc",
+    "sha256": "064dc54428f0233de503677674ce83c4138e8edf3df4524afbaf38733ac95d05",
+    "bytes": 20532694,
+    "total_registros": 574637,
+    "data_coleta": "2026-10-25",
+    "origem": "ftp://ftp.datasus.gov.br/dissemin/publicos/painel_oncologia/Dados/POBR2021.dbc"
+  },
+  "POBR2022": {
+    "arquivo": "POBR2022.dbc",
+    "sha256": "355997a48b064eea7ec3a31f48e99de9320e5734f6b27bfa7f725c552bf17660",
+    "bytes": 22569155,
+    "total_registros": 635735,
+    "data_coleta": "2026-10-25",
+    "origem": "ftp://ftp.datasus.gov.br/dissemin/publicos/painel_oncologia/Dados/POBR2022.dbc"
+  },
+  "POBR2023": {
+    "arquivo": "POBR2023.dbc",
+    "sha256": "6c77e9b279869f426c39dd5a18f83829acb55ab8168ac37304e73d024ecec3af",
+    "bytes": 24048473,
+    "total_registros": 679802,
+    "data_coleta": "2026-10-25",
+    "origem": "ftp://ftp.datasus.gov.br/dissemin/publicos/painel_oncologia/Dados/POBR2023.dbc"
+  }
+}
