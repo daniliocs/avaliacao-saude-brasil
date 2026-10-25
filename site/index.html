@@ -65,7 +65,7 @@
             <!-- Seletor de Modelo de Índice (Padrão Oficial vs Com Urgência) -->
             <div class="layer-selector index-mode-selector" role="group" aria-label="Modelo de Cálculo do Índice">
               <button class="index-mode-btn active" data-index-mode="oficial" title="Índice Oficial Padrão (33,3% D1, 33,3% D2, 33,3% D3)">⚖️ Padrão Oficial</button>
-              <button class="index-mode-btn" data-index-mode="urgencia" title="Índice Expandido com Urgência e SAMU 192 (+10% Peso RUE)">⚡ Com Urgência (10%)</button>
+              <button class="index-mode-btn" data-index-mode="urgencia" title="Índice Expandido com Urgência e Distância Golden Hour (+15% Peso RUE: 30% D1, 25% D2, 30% D3, 15% D5)">⚡ Com Urgência (15%)</button>
             </div>
 
             <!-- Seletor de Camada do Índice -->
@@ -139,7 +139,7 @@
             <div class="ranking-dimension-filter" role="group" aria-label="Filtrar Dimensão do Ranking">
               <div class="rank-dim-buttons-group">
                 <button class="rank-dim-btn active" data-rank-dim="nota_geral">🌟 Nota Geral</button>
-                <button class="rank-dim-btn" data-rank-dim="nota_com_urgencia" title="Nota com 10% Urgência/SAMU">⚡ Nota + Urgência (10%)</button>
+                <button class="rank-dim-btn" data-rank-dim="nota_com_urgencia" title="Nota com 15% Urgência/SAMU e Distância Golden Hour">⚡ Nota + Urgência (15%)</button>
                 <button class="rank-dim-btn" data-rank-dim="d1_nota">D1: Resultados</button>
                 <button class="rank-dim-btn" data-rank-dim="d2_nota">D2: Atenção Primária</button>
                 <button class="rank-dim-btn" data-rank-dim="d3_nota">D3: Estrutura</button>
@@ -178,10 +178,10 @@
                 <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.84rem; line-height: 1.6; color: #334155;">
                   <li><strong>D1 — Resultados em Saúde da População (33,3%):</strong> Mortalidade Infantil suavizada (40%), Mortalidade Prematura 30–69a por DCNT suavizada (30%) e Mortalidade por Causas Evitáveis pelo SUS (30%) no triênio 2021–2023 por residência (SIM / SINASC / Censo 2022). Razão de Mortalidade Materna (2019–2023) exibida como informativa.</li>
                   <li><strong>D2 — Atenção Primária e Prevenção (33,3%):</strong> Internações por Condições Sensíveis à APS — ICSAP (33,3%), Pré-Natal Adequado 7+ consultas no SINASC (33,3%) e Cobertura Vacinal Infantil Composta (Poliomielite, Pentavalente e Tríplice Viral D1 — 33,3%) no triênio 2021–2023.</li>
-                  <li><strong>D3 — Acesso e Capacidade Assistencial (33,3%):</strong> Leitos SUS regionalizados na Região de Saúde - CIR (33,3%), Médicos + Enfermeiros padronizados por carga horária de 40h/sem (33,3%) e Cobertura da Estratégia Saúde da Família - eSF (33,3%) no triênio 2021–2023.</li>
+                  <li><strong>D3 — Acesso e Capacidade Assistencial (33,3%):</strong> Leitos SUS na Região de Saúde ajustados pelo Fator de Distância Hospitalar <em>Golden Hour</em> (33,3%), Médicos + Enfermeiros padronizados por carga horária de 40h/sem (33,3%) e Cobertura da Estratégia Saúde da Família - eSF (33,3%) no triênio 2021–2023.</li>
                   <li><strong>Normalização Relativa (P5–P95):</strong> Indicadores normalizados pelos percentis empíricos P5 e P95 da distribuição nacional observada, com análise de sensibilidade completa.</li>
                   <li><strong>Dimensão 4 (Financiamento SIOPS deflacionado) e Camada Privada (ANS/CNES):</strong> Populados para os 5.570 municípios e exibidos separadamente fora da nota principal.</li>
-                  <li><strong>Dimensão 5 — Urgência &amp; SAMU 192 (Fase 1 de Expansão):</strong> Cobertura populacional de SAMU 192, frota de ambulâncias (USB básica e UTI Móvel USA) e UPAs 24h municipais e da Região de Saúde (DEMAS/SEIDIGI/MS). Disponível como camada visualizável (0–100) e como modelo alternativo via seletor (30% D1 + 30% D2 + 30% D3 + 10% D5).</li>
+                  <li><strong>Dimensão 5 — Urgência, SAMU 192 &amp; Fator de Distância <em>Golden Hour</em>:</strong> Combina prontidão imediata local (35%: base local de ambulância, UPA 24h/UTI móvel e leitos de estabilização) e rede regional descontada pela distância rodoviária até o Polo Hospitalar de Referência ($f_{dist} = \exp(-0,012 \cdot d_{km})$, 65%). Disponível como camada visualizável (0–100) e como modelo alternativo com 15% de peso (30% D1 + 25% D2 + 30% D3 + 15% D5).</li>
                 </ul>
               </div>
 

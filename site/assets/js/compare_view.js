@@ -254,6 +254,36 @@ function renderMunicipiosComparison() {
             vA: urgA.tx_frota_samu_reg_100k,
             vB: urgB.tx_frota_samu_reg_100k,
             digits: 2
+        },
+        {
+            nome: "D5.6 — Distância Rodoviária ao Polo Hospitalar (↓ menor é melhor)",
+            unid: "km",
+            vA: urgA.dist_polo_km ?? 0,
+            vB: urgB.dist_polo_km ?? 0,
+            digits: 1,
+            sentido: "menor_melhor"
+        },
+        {
+            nome: "D5.7 — Tempo Estimado de Socorro / Remoção (↓ menor é melhor)",
+            unid: "min",
+            vA: urgA.tempo_ambulancia_min ?? 12,
+            vB: urgB.tempo_ambulancia_min ?? 12,
+            digits: 0,
+            sentido: "menor_melhor"
+        },
+        {
+            nome: "D5.8 — Leitos Hospitalares SUS no Município",
+            unid: "leitos",
+            vA: urgA.leitos_locais_sus ?? 0,
+            vB: urgB.leitos_locais_sus ?? 0,
+            digits: 0
+        },
+        {
+            nome: "D5.9 — Escore de Prontidão Imediata Local (0–100)",
+            unid: "pts",
+            vA: urgA.escore_prontidao_local,
+            vB: urgB.escore_prontidao_local,
+            digits: 2
         }
     ];
 
@@ -266,8 +296,9 @@ function renderMunicipiosComparison() {
         ${urgRows.map(r => {
             const aOk = typeof r.vA === "number" && !isNaN(r.vA);
             const bOk = typeof r.vB === "number" && !isNaN(r.vB);
-            const winA = aOk && bOk && r.vA > r.vB;
-            const winB = aOk && bOk && r.vB > r.vA;
+            const winA = aOk && bOk && (r.sentido === "menor_melhor" ? r.vA < r.vB : r.vA > r.vB);
+            const winB = aOk && bOk && (r.sentido === "menor_melhor" ? r.vB < r.vA : r.vB > r.vA);
+
             return `
                 <tr>
                     <td style="text-align:right; font-weight:600; ${winA ? 'background:#f0fdf4;' : ''}">${fmtNum(r.vA, r.digits)} <small style="color:var(--color-text-subtle);">${r.unid}</small></td>
@@ -415,11 +446,11 @@ function renderMunicipiosComparison() {
             <h3 class="section-title" style="margin-top:0.5rem;">Comparação de Notas por Dimensão (Escala 0–100)</h3>
             <div style="display:flex; flex-direction:column; gap:0.75rem;">
                 ${diffRow("🌟 Nota Geral Consolidada (Padrão Oficial 3D)", munA.nota_geral, munB.nota_geral, "maior_melhor", 1, " pts")}
-                ${diffRow("⚡ Nota Expandida com Urgência (+10% RUE)", munA.nota_com_urgencia, munB.nota_com_urgencia, "maior_melhor", 1, " pts")}
+                ${diffRow("⚡ Nota Expandida com Urgência (+15% RUE & Golden Hour)", munA.nota_com_urgencia, munB.nota_com_urgencia, "maior_melhor", 1, " pts")}
                 ${diffRow("D1 — Resultados em Saúde (33,3% ou 30%)", munA.d1_nota, munB.d1_nota, "maior_melhor", 1, " pts")}
                 ${diffRow("D2 — Atenção Primária e Prevenção (33,3% ou 30%)", munA.d2_nota, munB.d2_nota, "maior_melhor", 1, " pts")}
                 ${diffRow("D3 — Acesso e Capacidade Assistencial (33,3% ou 30%)", munA.d3_nota, munB.d3_nota, "maior_melhor", 1, " pts")}
-                ${diffRow("🚑 D5 — Rede de Urgência & SAMU 192 (10% RUE)", munA.d5_nota, munB.d5_nota, "maior_melhor", 1, " pts")}
+                ${diffRow("🚑 D5 — Rede de Urgência, SAMU & Distância (15% RUE)", munA.d5_nota, munB.d5_nota, "maior_melhor", 1, " pts")}
             </div>
         </section>
 
@@ -593,7 +624,7 @@ function renderEstadosComparison() {
             <h3 class="section-title" style="margin-top:0.5rem;">Médias Estaduais por Dimensão (0–100)</h3>
             <div style="display:flex; flex-direction:column; gap:0.75rem;">
                 ${diffRow("🌟 Média Estadual da Nota Geral (Padrão 3D)", estA.media_escore_uf, estB.media_escore_uf, "maior_melhor", 1, " pts")}
-                ${diffRow("⚡ Média Estadual com Urgência (+10% RUE)", estA.media_com_urgencia_uf, estB.media_com_urgencia_uf, "maior_melhor", 1, " pts")}
+                ${diffRow("⚡ Média Estadual com Urgência (+15% RUE & Golden Hour)", estA.media_com_urgencia_uf, estB.media_com_urgencia_uf, "maior_melhor", 1, " pts")}
                 ${diffRow("👥 Média Estadual Ponderada pela População", estA.media_ponderada_uf, estB.media_ponderada_uf, "maior_melhor", 1, " pts")}
                 ${diffRow("D1 — Resultados em Saúde (Média UF)", estA.media_d1_uf, estB.media_d1_uf, "maior_melhor", 1, " pts")}
                 ${diffRow("D2 — Atenção Primária (Média UF)", estA.media_d2_uf, estB.media_d2_uf, "maior_melhor", 1, " pts")}

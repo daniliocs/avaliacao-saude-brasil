@@ -350,6 +350,20 @@ def construir() -> pd.DataFrame:
     df["tx_mort_evit_bruta"] = df["tx_mort_evit"]
     df["tx_mort_evit"] = np.where(df["tx_mort_evit"].notna(), (df["tx_mort_evit_bruta"] * fator_md / fator_et).round(1), np.nan)
 
+    # Ajuste Gravitacional Golden Hour (Decaimento por Distância) em D3.1 (Leitos SUS Efetivos)
+    df["tx_leito_sus_reg_bruto"] = df["tx_leito_sus_reg"].round(1)
+    if "fator_golden_hour" in df.columns and "leitos_locais_sus" in df.columns:
+        fator_leito_local = np.clip(df["leitos_locais_sus"].fillna(0) / 50.0, 0.0, 1.0)
+        fator_acesso_hosp = np.clip(0.25 * fator_leito_local + 0.75 * df["fator_golden_hour"].fillna(1.0), 0.0, 1.0)
+        df["fator_acesso_hospitalar"] = fator_acesso_hosp.round(4)
+        df["tx_leito_sus_reg"] = np.where(
+            df["tx_leito_sus_reg_bruto"].notna(),
+            (df["tx_leito_sus_reg_bruto"] * fator_acesso_hosp).round(2),
+            np.nan,
+        )
+    else:
+        df["fator_acesso_hospitalar"] = 1.0
+
     limites = obter_limites(df, cfg_lim, versao)
     df = escores_componentes(df, limites)
     df = nota_dimensoes(df, cfg_lim, pesos)
@@ -392,7 +406,7 @@ def construir() -> pd.DataFrame:
         df["rank_d5"] = rank_min(df["d5_nota"]).astype("Int64")
         df["nota_com_urgencia"] = np.where(
             df["status"] == "classificado",
-            (0.30 * df["d1_nota"] + 0.30 * df["d2_nota"] + 0.30 * df["d3_nota"] + 0.10 * df["d5_nota"]).round(1),
+            (0.30 * df["d1_nota"] + 0.25 * df["d2_nota"] + 0.30 * df["d3_nota"] + 0.15 * df["d5_nota"]).round(1),
             np.nan
         )
         df["posicao_nacional_urgencia"] = np.nan

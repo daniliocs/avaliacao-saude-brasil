@@ -47,3 +47,17 @@ def test_totais_nacionais_plausibilidade(df_urgencia):
     assert df_urgencia["usb_mun"].sum() > 3000
     assert df_urgencia["usa_mun"].sum() > 500
     assert df_urgencia["upa_mun"].sum() > 500
+
+
+def test_fator_distancia_golden_hour(df_urgencia):
+    assert "dist_polo_km" in df_urgencia.columns
+    assert "fator_golden_hour" in df_urgencia.columns
+    assert (df_urgencia["dist_polo_km"] >= 0.0).all()
+    assert ((df_urgencia["fator_golden_hour"] > 0.0) & (df_urgencia["fator_golden_hour"] <= 1.0)).all()
+    polos = df_urgencia[df_urgencia["eh_polo_hospitalar"]]
+    assert len(polos) >= 1000
+    assert (polos["dist_polo_km"] == 0.0).all()
+    assert (polos["fator_golden_hour"] == 1.0).all()
+    diamantina = df_urgencia[df_urgencia["ibge7"].astype(str) == "3121605"]["escore_urgencia_rue"].iloc[0]
+    sgrp = df_urgencia[df_urgencia["ibge7"].astype(str) == "3125507"]["escore_urgencia_rue"].iloc[0]
+    assert diamantina > sgrp + 20.0

@@ -90,7 +90,7 @@ export function openDrawer(municipioData) {
             </div>
 
             <div style="margin-top: 0.5rem; padding: 0.4rem 0.6rem; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px; font-size: 0.75rem; color: #0369a1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.3rem;">
-                <span><strong>⚡ Simulação com Urgência (10% RUE):</strong> ${municipioData.nota_com_urgencia ? municipioData.nota_com_urgencia.toFixed(1) : '—'} pts</span>
+                <span><strong>⚡ Simulação com Urgência (15% RUE + Golden Hour):</strong> ${municipioData.nota_com_urgencia ? municipioData.nota_com_urgencia.toFixed(1) : '—'} pts</span>
                 <span>Posição com Urgência: <strong>#${municipioData.posicao_nacional_urgencia ? municipioData.posicao_nacional_urgencia.toLocaleString('pt-BR') : '—'}º</strong> no Brasil (${municipioData.posicao_estadual_urgencia ? '#' + municipioData.posicao_estadual_urgencia + 'º na UF' : ''})</span>
             </div>
 
@@ -246,6 +246,13 @@ function renderUrgenciaSamuCard(municipioData) {
         ? (municipioData.nota_com_urgencia - municipioData.nota_geral).toFixed(1)
         : null;
     const diffSign = diffPts && Number(diffPts) > 0 ? `+${diffPts}` : diffPts;
+    const distKm = typeof urg.dist_polo_km === "number" ? urg.dist_polo_km : 0;
+    const tempoMin = urg.tempo_ambulancia_min ?? 12;
+    const poloRef = urg.polo_hospitalar_ref || municipioData.nome;
+    const fatorGH = typeof urg.fator_golden_hour === "number" ? (urg.fator_golden_hour * 100).toFixed(0) + "%" : "100%";
+    const leitosLocais = urg.leitos_locais_sus ?? 0;
+    const prontLocal = typeof urg.escore_prontidao_local === "number" ? urg.escore_prontidao_local.toFixed(1) : "—";
+    const distLabel = distKm === 0 ? "0 km (Polo Local)" : `${distKm.toFixed(1)} km (~${tempoMin} min)`;
 
     return `
         <section class="separated-layer-card separated-layer-card--urgencia" aria-label="Rede de Urgência e SAMU 192">
@@ -285,12 +292,24 @@ function renderUrgenciaSamuCard(municipioData) {
                     <span class="urgencia-stat-box__val">${urg.usa_mun ?? 0} USA</span>
                     <span class="urgencia-stat-box__sub">Região de Saúde: ${urg.usa_reg ?? 0} USAs ativas</span>
                 </div>
+
+                <div class="urgencia-stat-box" style="border-color: #7dd3fc; background: #f0f9ff;">
+                    <span class="urgencia-stat-box__title">⏱️ Distância ao Polo (Golden Hour)</span>
+                    <span class="urgencia-stat-box__val">${distLabel}</span>
+                    <span class="urgencia-stat-box__sub">Polo: <strong>${poloRef}</strong> &bull; Fator: ${fatorGH}</span>
+                </div>
+
+                <div class="urgencia-stat-box" style="border-color: #7dd3fc; background: #f0f9ff;">
+                    <span class="urgencia-stat-box__title">🛏️ Leitos SUS &amp; Prontidão Local</span>
+                    <span class="urgencia-stat-box__val">${leitosLocais.toLocaleString("pt-BR")} leitos locais</span>
+                    <span class="urgencia-stat-box__sub">Escore Prontidão Local: <strong>${prontLocal} / 100</strong></span>
+                </div>
             </div>
 
             <div class="urgencia-compare-pill">
                 <strong>⚡ Comparativo de Modelos:</strong><br>
                 &bull; <strong>Nota Geral Oficial (Padrão 3D):</strong> ${typeof municipioData.nota_geral === "number" ? municipioData.nota_geral.toFixed(1) : "—"} pts (#${municipioData.posicao_nacional || '—'}º BR)<br>
-                &bull; <strong>Nota com Urgência (+10% RUE):</strong> ${typeof municipioData.nota_com_urgencia === "number" ? municipioData.nota_com_urgencia.toFixed(1) : "—"} pts (#${municipioData.posicao_nacional_urgencia || '—'}º BR) ${diffSign ? `[Variação: ${diffSign} pts]` : ''}
+                &bull; <strong>Nota com Urgência (+15% RUE &amp; Golden Hour):</strong> ${typeof municipioData.nota_com_urgencia === "number" ? municipioData.nota_com_urgencia.toFixed(1) : "—"} pts (#${municipioData.posicao_nacional_urgencia || '—'}º BR) ${diffSign ? `[Variação: ${diffSign} pts]` : ''}
                 <div style="font-size:0.7rem; color:var(--color-text-subtle); margin-top:3px;">
                     Fonte: DEMAS / SEIDIGI / Ministério da Saúde (Base Oficial 2024).
                 </div>

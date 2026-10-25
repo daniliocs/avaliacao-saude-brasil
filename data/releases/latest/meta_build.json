@@ -1,5 +1,5 @@
 {
-  "build_timestamp": "2026-10-24T20:58:11.560802+00:00",
+  "build_timestamp": "2026-10-25T01:54:54.280722+00:00",
   "versao_metodologia": "v0.5.0-draft",
   "status_metodologia": "Experimental — Normalização Relativa por Percentis (P5–P95)",
   "regras_inegociaveis": [
@@ -846,8 +846,8 @@
         "n_municipios_base": 5570
       },
       "D3.1": {
-        "pior": 103.99881041374417,
-        "melhor": 318.8037993771162,
+        "pior": 34.6895,
+        "melhor": 246.1,
         "coluna": "tx_leito_sus_reg",
         "sentido": "maior_melhor",
         "percentis": [
@@ -1289,8 +1289,8 @@
         "n_municipios_base": 5570
       },
       "D3.1": {
-        "pior": 103.99881041374417,
-        "melhor": 318.8037993771162,
+        "pior": 34.6895,
+        "melhor": 246.1,
         "coluna": "tx_leito_sus_reg",
         "sentido": "maior_melhor",
         "percentis": [
@@ -1323,10 +1323,10 @@
       }
     },
     "medias": {
-      "nota_geral": 58.548563734290845,
+      "nota_geral": 57.98719928186715,
       "d1_nota": 56.60786355475763,
       "d2_nota": 64.24856373429084,
-      "d3_nota": 54.79012567324955
+      "d3_nota": 53.10409335727109
     }
   },
   "auditoria_fontes": {

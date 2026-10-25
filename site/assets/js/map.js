@@ -266,7 +266,7 @@ function getTooltipHtml(mun) {
     let statusBlock = "";
     if (escoreFmt) {
         const titleBadge = isUrgenciaMode
-            ? `Nota c/ Urgência (10% RUE): ${escoreFmt} / 100`
+            ? `Nota c/ Urgência (15% RUE): ${escoreFmt} / 100`
             : `Nota Geral: ${escoreFmt} / 100`;
 
         const posNac = isUrgenciaMode ? mun.posicao_nacional_urgencia : mun.posicao_nacional;
@@ -299,7 +299,7 @@ function getTooltipHtml(mun) {
             <div style="font-size:0.78rem; line-height:1.45; color:#334155;">
                 <span>🏆 Ranking Nacional: <strong>#${posNac ? posNac.toLocaleString("pt-BR") : '—'}</strong> de 5.570</span><br>
                 <span>🥇 Ranking Estadual (${mun.uf}): <strong>#${posEst ? posEst.toLocaleString("pt-BR") : '—'}</strong> de ${(mun.total_uf || '—').toLocaleString("pt-BR")}</span><br>
-                ${urg ? `<span>🚑 SAMU: <strong>${urg.cob_samu_efetiva}%</strong> &bull; Região: <strong>${urg.usb_reg ?? 0} USB / ${urg.usa_reg ?? 0} USA</strong></span><br>` : ''}
+                ${urg ? `<span>🚑 SAMU: <strong>${urg.cob_samu_efetiva}%</strong> &bull; Região: <strong>${urg.usb_reg ?? 0} USB / ${urg.usa_reg ?? 0} USA</strong></span><br><span>⏱️ Polo Hospitalar: <strong>${urg.dist_polo_km === 0 ? 'Sede Local (0 km)' : `${urg.dist_polo_km} km (~${urg.tempo_ambulancia_min} min — ${urg.polo_hospitalar_ref})`}</strong></span><br>` : ''}
                 <span>🏥 Região de Saúde: <strong>${mun.regiao_saude || '—'}</strong></span>
             </div>
         `;
@@ -483,7 +483,7 @@ function renderMapOverlayMarkers() {
                 <div style="font-size:0.8rem; line-height:1.45; min-width:190px;">
                     <strong style="font-size:0.95rem;">#${idx + 1}º ${est.nome_uf} (${est.uf})</strong><br>
                     <span>Média Oficial (3D): <strong>${est.media_escore_uf.toFixed(1)} pts</strong></span><br>
-                    <span>Média c/ Urgência (10%): <strong>${est.media_com_urgencia_uf ? est.media_com_urgencia_uf.toFixed(1) : '—'} pts</strong></span><br>
+                    <span>Média c/ Urgência (15%): <strong>${est.media_com_urgencia_uf ? est.media_com_urgencia_uf.toFixed(1) : '—'} pts</strong></span><br>
                     <span>D1: <strong>${est.media_d1_uf.toFixed(1)}</strong> | D2: <strong>${est.media_d2_uf.toFixed(1)}</strong> | D3: <strong>${est.media_d3_uf.toFixed(1)}</strong> | D5: <strong>${est.media_d5_uf ? est.media_d5_uf.toFixed(1) : '—'}</strong></span><br>
                     <span>Municípios: <strong>${est.total_municipios}</strong> &bull; SAMU: <strong>${est.cob_samu_media_uf ?? '—'}%</strong> &bull; UPAs: <strong>${est.total_upas_uf ?? 0}</strong></span><br>
                     <span style="color:#0284c7; font-weight:600;">👉 Clique para focar no Estado e ver o ranking da UF</span>
@@ -529,7 +529,7 @@ function renderMapOverlayMarkers() {
 
             const marker = L.marker([cap.lat, cap.lng], { icon, zIndexOffset: 950 });
             const scoreLabel = (activeIndexMode === "urgencia" && cap.nota_com_urgencia)
-                ? `Nota c/ Urgência (10%): <strong>${cap.nota_com_urgencia.toFixed(1)} / 100</strong> (#${cap.posicao_nacional_urgencia}º BR)`
+                ? `Nota c/ Urgência (15%): <strong>${cap.nota_com_urgencia.toFixed(1)} / 100</strong> (#${cap.posicao_nacional_urgencia}º BR)`
                 : `Nota Geral Oficial: <strong>${cap.escore.toFixed(1)} / 100</strong> (#${cap.posicao_nacional}º BR)`;
 
             marker.bindTooltip(`
@@ -873,7 +873,7 @@ function renderRankingsContent(selectedUf = "") {
 
     const dimLabelMap = {
         "nota_geral": "Nota Geral Consolidada (D1 + D2 + D3 — Padrão Oficial)",
-        "nota_com_urgencia": "Nota Expandida com Urgência (30% D1 + 30% D2 + 30% D3 + 10% D5)",
+        "nota_com_urgencia": "Nota Expandida com Urgência e Distância Golden Hour (30% D1 + 25% D2 + 30% D3 + 15% D5)",
         "d1_nota": "D1 — Resultados em Saúde (Mortalidade Infantil, DCNT e Evitáveis)",
         "d2_nota": "D2 — Atenção Primária (ICSAP, Pré-natal 7+ e Vacinação Composta)",
         "d3_nota": "D3 — Acesso e Capacidade (Leitos Regionais, Médicos/Enf. 40h e eSF)",
