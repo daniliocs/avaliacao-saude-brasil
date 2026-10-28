@@ -167,6 +167,18 @@ def build_meta_payload() -> dict:
                 "descricao": "Cobertura de planos privados (ANS) e leitos hospitalares não-SUS (CNES) — FORA DA NOTA PRINCIPAL (DEC-001)",
                 "nivel_agregacao": "Município de residência",
                 "peso_padrao": 0.0
+            },
+            "D5": {
+                "nome": "Rede de Urgência & SAMU 192 (Golden Hour)",
+                "descricao": "Prontidão imediata local (35%) e rede regional SAMU/UPA descontada pela distância rodoviária até o Polo Hospitalar (65%, f_dist = exp(-0.012 * d_km))",
+                "nivel_agregacao": "Município / Região de Saúde",
+                "peso_padrao": 0.15
+            },
+            "D6": {
+                "nome": "Linha de Cuidado Oncológico & CACON/UNACON",
+                "descricao": "Agilidade e cumprimento efetivo da Lei dos 60 dias sobre total de diagnosticados (30%), Diagnóstico Precoce auditado (20%), Conversão Terapêutica contra fila oculta TRATAMENTO=5 + Sobrevida D1 (25%) e Autonomia TFD + Terapias de Ponta CNES (25%)",
+                "nivel_agregacao": "Município / Polo de Referência",
+                "peso_padrao": 0.10
             }
         },
         "indicadores": indicadores_cfg.get("indicadores", []),
@@ -482,6 +494,7 @@ def build_mapa_resumo_payload(meta_build: dict):
             },
             "escore_oncologia": num_or_none(row.get("escore_oncologia"), 1),
             "rank_onco": int(row["rank_onco"]) if pd.notna(row.get("rank_onco")) else None,
+            "rank_d5": int(row["rank_d5"]) if pd.notna(row.get("rank_d5")) else None,
             "nota_integrada": num_or_none(row.get("nota_integrada"), 1),
             "posicao_nacional_integrada": int(row["posicao_nacional_integrada"]) if pd.notna(row.get("posicao_nacional_integrada")) else None,
             "posicao_estadual_integrada": int(row["posicao_estadual_integrada"]) if pd.notna(row.get("posicao_estadual_integrada")) else None,
@@ -561,6 +574,7 @@ def build_rankings_payload(df: pd.DataFrame):
             "total_grupo_pares": int(total_porte_map.get(row.get("porte_populacional"), 0)),
             "escore_oncologia": num_or_none(row.get("escore_oncologia"), 1),
             "rank_onco": int(row["rank_onco"]) if pd.notna(row.get("rank_onco")) else None,
+            "rank_d5": int(row["rank_d5"]) if pd.notna(row.get("rank_d5")) else None,
             "dist_cacon_km": num_or_none(row.get("dist_cacon_km"), 1),
             "tempo_cacon_min": int(row["tempo_cacon_min"]) if pd.notna(row.get("tempo_cacon_min")) else 15,
             "cacon_referencia": str(row.get("cacon_referencia", "")),

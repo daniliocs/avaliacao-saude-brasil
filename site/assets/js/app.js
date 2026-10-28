@@ -7,26 +7,26 @@
  * - Inicializa o Mapa Leaflet, a Gaveta Municipal, o Comparador e as Vistas Dinâmicas
  */
 
-import { initMap } from "./map.js?v=0.7.4";
-import { initDrawer } from "./drawer_municipio.js?v=0.7.4";
-import { initCompareView } from "./compare_view.js?v=0.7.4";
-import { renderMethodologyView } from "./methodology_view.js?v=0.7.4";
-import { renderSourcesView } from "./sources_view.js?v=0.7.4";
-import { renderDownloadsView } from "./downloads_view.js?v=0.7.4";
+import { initMap } from "./map.js?v=0.7.5";
+import { initDrawer } from "./drawer_municipio.js?v=0.7.5";
+import { initCompareView } from "./compare_view.js?v=0.7.5";
+import { renderMethodologyView } from "./methodology_view.js?v=0.7.5";
+import { renderSourcesView } from "./sources_view.js?v=0.7.5";
+import { renderDownloadsView } from "./downloads_view.js?v=0.7.5";
 
 let metaBuild = null;
 
 async function fetchMetaBuild() {
     const candidatePaths = [
-        "data/releases/latest/meta_build.json",
-        "./data/releases/latest/meta_build.json",
-        "../data/releases/latest/meta_build.json",
-        "/data/releases/latest/meta_build.json"
+        "data/releases/latest/meta_build.json?v=0.7.5",
+        "./data/releases/latest/meta_build.json?v=0.7.5",
+        "../data/releases/latest/meta_build.json?v=0.7.5",
+        "/data/releases/latest/meta_build.json?v=0.7.5"
     ];
 
     for (const path of candidatePaths) {
         try {
-            const res = await fetch(path);
+            const res = await fetch(path, { cache: "no-store" });
             if (res.ok) {
                 return await res.json();
             }

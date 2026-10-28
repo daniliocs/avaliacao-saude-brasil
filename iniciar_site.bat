@@ -4,7 +4,7 @@ cd /d "%~dp0"
 title Índice de Saúde Municipal do Brasil — Servidor Local
 echo ===================================================================
 echo   Iniciando Servidor Local — Índice de Saúde Municipal do Brasil
-echo   Versão: v0.7.4 (Fase 2: Urgência + Oncologia & CACON/UNACON)
+echo   Versão: v0.7.5 (Fase 2: Urgência + Oncologia & CACON/UNACON)
 echo ===================================================================
 echo.
 echo Iniciando servidor sem cache e abrindo navegador automaticamente...

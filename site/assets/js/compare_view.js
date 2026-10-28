@@ -8,7 +8,7 @@
  *      D1, D2, D3, mediana de TMI, gasto SIOPS, planos privados e Top 5 municípios de cada UF.
  */
 
-import { openDrawer } from "./drawer_municipio.js?v=0.7.4";
+import { openDrawer } from "./drawer_municipio.js?v=0.7.5";
 
 let mapaResumoRef = {};
 let rankingsRef = {};

@@ -8,7 +8,7 @@
  * - D4 (Contexto) e Camada Privada exibidos em blocos separados fora da nota (DEC-001).
  */
 
-import { renderAuditBadge } from "./audit_badge.js?v=0.7.4";
+import { renderAuditBadge } from "./audit_badge.js?v=0.7.5";
 
 let metaConfigCache = null;
 let currentDrawerMunicipio = null;
@@ -515,9 +515,47 @@ function renderOncologiaCard(municipioData) {
                 </div>
             </div>
 
+            <!-- RAIO-X DO DESTINO DOS PACIENTES DIAGNOSTICADOS (FILA PÓS-60 DIAS E FILA OCULTA TRATAMENTO = 5) -->
+            ${(() => {
+                const p60 = typeof onco.pct_60d_sobre_diag === "number" ? onco.pct_60d_sobre_diag : 0;
+                const pConv = typeof onco.pct_conversao_trat === "number" ? onco.pct_conversao_trat : 0;
+                const pAtraso = Math.max(0, Number((pConv - p60).toFixed(1)));
+                const pSemTrat = Math.max(0, Number((100 - pConv).toFixed(1)));
+                return `
+                <div style="margin-top: 0.55rem; padding: 0.55rem 0.65rem; background: #ffffff; border: 1px solid #d8b4fe; border-radius: 6px; font-size: 0.72rem; color: #334155;">
+                    <div style="font-weight: 700; color: #581c87; margin-bottom: 0.35rem; display: flex; justify-content: space-between;">
+                        <span>📊 Destino dos Pacientes após o Diagnóstico (${casosDiag} casos):</span>
+                        <span style="color: #6b21a8;">Auditoria POBR / TCU</span>
+                    </div>
+                    <div style="display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: #f1f5f9; margin-bottom: 0.45rem; border: 1px solid #cbd5e1;">
+                        <div style="width: ${p60}%; background: #10b981;" title="Iniciam em até 60 dias: ${p60.toFixed(1)}%"></div>
+                        <div style="width: ${pAtraso}%; background: #f59e0b;" title="Iniciam após 60 dias (atraso): ${pAtraso.toFixed(1)}%"></div>
+                        <div style="width: ${pSemTrat}%; background: #ef4444;" title="Sem tratamento registrado no SUS (TRATAMENTO=5): ${pSemTrat.toFixed(1)}%"></div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.3rem; text-align: center; font-size: 0.69rem;">
+                        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 4px; padding: 3px 4px;">
+                            <strong style="color: #047857; display: block; font-size: 0.8rem;">${p60.toFixed(1)}%</strong>
+                            <span>Trataram ≤ 60d (no prazo)</span>
+                        </div>
+                        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 4px; padding: 3px 4px;">
+                            <strong style="color: #b45309; display: block; font-size: 0.8rem;">${pAtraso.toFixed(1)}%</strong>
+                            <span>Trataram > 60d (fila tardia)</span>
+                        </div>
+                        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 4px; padding: 3px 4px;">
+                            <strong style="color: #b91c1c; display: block; font-size: 0.8rem;">${pSemTrat.toFixed(1)}%</strong>
+                            <span>Sem registro SUS (cód. 5)</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 0.35rem; font-size: 0.68rem; color: #64748b; line-height: 1.35;">
+                        * <strong>Sem registro SUS (<code>TRATAMENTO = 5</code>):</strong> pacientes diagnosticados que falecem na fila antes da 1ª sessão, desistem pelas barreiras de TFD ou migram para rede privada/judicialização (Acórdão TCU 1.944/2019).
+                    </div>
+                </div>
+                `;
+            })()}
+
             <!-- RÉGUA DE CALIBRAÇÃO ABSOLUTA -->
             <div style="margin-top: 0.5rem; padding: 0.45rem 0.65rem; background: #fdf4ff; border: 1px solid #f0abfc; border-radius: 6px; font-size: 0.72rem; color: #581c87; line-height: 1.45;">
-                ⚖️ <strong>Régua de Calibração Absoluta:</strong> A nota 100 representa o padrão-ouro inatingível (95%+ tratados em até 30 dias, diagnóstico precoce > 65% e mortalidade prematura controlada, equivalente aos melhores centros privados/mundiais). No SUS, escores acima de 60 já indicam alta eficiência assistencial e celeridade terapêutica.
+                ⚖️ <strong>Régua de Calibração Absoluta:</strong> A nota 100 representa o padrão-ouro inatingível (95%+ tratados em até 30 dias, diagnóstico precoce > 60%, alta conversão terapêutica e sobrevida padronizada, equivalente aos melhores centros mundiais). No SUS, escores acima de 60 já indicam alta eficiência assistencial.
             </div>
 
             <!-- COMPARATIVO DOS 3 MODELOS DE ÍNDICE -->

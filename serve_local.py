@@ -31,7 +31,7 @@ class NoCacheHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         if self.path in ("/", "/index.html"):
             ts = int(time.time())
             self.send_response(302)
-            self.send_header("Location", f"/site/index.html?v=0.7.4&t={ts}")
+            self.send_header("Location", f"/site/index.html?v=0.7.5&t={ts}")
             self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
             self.send_header("Pragma", "no-cache")
             self.send_header("Expires", "0")
@@ -97,11 +97,11 @@ def start_server():
         sys.exit(1)
 
     ts = int(time.time())
-    url = f"http://localhost:{active_port}/site/index.html?v=0.7.4&t={ts}"
+    url = f"http://localhost:{active_port}/site/index.html?v=0.7.5&t={ts}"
 
     print("===================================================================")
     print(f"  Servidor Local Ativo (SEM CACHE) na porta {active_port}")
-    print(f"  Versão: v0.7.4 (Fase 2: Urgência & Oncologia Completa)")
+    print(f"  Versão: v0.7.5 (Fase 2: Urgência & Oncologia Completa)")
     print(f"  Acessando: {url}")
     print("  (Para encerrar o servidor, basta fechar esta janela)")
     print("===================================================================")

@@ -77,6 +77,20 @@ export function renderMethodologyView(metaBuild) {
                                 <td><strong>${((dimPesos.D3 || 0.3333) * 100).toFixed(1)}%</strong></td>
                                 <td><span class="badge badge--quality-high">Nota Principal</span></td>
                             </tr>
+                            <tr style="background-color: #f0f9ff;">
+                                <td><strong>D5</strong></td>
+                                <td>Rede de Urgência &amp; SAMU 192 (Golden Hour)</td>
+                                <td>Prontidão imediata local (35%) e rede regional SAMU/UPA descontada pela distância rodoviária até o Polo Hospitalar (65%).</td>
+                                <td><strong>15.0%</strong></td>
+                                <td><span class="badge badge--quality-high">Modelo c/ Urgência &amp; Integrado</span></td>
+                            </tr>
+                            <tr style="background-color: #f5f3ff;">
+                                <td><strong>D6</strong></td>
+                                <td>🎗️ Linha de Cuidado Oncológico &amp; CACON/UNACON</td>
+                                <td>Cumprimento efetivo da Lei dos 60 dias sobre total diagnosticado (30%), Diagnóstico Precoce auditado (20%), Conversão Terapêutica contra fila oculta TRATAMENTO=5 + Sobrevida D1 (25%) e Autonomia TFD + Terapias de Ponta CNES (25%).</td>
+                                <td><strong>10.0%</strong></td>
+                                <td><span class="badge badge--quality-high">Modelo Integrado (10% Onco)</span></td>
+                            </tr>
                             <tr style="background-color: #faf5ff;">
                                 <td><strong>D4</strong></td>
                                 <td>${escapeHtml(dimensoes.D4?.nome || 'Contexto Municipal')}</td>

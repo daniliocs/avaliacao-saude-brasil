@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   
   <!-- Estilos da Aplicação -->
-  <link rel="stylesheet" href="assets/css/style.css?v=0.7.4">
+  <link rel="stylesheet" href="assets/css/style.css?v=0.7.5">
 </head>
 <body>
 
@@ -22,7 +22,7 @@
     <div class="header-container">
       <div class="brand-block">
         <h1 class="brand-title">Índice de Saúde Municipal</h1>
-        <span class="brand-badge version-display">v0.7.4 (Fase 2)</span>
+        <span class="brand-badge version-display">v0.7.5 (Fase 2)</span>
         <button id="btn-info" class="btn-info-pill" aria-label="Aviso e Metodologia" title="Clique para ver o Aviso de Interpretação e Metodologia">
           ℹ️ Info
         </button>
@@ -177,17 +177,18 @@
             <div class="info-modal-body">
               <div class="info-alert-box">
                 <strong>Aviso Obrigatório de Interpretação (Seção 10):</strong>
-                <p>Pequenas diferenças de pontuação entre municípios não representam necessariamente diferenças reais na atenção à saúde. O índice é analítico e experimental (<code>v0.5.0-draft</code>) e descreve as condições públicas do SUS no <em>território municipal e regional</em>, e não a avaliação isolada de equipes ou unidades hospitalares.</p>
+                <p>Pequenas diferenças de pontuação entre municípios não representam necessariamente diferenças reais na atenção à saúde. O índice é analítico e experimental (<code>v0.7.5 (Fase 2 — Oncologia & Urgência)</code>) e descreve as condições públicas do SUS no <em>território municipal e regional</em>, e não a avaliação isolada de equipes ou unidades hospitalares.</p>
               </div>
 
               <div class="info-structure-box">
-                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 700; color: #1e293b;">Composição do Índice Sintético Consolidado (v0.5.0-draft):</h4>
+                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 700; color: #1e293b;">Composição do Índice Sintético Consolidado (v0.7.5 (Fase 2 — Oncologia & Urgência)):</h4>
                 <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.84rem; line-height: 1.6; color: #334155;">
                   <li><strong>D1 — Resultados em Saúde da População (33,3%):</strong> Mortalidade Infantil suavizada (40%), Mortalidade Prematura 30–69a por DCNT suavizada (30%) e Mortalidade por Causas Evitáveis pelo SUS (30%) no triênio 2021–2023 por residência (SIM / SINASC / Censo 2022). Razão de Mortalidade Materna (2019–2023) exibida como informativa.</li>
                   <li><strong>D2 — Atenção Primária e Prevenção (33,3%):</strong> Internações por Condições Sensíveis à APS — ICSAP (33,3%), Pré-Natal Adequado 7+ consultas no SINASC (33,3%) e Cobertura Vacinal Infantil Composta (Poliomielite, Pentavalente e Tríplice Viral D1 — 33,3%) no triênio 2021–2023.</li>
                   <li><strong>D3 — Acesso e Capacidade Assistencial (33,3%):</strong> Leitos SUS na Região de Saúde ajustados pelo Fator de Distância Hospitalar <em>Golden Hour</em> (33,3%), Médicos + Enfermeiros padronizados por carga horária de 40h/sem (33,3%) e Cobertura da Estratégia Saúde da Família - eSF (33,3%) no triênio 2021–2023.</li>
                   <li><strong>Normalização Relativa (P5–P95):</strong> Indicadores normalizados pelos percentis empíricos P5 e P95 da distribuição nacional observada, com análise de sensibilidade completa.</li>
                   <li><strong>Dimensão 4 (Financiamento SIOPS deflacionado) e Camada Privada (ANS/CNES):</strong> Populados para os 5.570 municípios e exibidos separadamente fora da nota principal.</li>
+                  <li><strong>Dimensão 6 — Linha de Cuidado Oncológico &amp; CACON/UNACON (10% no Modelo Integrado):</strong> Avalia Agilidade e Cumprimento Efetivo da Lei dos 60 Dias sobre todos os diagnosticados (penalizando a fila oculta <code>TRATAMENTO=5</code>, Acórdão TCU 1.944/2019 — 30%), Diagnóstico Precoce auditado + Rastreamento APS (20%), Taxa de Conversão Terapêutica + Sobrevida Padronizada D1 (25%) e Autonomia Local TFD + Terapias de Ponta CNES (Imunoterapia, Terapia Alvo, IMRT, Cirurgia Oncológica, Onco Pediátrica e TMO — 25%).</li>
                   <li><strong>Dimensão 5 — Urgência, SAMU 192 &amp; Fator de Distância <em>Golden Hour</em>:</strong> Combina prontidão imediata local (35%: base local de ambulância, UPA 24h/UTI móvel e leitos de estabilização) e rede regional descontada pela distância rodoviária até o Polo Hospitalar de Referência ($f_{dist} = \exp(-0,012 \cdot d_{km})$, 65%). Disponível como camada visualizável (0–100) e como modelo alternativo com 15% de peso (30% D1 + 25% D2 + 30% D3 + 15% D5).</li>
                 </ul>
               </div>
@@ -289,6 +290,6 @@
   </script>
 
   <!-- Script Principal da Aplicação com Cache-Buster -->
-  <script type="module" src="assets/js/app.js?v=0.7.4"></script>
+  <script type="module" src="assets/js/app.js?v=0.7.5"></script>
 </body>
 </html>

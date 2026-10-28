@@ -9,8 +9,8 @@
  * - Modal de Rankings com 4 escopos separados: Top 100 Brasil, Por Estado (isolado), 27 Estados e 27 Capitais
  */
 
-import { openDrawer, refreshDrawerIndexMode } from "./drawer_municipio.js?v=0.7.4";
-import { updateCompareData } from "./compare_view.js?v=0.7.4";
+import { openDrawer, refreshDrawerIndexMode } from "./drawer_municipio.js?v=0.7.5";
+import { updateCompareData } from "./compare_view.js?v=0.7.5";
 
 let leafletMap = null;
 let canvasRenderer = null;
@@ -180,14 +180,14 @@ export async function initMap(metaConfig) {
 
 async function loadRankings() {
     const candidatePaths = [
-        "data/releases/latest/rankings_resumo.json?v=0.7.4",
-        "./data/releases/latest/rankings_resumo.json?v=0.7.4",
-        "../data/releases/latest/rankings_resumo.json?v=0.7.4"
+        "data/releases/latest/rankings_resumo.json?v=0.7.5",
+        "./data/releases/latest/rankings_resumo.json?v=0.7.5",
+        "../data/releases/latest/rankings_resumo.json?v=0.7.5"
     ];
 
     for (const path of candidatePaths) {
         try {
-            const response = await fetch(path);
+            const response = await fetch(path, { cache: "no-store" });
             if (response.ok) {
                 rankingsData = await response.json();
                 console.log(`[map.js] rankings_resumo.json carregado com sucesso (${path}).`);
@@ -202,14 +202,14 @@ async function loadRankings() {
 
 async function loadMapaResumo() {
     const candidatePaths = [
-        "data/releases/latest/mapa_resumo.json?v=0.7.4",
-        "./data/releases/latest/mapa_resumo.json?v=0.7.4",
-        "../data/releases/latest/mapa_resumo.json?v=0.7.4"
+        "data/releases/latest/mapa_resumo.json?v=0.7.5",
+        "./data/releases/latest/mapa_resumo.json?v=0.7.5",
+        "../data/releases/latest/mapa_resumo.json?v=0.7.5"
     ];
 
     for (const path of candidatePaths) {
         try {
-            const response = await fetch(path);
+            const response = await fetch(path, { cache: "no-store" });
             if (response.ok) {
                 mapaResumoData = await response.json();
                 console.log(`[map.js] ${Object.keys(mapaResumoData).length} municípios carregados (${path}).`);
@@ -1008,12 +1008,16 @@ function renderRankingsContent(selectedUf = "") {
                     const score = typeof m[activeRankDim] === "number" ? m[activeRankDim] : (typeof m.escore === "number" ? m.escore : m.nota_geral);
                     const scoreFmt = typeof score === "number" ? score.toFixed(1) : "—";
 
-                    // Posição no país para sinalização adicional
+                    // Posição no país sincronizada com a dimensão ativa
                     const nacPos = (activeRankDim === "nota_integrada" && m.posicao_nacional_integrada)
                         ? m.posicao_nacional_integrada
                         : ((activeRankDim === "nota_com_urgencia" && m.posicao_nacional_urgencia)
                             ? m.posicao_nacional_urgencia
-                            : m.posicao_nacional);
+                            : ((activeRankDim === "escore_oncologia" && m.rank_onco)
+                                ? m.rank_onco
+                                : ((activeRankDim === "d5_nota" && m.rank_d5)
+                                    ? m.rank_d5
+                                    : m.posicao_nacional)));
 
                     let posPrefix = "";
                     let posSuffix = "";

@@ -1,6 +1,6 @@
 {
-  "build_timestamp": "2026-10-25T15:56:58.604014+00:00",
-  "versao_metodologia": "v0.7.3",
+  "build_timestamp": "2026-10-28T01:21:11.953618+00:00",
+  "versao_metodologia": "v0.7.5",
   "status_metodologia": "Experimental — Normalização Relativa por Percentis (P5–P95)",
   "regras_inegociaveis": [
     "Proibido inventar dados numéricos, metas ou limites sem validação documental",
@@ -313,6 +313,18 @@
       "descricao": "Cobertura de planos privados (ANS) e leitos hospitalares não-SUS (CNES) — FORA DA NOTA PRINCIPAL (DEC-001)",
       "nivel_agregacao": "Município de residência",
       "peso_padrao": 0.0
+    },
+    "D5": {
+      "nome": "Rede de Urgência & SAMU 192 (Golden Hour)",
+      "descricao": "Prontidão imediata local (35%) e rede regional SAMU/UPA descontada pela distância rodoviária até o Polo Hospitalar (65%, f_dist = exp(-0.012 * d_km))",
+      "nivel_agregacao": "Município / Região de Saúde",
+      "peso_padrao": 0.15
+    },
+    "D6": {
+      "nome": "Linha de Cuidado Oncológico & CACON/UNACON",
+      "descricao": "Agilidade e cumprimento efetivo da Lei dos 60 dias sobre total de diagnosticados (30%), Diagnóstico Precoce auditado (20%), Conversão Terapêutica contra fila oculta TRATAMENTO=5 + Sobrevida D1 (25%) e Autonomia TFD + Terapias de Ponta CNES (25%)",
+      "nivel_agregacao": "Município / Polo de Referência",
+      "peso_padrao": 0.1
     }
   },
   "indicadores": [
@@ -764,7 +776,7 @@
     }
   },
   "limites_calculados": {
-    "versao": "v0.7.3",
+    "versao": "v0.7.5",
     "metodo": "percentis",
     "gerado_em": "2026-10-24",
     "limites": {
