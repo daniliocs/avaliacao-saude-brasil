@@ -1522,6 +1522,17 @@ details.dim-accordion[open] summary.dim-summary::after {
   color: #7e22ce;
 }
 
+.separated-layer-card--vacinas {
+  background-color: #f0fdf4; /* Verde suave preventivo PNI */
+  border-color: #bbf7d0;
+  border-left: 4px solid #16a34a;
+}
+
+.separated-tag--vacinas {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
 
 .urgencia-stats-grid {
   display: grid;

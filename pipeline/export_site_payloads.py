@@ -146,7 +146,7 @@ def build_meta_payload() -> dict:
             },
             "D2": {
                 "nome": "Atenção Primária e Prevenção",
-                "descricao": "Resolutividade e prevenção na APS (D2.1 Internações Sensíveis à APS - ICSAP, D2.2 Pré-natal 7+ consultas SINASC e D2.3 Cobertura Vacinal Composta Pólio+Penta+Tríplice Viral, triênio 2021–2023)",
+                "descricao": "Resolutividade e prevenção na APS (D2.1 Internações Sensíveis à APS - ICSAP, D2.2 Pré-natal 7+ consultas SINASC e D2.3 Cobertura Vacinal Composta - 6 Vacinas Estratégicas do 1º ano de vida, triênio 2021–2023)",
                 "nivel_agregacao": "Município de residência",
                 "peso_padrao": pesos_cfg.get("esquemas", {}).get("pesos_iguais", {}).get("dimensoes", {}).get("D2", 0.3333)
             },
@@ -336,7 +336,7 @@ def build_mapa_resumo_payload(meta_build: dict):
                 "escore": num_or_none(row.get("escore_D2_3"), 1),
                 "ic_95": None,
                 "fonte_id": "si_pni",
-                "fonte_detalhe": "SI-PNI / MS (média Pólio + Pentavalente + Tríplice Viral D1) via IEPS Data",
+                "fonte_detalhe": "SI-PNI / MS (Média de 6 vacinas do 1º ano: Pólio, Penta, Tríplice Viral D1, Pneumocócica 10, Meningo C, Rotavírus) via IEPS Data",
                 "periodo_vintage": "2021–2023",
                 "data_coleta": coleta_ieps,
                 "versao_metodologia": versao,
@@ -556,6 +556,23 @@ def build_mapa_resumo_payload(meta_build: dict):
                 "acc_uti": num_or_none(row.get("acc_uti"), 2),
                 "acc_cir": num_or_none(row.get("acc_cir"), 2),
                 "vintage_infra": str(row.get("vintage_infra", "CNES 2023-12")),
+            },
+            "detalhes_vacinas": {
+                "cob_vac_composta": num_or_none(row.get("cob_vac_composta"), 1),
+                "polio": num_or_none(row.get("cob_vac_polio"), 1),
+                "penta": num_or_none(row.get("cob_vac_penta"), 1),
+                "tvd1": num_or_none(row.get("cob_vac_tvd1"), 1),
+                "pneumo": num_or_none(row.get("cob_vac_pneumo"), 1),
+                "menin": num_or_none(row.get("cob_vac_menin"), 1),
+                "rota": num_or_none(row.get("cob_vac_rota"), 1),
+                "bcg": num_or_none(row.get("cob_vac_bcg"), 1),
+                "hepa": num_or_none(row.get("cob_vac_hepa"), 1),
+                "hepb": num_or_none(row.get("cob_vac_hepb"), 1),
+                "hpv_meninas": num_or_none(row.get("hpv_cob_meninas"), 1),
+                "hpv_meninos": num_or_none(row.get("hpv_cob_meninos"), 1),
+                "hpv_total": num_or_none(row.get("hpv_cob_total"), 1),
+                "hpv_doses_meninas": int(row["hpv_doses_meninas"]) if pd.notna(row.get("hpv_doses_meninas")) else None,
+                "hpv_doses_meninos": int(row["hpv_doses_meninos"]) if pd.notna(row.get("hpv_doses_meninos")) else None,
             }
         }
 

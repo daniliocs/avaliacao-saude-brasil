@@ -102,8 +102,8 @@ indicadores:
 
   - id: D2.3
     dimensao: D2
-    nome: "Cobertura Vacinal Infantil Composta (Pólio, Penta e Tríplice Viral)"
-    descricao: "Média da cobertura vacinal infantil para Poliomielite, Pentavalente (DTP+HB+Hib) e Tríplice Viral D1 (triênio 2021–2023 via IEPS Data / SI-PNI)"
+    nome: "Cobertura Vacinal Infantil Composta (6 Vacinas Estratégicas)"
+    descricao: "Média da cobertura vacinal infantil para 6 vacinas do 1º ano de vida: Poliomielite, Pentavalente, Tríplice Viral D1, Pneumocócica 10, Meningocócica C e Rotavírus Humano (triênio 2021–2023 via IEPS Data / SI-PNI). BCG, Hepatite A, Hepatite B e HPV são apresentadas de forma informativa no card municipal."
     sentido: "maior_melhor"
     unidade: "%"
     fontes:

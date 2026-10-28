@@ -45,6 +45,10 @@ data/raw/demas_urgencia/*
 !data/raw/oncologia/
 data/raw/oncologia/*
 !data/raw/oncologia/manifest_oncologia.json
+!data/raw/pni/
+data/raw/pni/*
+!data/raw/pni/hpv_municipios.parquet
+!data/raw/pni/manifest_pni.json
 scratch/
 
 # Pytest cache

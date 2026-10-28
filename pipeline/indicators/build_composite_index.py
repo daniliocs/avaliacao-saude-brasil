@@ -40,6 +40,7 @@ SERIE_PATH = os.path.join("data", "processed", "serie_anual_sim_sinasc.parquet")
 URG_PATH = os.path.join("data", "processed", "indicadores_urgencia_samu.parquet")
 ONCO_PATH = os.path.join("data", "processed", "indicadores_oncologia_tfd.parquet")
 INFRA_PATH = os.path.join("data", "processed", "indicadores_cnes_infra.parquet")
+HPV_PATH = os.path.join("data", "raw", "pni", "hpv_municipios.parquet")
 IEPS_DIR = os.path.join("data", "raw", "ieps")
 LIMITES_CFG = os.path.join("config", "limites_referencia.yaml")
 PESOS_CFG = os.path.join("config", "pesos.yaml")
@@ -59,6 +60,12 @@ IEPS_COLUNAS = {
     "cob_vac_polio": r"^Cob\. Vacinal Poliomielite",
     "cob_vac_penta": r"^Cob\. Vacinal Pentavalente",
     "cob_vac_tvd1": r"^Cob\. Vacinal Tr.plice Viral D1",
+    "cob_vac_pneumo": r"^Cob\. Vacinal Pneumoc",
+    "cob_vac_menin": r"^Cob\. Vacinal Meningococo C",
+    "cob_vac_rota": r"^Cob\. Vacinal Rotav",
+    "cob_vac_bcg": r"^Cob\. Vacinal BCG",
+    "cob_vac_hepa": r"^Cob\. Vacinal Hepatite A",
+    "cob_vac_hepb": r"^Cob\. Vacinal Hepatite B",
     "tx_hosp_csap": r"^Hospitaliza..es CSAP",
     "tx_mort_evit": r"^Mortalidade Bruta Causas Evit.veis",
     "tx_leito_sus": r"^Leitos SUS",
@@ -138,7 +145,7 @@ def ler_ieps_ano(ano: int) -> pd.DataFrame:
     out["ano"] = ano
 
     # Derivadas anuais sem imputação
-    out["cob_vac_composta"] = out[["cob_vac_polio", "cob_vac_penta", "cob_vac_tvd1"]].mean(axis=1, skipna=False)
+    out["cob_vac_composta"] = out[["cob_vac_polio", "cob_vac_penta", "cob_vac_tvd1", "cob_vac_pneumo", "cob_vac_menin", "cob_vac_rota"]].mean(axis=1, skipna=False)
     out["icsap_10k"] = out["tx_hosp_csap"] / 10.0
     out["tx_prof_ch"] = out["tx_med_ch"] + out["tx_enf_ch"]
     out["tx_prof_bruto"] = out["tx_med"] + out["tx_enf"]
@@ -158,7 +165,7 @@ def agregar_ieps(janelas: dict, dim_pop: pd.DataFrame) -> tuple[pd.DataFrame, di
         saida["regiao_saude_nome_ieps"] = ult["regiao_saude_nome_ieps"].astype(str)
 
     meta = {}
-    cols_extras = ["cob_vac_polio", "cob_vac_penta", "cob_vac_tvd1", "tx_med", "tx_enf", "tx_med_ch", "tx_enf_ch", "tx_prof_bruto"]
+    cols_extras = ["cob_vac_polio", "cob_vac_penta", "cob_vac_tvd1", "cob_vac_pneumo", "cob_vac_menin", "cob_vac_rota", "cob_vac_bcg", "cob_vac_hepa", "cob_vac_hepb", "tx_med", "tx_enf", "tx_med_ch", "tx_enf_ch", "tx_prof_bruto"]
     for ind, col in IND_PARA_IEPS.items():
         j = janelas[ind]
         sub = longo[longo["ano"].isin(j["anos"])]
@@ -339,6 +346,11 @@ def construir() -> pd.DataFrame:
         infra["ibge7"] = infra["ibge7"].astype(str)
         cols_novas = [c for c in infra.columns if c not in df.columns or c == "ibge7"]
         df = df.merge(infra[cols_novas], on="ibge7", how="left")
+    if os.path.exists(HPV_PATH):
+        hpv = pd.read_parquet(HPV_PATH)
+        hpv["ibge7"] = hpv["ibge7"].astype(str)
+        cols_hpv = [c for c in hpv.columns if c not in df.columns or c == "ibge7"]
+        df = df.merge(hpv[cols_hpv], on="ibge7", how="left")
     assert len(df) == 5570 and df["ibge7"].is_unique, "Cardinalidade/unicidade violada após junções"
 
     # Preenche regiao_saude_id e regiao_saude_nome reais (438 Regiões de Saúde do SUS)

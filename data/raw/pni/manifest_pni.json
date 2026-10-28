@@ -1,0 +1,20 @@
+{
+  "indicador": "vacinacao_hpv_9_a_14_anos",
+  "fonte_primaria": "Ministério da Saúde / SEIDIGI / DEMAS / SI-PNI - RNDS",
+  "painel_url": "https://infoms.saude.gov.br/extensions/SEIDIGI_DEMAS_VACINACAO_HPV/index.html",
+  "data_coleta": "2026-10-28",
+  "metadados": {
+    "coorte": "9 a 14 anos",
+    "esquema": "Dose única (adotada pelo PNI em 2024)",
+    "meta_cobertura_pni_pct": 90.0,
+    "segregacao": "Feminino (meninas) e Masculino (meninos)",
+    "papel_no_indice": "informativo (fora da nota D2.3)"
+  },
+  "arquivos": {
+    "hpv_municipios.parquet": {
+      "bytes": 137367,
+      "sha256": "c4740c3381790f76d4bb0874f56108788a61d5a24ec61894cd34c902282635d2",
+      "n_municipios": 5571
+    }
+  }
+}

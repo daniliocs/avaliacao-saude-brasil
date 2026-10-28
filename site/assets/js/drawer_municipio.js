@@ -194,6 +194,9 @@ export function openDrawer(municipioData, indexMode = null) {
             ${renderDimAccordion("D3", "Acesso e Infraestrutura", ["D3.1", "D3.2", "D3.3", "D3.4"], municipioData)}
         </section>
 
+        <!-- BLOCO DEDICADO: COBERTURA VACINAL COMPLETA & DESTAQUE HPV (PNI / MINISTÉRIO DA SAÚDE) -->
+        ${renderVacinasCard(municipioData)}
+
         <!-- BLOCO DEDICADO: REDE DE URGÊNCIA & SAMU 192 (RUE) -->
         ${renderUrgenciaSamuCard(municipioData)}
 
@@ -306,6 +309,183 @@ function renderDimAccordion(dimId, dimNome, indicatorIds, municipioData) {
                 ${cardsHtml}
             </div>
         </details>
+    `;
+}
+
+function renderVacinasCard(municipioData) {
+    const vac = municipioData.detalhes_vacinas;
+    if (!vac) return "";
+
+    const cobComposta = typeof vac.cob_vac_composta === "number" ? vac.cob_vac_composta.toFixed(1) + "%" : "—";
+    const escoreD2_3 = municipioData.indicadores?.D2_3?.escore !== undefined 
+        ? (typeof municipioData.indicadores.D2_3.escore === "number" ? municipioData.indicadores.D2_3.escore.toFixed(1) : municipioData.indicadores.D2_3.escore)
+        : (typeof municipioData.indicadores?.["D2.3"]?.escore === "number" ? municipioData.indicadores["D2.3"].escore.toFixed(1) : "—");
+
+    const formatPct = (val) => typeof val === "number" ? val.toFixed(1) + "%" : "—";
+    const statusMeta = (val, meta) => {
+        if (typeof val !== "number") return `<span style="color:#64748b;">—</span>`;
+        if (val >= meta) return `<span style="color:#15803d; font-weight:700;">✅ Meta (${val.toFixed(1)}%)</span>`;
+        const diff = (meta - val).toFixed(1);
+        return `<span style="color:#b45309; font-weight:600;">⚠️ Abaixo (${val.toFixed(1)}% / -${diff}%)</span>`;
+    };
+
+    // 6 Vacinas Estratégicas do 1º Ano (Composição D2.3)
+    const polio = vac.polio;
+    const penta = vac.penta;
+    const tvd1 = vac.tvd1;
+    const pneumo = vac.pneumo;
+    const menin = vac.menin;
+    const rota = vac.rota;
+
+    // Complementares (Informativas)
+    const bcg = vac.bcg;
+    const hepa = vac.hepa;
+    const hepb = vac.hepb;
+
+    // HPV
+    const hpvFem = vac.hpv_meninas;
+    const hpvMasc = vac.hpv_meninos;
+    const hpvTot = vac.hpv_total;
+    const hpvDosesFem = vac.hpv_doses_meninas;
+    const hpvDosesMasc = vac.hpv_doses_meninos;
+    const hpvDosesTot = (hpvDosesFem || 0) + (hpvDosesMasc || 0);
+
+    return `
+        <section class="separated-layer-card separated-layer-card--vacinas" aria-label="Coberturas Vacinais e Imunização PNI">
+            <div class="separated-layer-header">
+                <div style="display: flex; align-items: center; gap: 0.45rem;">
+                    <span style="font-size: 1.25rem;">💉</span>
+                    <h4 style="font-size: 0.95rem; font-weight: 700; color: #15803d; margin: 0;">Imunização &amp; Cobertura Vacinal (PNI / DATASUS)</h4>
+                </div>
+                <span class="separated-tag separated-tag--vacinas">Média D2.3: ${cobComposta}</span>
+            </div>
+
+            <p style="font-size: 0.75rem; color: #166534; margin: 0; line-height: 1.4;">
+                Avaliação do Programa Nacional de Imunizações (PNI): as <strong>6 vacinas estratégicas do 1º ano de vida</strong> compõem a nota oficial D2.3. As demais vacinas infantis e a imunização de adolescentes contra o HPV são monitoradas de forma puramente informativa.
+            </p>
+
+            <!-- PILAR 1: AS 6 VACINAS DO 1º ANO (ENTRAM NA NOTA D2.3) -->
+            <div style="margin-top: 0.55rem; padding: 0.55rem 0.65rem; background: #ffffff; border: 1px solid #86efac; border-radius: 6px;">
+                <div style="font-size: 0.78rem; font-weight: 700; color: #166534; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: space-between;">
+                    <span>👶 1. Vacinas Estratégicas do 1º Ano de Vida (Composição D2.3):</span>
+                    <span style="font-size: 0.72rem; color: #15803d; font-weight: 700;">Escore D2.3: ${escoreD2_3} / 100</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.35rem; font-size: 0.73rem;">
+                    <div style="padding: 4px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>🟣 <strong>Poliomielite (VIP):</strong> ${statusMeta(polio, 95)}</span>
+                    </div>
+                    <div style="padding: 4px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>💉 <strong>Pentavalente:</strong> ${statusMeta(penta, 95)}</span>
+                    </div>
+                    <div style="padding: 4px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>🩹 <strong>Tríplice Viral D1:</strong> ${statusMeta(tvd1, 95)}</span>
+                    </div>
+                    <div style="padding: 4px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>🫁 <strong>Pneumocócica 10:</strong> ${statusMeta(pneumo, 95)}</span>
+                    </div>
+                    <div style="padding: 4px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>🧠 <strong>Meningocócica C:</strong> ${statusMeta(menin, 95)}</span>
+                    </div>
+                    <div style="padding: 4px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>💧 <strong>Rotavírus Humano:</strong> ${statusMeta(rota, 90)}</span>
+                    </div>
+                </div>
+                <div style="font-size: 0.68rem; color: #64748b; margin-top: 0.35rem;">
+                    * Metas PNI: 95% para Polio, Penta, Tríplice Viral, Pneumocócica e Meningo C; 90% para Rotavírus.
+                </div>
+            </div>
+
+            <!-- PILAR 2: VACINAS COMPLEMENTARES DA PRIMEIRA INFÂNCIA (INFORMATIVAS - FORA DA NOTA) -->
+            <div style="margin-top: 0.5rem; padding: 0.5rem 0.65rem; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px;">
+                <div style="font-size: 0.76rem; font-weight: 700; color: #475569; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: space-between;">
+                    <span>🍼 2. Outras Coberturas Infantis (Acompanhamento Informativo):</span>
+                    <span style="font-size: 0.68rem; color: #64748b; background: #f1f5f9; padding: 1px 5px; border-radius: 4px;">Fora da Nota D2.3</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.35rem; font-size: 0.72rem;">
+                    <div style="padding: 4px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center;">
+                        <span style="display: block; color: #64748b; font-size: 0.68rem;">BCG (Tuberculose)</span>
+                        <strong style="color: #0f172a; font-size: 0.85rem;">${formatPct(bcg)}</strong>
+                        <span style="display: block; font-size: 0.65rem; color: #64748b;">Meta: 90%</span>
+                    </div>
+                    <div style="padding: 4px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center;">
+                        <span style="display: block; color: #64748b; font-size: 0.68rem;">Hepatite A</span>
+                        <strong style="color: #0f172a; font-size: 0.85rem;">${formatPct(hepa)}</strong>
+                        <span style="display: block; font-size: 0.65rem; color: #64748b;">Meta: 95%</span>
+                    </div>
+                    <div style="padding: 4px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center;">
+                        <span style="display: block; color: #64748b; font-size: 0.68rem;">Hepatite B (&lt;30d)</span>
+                        <strong style="color: #0f172a; font-size: 0.85rem;">${formatPct(hepb)}</strong>
+                        <span style="display: block; font-size: 0.65rem; color: #64748b;">Meta: 95%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PILAR 3: DESTAQUE ESPECIAL HPV (9 A 14 ANOS) - MENINAS E MENINOS -->
+            <div style="margin-top: 0.55rem; padding: 0.65rem 0.75rem; background: #faf5ff; border: 1.5px solid #c084fc; border-radius: 8px; box-shadow: 0 1px 3px rgba(192, 132, 252, 0.15);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
+                    <div style="display: flex; align-items: center; gap: 0.35rem;">
+                        <span style="font-size: 1.1rem;">🌸</span>
+                        <strong style="font-size: 0.85rem; color: #6b21a8;">Destaque: Vacinação contra HPV (9 a 14 anos)</strong>
+                    </div>
+                    <span style="font-size: 0.68rem; font-weight: 700; background: #ede9fe; color: #6b21a8; padding: 2px 6px; border-radius: 999px;">
+                        Meta PNI: 90%
+                    </span>
+                </div>
+                
+                <p style="font-size: 0.72rem; color: #7e22ce; margin: 0 0 0.5rem 0; line-height: 1.35;">
+                    Prevenção de cânceres de colo do útero, pênis, ânus e orofaringe (Ministério da Saúde / InfoMS — Dose única adotada em 2024). Segregação censitária por sexo:
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
+                    <!-- CARD MENINAS -->
+                    <div style="background: #ffffff; border: 1.2px solid #f0abfc; border-radius: 6px; padding: 0.5rem 0.6rem; text-align: center;">
+                        <span style="display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 0.75rem; font-weight: 700; color: #86198f;">
+                            👧 Meninas (9 a 14 anos)
+                        </span>
+                        <div style="font-size: 1.35rem; font-weight: 800; color: #a21caf; margin: 2px 0;">
+                            ${formatPct(hpvFem)}
+                        </div>
+                        <div style="margin-bottom: 3px;">
+                            ${typeof hpvFem === "number" && hpvFem >= 90 
+                                ? '<span style="color:#15803d; font-size:0.68rem; font-weight:700;">✅ Meta Atingida (≥90%)</span>' 
+                                : `<span style="color:#b45309; font-size:0.68rem; font-weight:600;">⚠️ ${typeof hpvFem === "number" ? (90 - hpvFem).toFixed(1) + "% abaixo da meta" : "Sem dado"}</span>`}
+                        </div>
+                        <div style="font-size: 0.67rem; color: #64748b;">
+                            ${typeof hpvDosesFem === "number" ? hpvDosesFem.toLocaleString("pt-BR") + " doses aplicadas" : "—"}
+                        </div>
+                    </div>
+
+                    <!-- CARD MENINOS -->
+                    <div style="background: #ffffff; border: 1.2px solid #93c5fd; border-radius: 6px; padding: 0.5rem 0.6rem; text-align: center;">
+                        <span style="display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 0.75rem; font-weight: 700; color: #1d4ed8;">
+                            👦 Meninos (9 a 14 anos)
+                        </span>
+                        <div style="font-size: 1.35rem; font-weight: 800; color: #1d4ed8; margin: 2px 0;">
+                            ${formatPct(hpvMasc)}
+                        </div>
+                        <div style="margin-bottom: 3px;">
+                            ${typeof hpvMasc === "number" && hpvMasc >= 90 
+                                ? '<span style="color:#15803d; font-size:0.68rem; font-weight:700;">✅ Meta Atingida (≥90%)</span>' 
+                                : `<span style="color:#b45309; font-size:0.68rem; font-weight:600;">⚠️ ${typeof hpvMasc === "number" ? (90 - hpvMasc).toFixed(1) + "% abaixo da meta" : "Sem dado"}</span>`}
+                        </div>
+                        <div style="font-size: 0.67rem; color: #64748b;">
+                            ${typeof hpvDosesMasc === "number" ? hpvDosesMasc.toLocaleString("pt-BR") + " doses aplicadas" : "—"}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONSOLIDAÇÃO TOTAL HPV -->
+                <div style="margin-top: 0.45rem; padding: 0.35rem 0.5rem; background: #ffffff; border-radius: 4px; border: 1px solid #e9d5ff; display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem;">
+                    <span style="color: #6b21a8;">👥 <strong>Cobertura Consolidada (Ambos os Sexos):</strong></span>
+                    <strong style="color: #581c87; font-size: 0.82rem;">${formatPct(hpvTot)}</strong>
+                    <span style="color: #64748b; font-size: 0.67rem;">${typeof hpvDosesTot === "number" && hpvDosesTot > 0 ? hpvDosesTot.toLocaleString("pt-BR") + " doses totais" : ""}</span>
+                </div>
+
+                <div style="font-size: 0.67rem; color: #7e22ce; margin-top: 0.35rem; line-height: 1.35;">
+                    ℹ️ <em>Informativo — Fora da composição da Nota Geral (D2.3). Fonte: Ministério da Saúde / InfoMS / DEMAS / SEIDIGI (SI-PNI + RNDS 2024).</em>
+                </div>
+            </div>
+        </section>
     `;
 }
 

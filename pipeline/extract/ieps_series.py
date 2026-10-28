@@ -30,6 +30,12 @@ INDICADORES = [
     "cob_vac_polio",
     "cob_vac_penta",
     "cob_vac_tvd1",
+    "cob_vac_pneumo",
+    "cob_vac_menin",
+    "cob_vac_rota",
+    "cob_vac_bcg",
+    "cob_vac_hepa",
+    "cob_vac_hepb",
     "tx_hosp_csap",
     "tx_mort_evit",
     "tx_med",
@@ -60,14 +66,14 @@ def baixar(ano: int, forcar: bool = False) -> dict:
     if not precisa_baixar:
         with open(destino, "rb") as f:
             head = f.readline().decode("latin1", errors="ignore")
-        if "Pentavalente" not in head or "CSAP" not in head:
+        if "Pentavalente" not in head or "CSAP" not in head or "Pneumoc" not in head:
             precisa_baixar = True
     if not precisa_baixar:
         print(f"[ieps_series] {ano}: cache existente completo ({destino}).")
         with open(destino, "rb") as f:
             blob = f.read()
     else:
-        print(f"[ieps_series] {ano}: baixando 15 indicadores...")
+        print(f"[ieps_series] {ano}: baixando 21 indicadores...")
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=180) as resp:
             blob = resp.read()

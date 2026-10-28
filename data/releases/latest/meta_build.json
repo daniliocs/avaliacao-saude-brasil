@@ -1,5 +1,5 @@
 {
-  "build_timestamp": "2026-10-28T01:57:53.072011+00:00",
+  "build_timestamp": "2026-10-28T11:56:20.600128+00:00",
   "versao_metodologia": "v0.8.0",
   "status_metodologia": "Experimental — Normalização Relativa por Percentis (P5–P95)",
   "regras_inegociaveis": [
@@ -292,7 +292,7 @@
     },
     "D2": {
       "nome": "Atenção Primária e Prevenção",
-      "descricao": "Resolutividade e prevenção na APS (D2.1 Internações Sensíveis à APS - ICSAP, D2.2 Pré-natal 7+ consultas SINASC e D2.3 Cobertura Vacinal Composta Pólio+Penta+Tríplice Viral, triênio 2021–2023)",
+      "descricao": "Resolutividade e prevenção na APS (D2.1 Internações Sensíveis à APS - ICSAP, D2.2 Pré-natal 7+ consultas SINASC e D2.3 Cobertura Vacinal Composta - 6 Vacinas Estratégicas do 1º ano de vida, triênio 2021–2023)",
       "nivel_agregacao": "Município de residência",
       "peso_padrao": 0.3333333333333333
     },
@@ -444,8 +444,8 @@
     {
       "id": "D2.3",
       "dimensao": "D2",
-      "nome": "Cobertura Vacinal Infantil Composta (Pólio, Penta e Tríplice Viral)",
-      "descricao": "Média da cobertura vacinal infantil para Poliomielite, Pentavalente (DTP+HB+Hib) e Tríplice Viral D1 (triênio 2021–2023 via IEPS Data / SI-PNI)",
+      "nome": "Cobertura Vacinal Infantil Composta (6 Vacinas Estratégicas)",
+      "descricao": "Média da cobertura vacinal infantil para 6 vacinas do 1º ano de vida: Poliomielite, Pentavalente, Tríplice Viral D1, Pneumocócica 10, Meningocócica C e Rotavírus Humano (triênio 2021–2023 via IEPS Data / SI-PNI). BCG, Hepatite A, Hepatite B e HPV são apresentadas de forma informativa no card municipal.",
       "sentido": "maior_melhor",
       "unidade": "%",
       "fontes": [
@@ -784,7 +784,7 @@
   "limites_calculados": {
     "versao": "v0.8.0",
     "metodo": "percentis",
-    "gerado_em": "2026-10-27",
+    "gerado_em": "2026-10-28",
     "limites": {
       "D1.1": {
         "pior": 15.91332102777362,
@@ -853,8 +853,8 @@
         "n_municipios_base": 5570
       },
       "D2.3": {
-        "pior": 64.00422328505555,
-        "melhor": 99.37613060183332,
+        "pior": 64.51986776683333,
+        "melhor": 99.23660315972222,
         "coluna": "cob_vac_composta",
         "sentido": "maior_melhor",
         "percentis": [
@@ -1058,7 +1058,7 @@
   },
   "build_info": {
     "versao_metodologia": "v0.8.0",
-    "gerado_em": "2026-10-27",
+    "gerado_em": "2026-10-28",
     "n_municipios": 5570,
     "n_classificados": 5570,
     "n_sem_classificacao": 0,
@@ -1142,7 +1142,7 @@
         "origem": "ftp.datasus.gov.br (microdados por residência)"
       },
       "ieps": {
-        "data_coleta": "2026-10-24",
+        "data_coleta": "2026-10-28",
         "origem": "iepsdata.org.br (intermediário)",
         "indicadores": {
           "D1.4": {
@@ -1228,7 +1228,7 @@
         }
       },
       "cnes_infra": {
-        "data_coleta": "2026-10-27",
+        "data_coleta": "2026-10-28",
         "origem": "ftp.datasus.gov.br / CNES (microdados EQ, LT, ST 2023-12)"
       }
     },
@@ -1300,8 +1300,8 @@
         "n_municipios_base": 5570
       },
       "D2.3": {
-        "pior": 64.00422328505555,
-        "melhor": 99.37613060183332,
+        "pior": 64.51986776683333,
+        "melhor": 99.23660315972222,
         "coluna": "cob_vac_composta",
         "sentido": "maior_melhor",
         "percentis": [
@@ -1345,9 +1345,9 @@
       }
     },
     "medias": {
-      "nota_geral": 57.91723518850988,
+      "nota_geral": 57.922028725314185,
       "d1_nota": 56.60786355475763,
-      "d2_nota": 64.24856373429084,
+      "d2_nota": 64.26344703770198,
       "d3_nota": 52.89585278276481
     }
   },
