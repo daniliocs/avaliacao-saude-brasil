@@ -105,3 +105,21 @@
   Em cumprimento à Regra Inegociável 1 (proibição de inventar metas ou limites de referência não validados em portaria/documento oficial) e para eliminar a saturação artificial de notas 100 decorrente de tetos arbitrários, os limites normativos permanecem como `null` (`PEND-033`).
 - **Decisão:**
   Enquanto `meta_oficial_confirmada` for `null` em `config/limites_referencia.yaml`, o pipeline adota normalização empírica relativa baseada nos percentis P5 e P95 da distribuição nacional observada na janela vigente, gravando os valores calculados em `config/limites_calculados.json` e realizando análise de sensibilidade cruzando os cortes `[P1, P99]`, `[P5, P95]` e `[P10, P90]` combinados aos esquemas alternativos de pesos para compor `[faixa_posicao_min, faixa_posicao_max]`.
+
+---
+
+### DEC-011: Promoção das Fontes SAMU 192 e Painel-Oncologia e Estratégia de Validação Cruzada para Fontes Candidatas (SIA, SISCAN, SIGTAP e IPS)
+- **Data:** 2026-10-28
+- **Status:** Aprovado
+- **Contexto:**
+  As fontes `samu_192` (DEMAS/MS) e `painel_oncologia` (DATASUS/INCA) foram validadas e integradas operacionalmente aos pipelines das Dimensões 5 (Urgência) e 6 (Oncologia), cumprindo todos os requisitos dos Quality Gates com cobertura nos 5.570 municípios. Paralelamente, as fontes ambulatoriais e de rastreamento (`sia_sus` e `siscan`) permanecem em revisão devido a distorções conhecidas de registro (atendimento vs. residência e subnotificação de produção).
+- **Decisões:**
+  1. **Promoção de Fontes:** Promover formalmente `samu_192` e `painel_oncologia` em `sources/registry.yaml` de `status: em_revisao` para `status: ativo` e `estagio_pipeline: quality_checked`.
+  2. **Estratégia de Cruzamento para SIA/SUS (Ambulatorial):** Para neutralizar o viés de atendimento e a subnotificação do BPA, o pipeline deve cruzar:
+     - **CNES:** Capacidade instalada real (CBOs de médicos especialistas com carga horária SUS no município) para verificar se municípios sem registros no SIA possuem equipe médica ativa.
+     - **SIOPS (Subfunção 302 - Média e Alta Complexidade):** Gasto liquidado per capita em atenção especializada para validar coerência orçamentária com a produção física.
+     - **IBGE / REGIC:** Malha de fluxo de deslocamento para atendimento de saúde, delimitando o acesso regional efetivo em até 60 minutos.
+     - **BPA Individualizado (BPA-I) e APAC:** Restringir o cômputo ao campo `CODMUNRES` (município de residência do usuário), descartando o BPA consolidado (BPA-C) bruto.
+  3. **Estratégia de Cruzamento para SISCAN (Rastreamento do Câncer):** Cruzar os registros nominais do SISCAN com a produção de procedimentos ambulatoriais de rastreamento do SIA/SUS (códigos 02.03.01.001-9 e 02.03.01.008-6 para colo do útero; 02.04.03.018-8 para mamografia bilateral) e denominadores demográficos femininos do Censo 2022 / IBGE, capturando exames faturados pelo SUS fora do portal SISCAN.
+  4. **SIGTAP:** Estruturação da tabela canônica de procedimentos cirúrgicos do DATASUS para segregação rigorosa entre urgência/emergência e cirurgias eletivas.
+  5. **IPS Brasil:** Execução de testes de correlação de Spearman com a dimensão de Necessidades Humanas Básicas para auditoria de convergência externa (Seção 9).

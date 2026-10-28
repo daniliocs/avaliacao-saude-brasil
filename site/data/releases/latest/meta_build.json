@@ -1,5 +1,5 @@
 {
-  "build_timestamp": "2026-10-28T14:30:54.473630+00:00",
+  "build_timestamp": "2026-10-28T15:10:39.569213+00:00",
   "versao_metodologia": "v0.8.1",
   "status_metodologia": "Experimental — Normalização Relativa por Percentis (P5–P95)",
   "regras_inegociaveis": [
@@ -220,16 +220,16 @@
       "orgao": "Ministério da Saúde / SAES / CGCAN / INCA",
       "url_documentacao": "https://www.gov.br/saude/pt-br/composicao/saes/cgcan/cgcan",
       "url_dados": "http://tabnet.datasus.gov.br/cgi/dhdat.exe?PAINEL_ONCO/PAINEL_ONCOLOGIABR.def",
-      "formato": "tabnet / csv",
+      "formato": "tabnet / csv -> parquet",
       "periodicidade_publicacao": "mensal",
       "defasagem_tipica": "3 a 6 meses",
-      "licenca_termos_uso": "Dados Abertos Governamentais",
-      "ultima_verificacao": "2026-10-24",
-      "ultimo_periodo_disponivel": null,
-      "status": "em_revisao",
-      "estagio_pipeline": "documented",
+      "licenca_termos_uso": "Dados Abertos Governamentais (Acesso Público DATASUS)",
+      "ultima_verificacao": "2026-10-28",
+      "ultimo_periodo_disponivel": "2021-2023",
+      "status": "ativo",
+      "estagio_pipeline": "quality_checked",
       "geografia_base": "residencia_e_atendimento",
-      "pendencia_id": "PEND-039"
+      "pendencia_id": "PEND-039 (Validada)"
     },
     {
       "id": "siscan",
@@ -251,19 +251,19 @@
     {
       "id": "samu_192",
       "nome": "Serviço de Atendimento Móvel de Urgência (SAMU 192) — Unidades Móveis e Cobertura",
-      "orgao": "Ministério da Saúde / SAES / DAHU",
+      "orgao": "Ministério da Saúde / SAES / DAHU / DEMAS",
       "url_documentacao": "https://dadosabertos.saude.gov.br/dataset/mgdi-servico-de-atendimento-movel-de-urgencia-samu-192",
       "url_dados": "https://dadosabertos.saude.gov.br/dataset/mgdi-servico-de-atendimento-movel-de-urgencia-samu-192",
-      "formato": "csv / json",
-      "periodicidade_publicacao": "anual",
-      "defasagem_tipica": "A_VALIDAR",
-      "licenca_termos_uso": "Dados Abertos Governamentais",
-      "ultima_verificacao": "2026-10-24",
-      "ultimo_periodo_disponivel": null,
-      "status": "em_revisao",
-      "estagio_pipeline": "documented",
+      "formato": "csv / json (DEMAS/MS) -> parquet",
+      "periodicidade_publicacao": "anual / contínua",
+      "defasagem_tipica": "anual / contínua (DEMAS/MS)",
+      "licenca_termos_uso": "Dados Abertos Governamentais (Acesso Público MS)",
+      "ultima_verificacao": "2026-10-28",
+      "ultimo_periodo_disponivel": "2023",
+      "status": "ativo",
+      "estagio_pipeline": "quality_checked",
       "geografia_base": "cobertura_regional",
-      "pendencia_id": "PEND-041"
+      "pendencia_id": "PEND-041 (Validada)"
     },
     {
       "id": "sigtap",
