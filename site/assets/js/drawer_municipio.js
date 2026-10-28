@@ -252,6 +252,9 @@ export function openDrawer(municipioData, indexMode = null) {
         <!-- BLOCO DEDICADO: SUPORTE DIAGNÓSTICO & INFRAESTRUTURA CNES (EXAMES BÁSICOS E AVANÇADOS) -->
         ${renderCnesInfraCard(municipioData)}
 
+        <!-- BLOCO DEDICADO: CIRURGIAS, ESPECIALISTAS & EXAMES (FASE 3) -->
+        ${renderCirurgiasEspecialistasCard(municipioData)}
+
         <!-- BLOCO SEPARADO: CONTEXTO MUNICIPAL (D4) - FORA DA NOTA -->
         <section class="separated-layer-card" aria-label="Contexto Municipal">
             <div class="separated-layer-header">
@@ -939,5 +942,101 @@ function renderCnesInfraCard(municipioData) {
                 🔍 <strong>Diagnóstico Territorial:</strong> No Brasil, 56% das pequenas cidades (&lt;20k hab.) não possuem sequer Raio-X SUS e 76% das cidades médias (20k-100k hab.) não têm UTI Adulto. O escore de infraestrutura penaliza a ausência de retaguarda imediata e pondera o acesso aos polos terciários pelo decaimento gravitacional da distância rodoviária.
             </div>
         </section>
+    `;
+}
+
+function renderCirurgiasEspecialistasCard(municipioData) {
+    const f3 = municipioData.cirurgias_especialistas;
+    if (!f3) return "";
+
+    const escoreF3 = typeof f3.escore_fase3 === "number" ? f3.escore_fase3.toFixed(1) : "—";
+    const escoreCir = typeof f3.escore_cirurgico === "number" ? f3.escore_cirurgico.toFixed(1) : "—";
+    const escoreEsp = typeof f3.escore_especialistas === "number" ? f3.escore_especialistas.toFixed(1) : "—";
+    const escoreBas = typeof f3.escore_exames_basicos === "number" ? f3.escore_exames_basicos.toFixed(1) : "—";
+    const escoreAv = typeof f3.escore_exames_avancados === "number" ? f3.escore_exames_avancados.toFixed(1) : "—";
+
+    const centroCirLocal = f3.eh_polo_cirurgico
+        ? `<span class="badge badge--quality-high">✅ Centro Cirúrgico Local SUS</span>`
+        : `<span class="badge badge--quality-warning">⚠️ Sem Centro Cirúrgico Local</span>`;
+
+    const poloCirDist = f3.eh_polo_cirurgico
+        ? `Sede Municipal`
+        : `${f3.dist_polo_cirurgico_km || 0} km (${f3.tempo_polo_cirurgico_min || 15} min) até <strong>${f3.polo_cirurgico_ref || 'Polo Regional'}</strong>`;
+
+    const poloTomoDist = f3.dist_tomografo_km === 0
+        ? `Equipamento Local SUS`
+        : `${f3.dist_tomografo_km || 0} km (${f3.tempo_tomografo_min || 15} min) até <strong>${f3.polo_tomografo_ref || 'Polo TC'}</strong>`;
+
+    const poloRmDist = f3.dist_ressonancia_km === 0
+        ? `Equipamento Local SUS`
+        : `${f3.dist_ressonancia_km || 0} km (${f3.tempo_ressonancia_min || 15} min) até <strong>${f3.polo_ressonancia_ref || 'Polo RM'}</strong>`;
+
+    const poloEspDist = f3.dist_especialistas_km === 0
+        ? `Atendimento Local SUS`
+        : `${f3.dist_especialistas_km || 0} km (${f3.tempo_especialistas_min || 15} min) até <strong>${f3.polo_especialistas_ref || 'Polo Especialistas'}</strong>`;
+
+    return `
+    <details class="accordion-item" style="border: 1px solid #0284c7; background: #f0f9ff; margin-bottom: 0.85rem;" open>
+        <summary class="accordion-header" style="background: #e0f2fe; color: #0369a1; padding: 0.65rem 0.85rem; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display:flex; align-items:center; gap:0.4rem;">
+                <span style="font-size:1.15rem;">🏥</span>
+                <span>Cirurgias, Especialistas &amp; Suporte de Exames</span>
+                <span style="font-size:0.68rem; background:#0284c7; color:#fff; padding:2px 6px; border-radius:10px; font-weight:600;">Fase 3</span>
+            </div>
+            <span style="font-size: 0.82rem; font-weight: 700; color: #0284c7;">
+                Escore: ${escoreF3} / 100
+            </span>
+        </summary>
+        <div class="accordion-body" style="padding: 0.85rem; background: #ffffff;">
+            <p style="font-size: 0.78rem; color: var(--color-text-muted); margin-bottom: 0.75rem; line-height: 1.45;">
+                Avaliação de acesso a procedimentos cirúrgicos do SUS, tempo de deslocamento até centros cirúrgicos, presença de médicos especialistas e resolutividade de exames diagnósticos básicos e avançados.
+            </p>
+
+            <!-- Bloco 1: Atenção Cirúrgica SUS -->
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:0.65rem; margin-bottom:0.65rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+                    <strong style="font-size:0.82rem; color:#0f172a;">🔪 Atenção Cirúrgica SUS</strong>
+                    <span style="font-size:0.75rem; font-weight:700; color:#0284c7;">Escore: ${escoreCir}</span>
+                </div>
+                <div style="font-size:0.78rem; margin-bottom:0.25rem;">
+                    Status: ${centroCirLocal}
+                </div>
+                <div style="font-size:0.76rem; color:#475569; margin-bottom:0.25rem;">
+                    Polo Cirúrgico: ${poloCirDist}
+                </div>
+                <div style="font-size:0.76rem; color:#475569;">
+                    Leitos Cirúrgicos SUS Locais: <strong>${f3.leitos_cirurgicos_sus || 0}</strong> ${f3.tx_leitos_cirurgicos_100k ? `(${f3.tx_leitos_cirurgicos_100k} / 100k hab)` : ''}
+                </div>
+            </div>
+
+            <!-- Bloco 2: Acesso a Médicos Especialistas -->
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:0.65rem; margin-bottom:0.65rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+                    <strong style="font-size:0.82rem; color:#0f172a;">👨‍⚕️ Médicos Especialistas &amp; Consultas</strong>
+                    <span style="font-size:0.75rem; font-weight:700; color:#0284c7;">Escore: ${escoreEsp}</span>
+                </div>
+                <div style="font-size:0.76rem; color:#475569; margin-bottom:0.25rem;">
+                    Polo de Especialistas: ${poloEspDist}
+                </div>
+                <div style="font-size:0.74rem; color:var(--color-text-subtle);">
+                    Cobre especialidades essenciais (Clínica Médica, Pediatria, Ginecologia/Obstetrícia, Cirurgia Geral e Ortopedia).
+                </div>
+            </div>
+
+            <!-- Bloco 3: Suporte Diagnóstico (Exames Básicos e Avançados) -->
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:0.65rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+                    <strong style="font-size:0.82rem; color:#0f172a;">🔬 Suporte de Exames Diagnósticos</strong>
+                    <span style="font-size:0.75rem; font-weight:700; color:#0284c7;">Básicos: ${escoreBas} | Avançados: ${escoreAv}</span>
+                </div>
+                <div style="font-size:0.76rem; color:#475569; margin-bottom:0.25rem;">
+                    Tomografia Computadorizada (TC): ${poloTomoDist}
+                </div>
+                <div style="font-size:0.76rem; color:#475569;">
+                    Ressonância Magnética (RM): ${poloRmDist}
+                </div>
+            </div>
+        </div>
+    </details>
     `;
 }

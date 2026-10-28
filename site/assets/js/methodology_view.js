@@ -289,6 +289,25 @@ export function renderMethodologyView(metaBuild) {
                         <li><strong>Régua de Calibração Absoluta:</strong> A nota 100 reflete o padrão-ouro inatingível (95%+ em até 30 dias, diagnóstico precoce &gt; 60%, equivalente aos melhores centros mundiais). No SUS, escores acima de 60 já indicam alta eficiência assistencial.</li>
                     </ul>
                 </div>
+
+                <!-- FASE 3: ATENÇÃO CIRÚRGICA, ESPECIALISTAS E SUPORTE DE EXAMES -->
+                <div style="border: 2px solid #0284c7; border-radius: var(--radius-sm); padding: 1.15rem; background: #f0f9ff; margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.65rem;">
+                        <h3 style="font-size: 1.05rem; font-weight: 700; color: #0369a1; margin: 0;">
+                            🏥 Fase 3: Atenção Cirúrgica SUS, Médicos Especialistas &amp; Suporte de Exames Diagnósticos
+                        </h3>
+                        <span class="separated-tag" style="background:#e0f2fe; color:#0369a1;">CNES / SIH / DEMAS / IBGE 2022</span>
+                    </div>
+                    <p style="font-size: 0.82rem; color: #0c4a6e; line-height: 1.5; margin: 0 0 0.5rem 0;">
+                        Diagnóstico censitário da capacidade instalada de intervenções cirúrgicas, presença de consultas com médicos especialistas e resolutividade de exames laboratoriais e por imagem nos 5.570 municípios:
+                    </p>
+                    <ul style="padding-left: 1.25rem; font-size: 0.81rem; line-height: 1.55; color: #075985;">
+                        <li><strong>1. Atenção Cirúrgica SUS (35% do Escore Fase 3):</strong> Mapeamento dos 2.966 municípios com centros cirúrgicos ativos no SUS e 77.723 leitos cirúrgicos cadastrados. Para os 2.604 municípios desprovidos de centro cirúrgico local, é calculado o tempo rodoviário de transporte intermunicipal (ambulância / viatura a 70 km/h) até o polo cirúrgico de referência.</li>
+                        <li><strong>2. Acesso a Médicos Especialistas (30% do Escore Fase 3):</strong> Densidade de médicos com carga horária ambulatorial SUS nas especialidades essenciais (Clínica Médica, Pediatria, Ginecologia/Obstetrícia, Cirurgia Geral e Ortopedia) e distância geodésica ponderada até o polo ambulatorial mais próximo.</li>
+                        <li><strong>3. Suporte Diagnóstico Básico Local (15% do Escore Fase 3):</strong> Presença física de equipamentos para diagnóstico primário imediato no território municipal (Raio-X, Ultrassonografia, Eletrocardiograma e Desfibrilador). Detecta os "desertos de exames básicos" (40,2% das cidades não possuem Raio-X SUS local).</li>
+                        <li><strong>4. Suporte Diagnóstico Avançado (20% do Escore Fase 3):</strong> Acesso georreferenciado e tempo de viagem até os 970 polos com Tomografia Computadorizada (TC), 504 polos com Ressonância Magnética (RM), Mamógrafos e Endoscopia digestiva.</li>
+                    </ul>
+                </div>
             </section>
 
             <!-- 4. CAMADAS INFORMATIVAS (FORA DA NOTA) -->

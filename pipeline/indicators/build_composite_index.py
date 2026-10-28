@@ -41,6 +41,7 @@ URG_PATH = os.path.join("data", "processed", "indicadores_urgencia_samu.parquet"
 ONCO_PATH = os.path.join("data", "processed", "indicadores_oncologia_tfd.parquet")
 INFRA_PATH = os.path.join("data", "processed", "indicadores_cnes_infra.parquet")
 HPV_PATH = os.path.join("data", "raw", "pni", "hpv_municipios.parquet")
+FASE3_PATH = os.path.join("data", "processed", "indicadores_cirurgias_especialistas.parquet")
 IEPS_DIR = os.path.join("data", "raw", "ieps")
 LIMITES_CFG = os.path.join("config", "limites_referencia.yaml")
 PESOS_CFG = os.path.join("config", "pesos.yaml")
@@ -351,6 +352,11 @@ def construir() -> pd.DataFrame:
         hpv["ibge7"] = hpv["ibge7"].astype(str)
         cols_hpv = [c for c in hpv.columns if c not in df.columns or c == "ibge7"]
         df = df.merge(hpv[cols_hpv], on="ibge7", how="left")
+    if os.path.exists(FASE3_PATH):
+        fase3 = pd.read_parquet(FASE3_PATH).drop(columns=["ibge6", "nome_municipio", "uf_sigla"], errors="ignore")
+        fase3["ibge7"] = fase3["ibge7"].astype(str)
+        cols_fase3 = [c for c in fase3.columns if c not in df.columns or c == "ibge7"]
+        df = df.merge(fase3[cols_fase3], on="ibge7", how="left")
     assert len(df) == 5570 and df["ibge7"].is_unique, "Cardinalidade/unicidade violada após junções"
 
     # Preenche regiao_saude_id e regiao_saude_nome reais (438 Regiões de Saúde do SUS)

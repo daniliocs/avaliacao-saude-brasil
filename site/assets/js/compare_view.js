@@ -470,6 +470,147 @@ function renderMunicipiosComparison() {
         }).join("")}
     `;
 
+    // Fase 3: Cirurgias, Especialistas & Suporte de Exames
+    const f3A = munA.cirurgias_especialistas || {};
+    const f3B = munB.cirurgias_especialistas || {};
+
+    const fase3Rows = [
+        {
+            nome: "FASE3.1 — Escore de Atenção Especializada & Cirúrgica (0–100)",
+            unid: "pts",
+            vA: f3A.escore_fase3,
+            vB: f3B.escore_fase3,
+            digits: 1,
+            sentido: "maior_melhor"
+        },
+        {
+            nome: "CIR.1 — Escore de Atenção Cirúrgica SUS (0–100)",
+            unid: "pts",
+            vA: f3A.escore_cirurgico,
+            vB: f3B.escore_cirurgico,
+            digits: 1,
+            sentido: "maior_melhor"
+        },
+        {
+            nome: "CIR.2 — Centro Cirúrgico SUS no Município",
+            unid: "",
+            vA_str: f3A.eh_polo_cirurgico ? "✅ Local Ativo" : "⚠️ Deslocamento p/ Polo",
+            vB_str: f3B.eh_polo_cirurgico ? "✅ Local Ativo" : "⚠️ Deslocamento p/ Polo",
+            is_text: true
+        },
+        {
+            nome: "CIR.3 — Distância Rodoviária ao Polo Cirúrgico (↓ menor é melhor)",
+            unid: "km",
+            vA: f3A.dist_polo_cirurgico_km ?? 0,
+            vB: f3B.dist_polo_cirurgico_km ?? 0,
+            digits: 1,
+            sentido: "menor_melhor"
+        },
+        {
+            nome: "CIR.4 — Tempo Estimado até o Centro Cirúrgico SUS (↓ menor é melhor)",
+            unid: "min",
+            vA: f3A.tempo_polo_cirurgico_min ?? 15,
+            vB: f3B.tempo_polo_cirurgico_min ?? 15,
+            digits: 0,
+            sentido: "menor_melhor"
+        },
+        {
+            nome: "CIR.5 — Leitos Cirúrgicos SUS no Município",
+            unid: "leitos",
+            vA: f3A.leitos_cirurgicos_sus ?? 0,
+            vB: f3B.leitos_cirurgicos_sus ?? 0,
+            digits: 0,
+            sentido: "maior_melhor"
+        },
+        {
+            nome: "CIR.6 — Taxa de Leitos Cirúrgicos SUS",
+            unid: "leitos / 100k hab",
+            vA: f3A.tx_leitos_cirurgicos_100k,
+            vB: f3B.tx_leitos_cirurgicos_100k,
+            digits: 1,
+            sentido: "maior_melhor"
+        },
+        {
+            nome: "ESP.1 — Escore de Acesso a Médicos Especialistas (0–100)",
+            unid: "pts",
+            vA: f3A.escore_especialistas,
+            vB: f3B.escore_especialistas,
+            digits: 1,
+            sentido: "maior_melhor"
+        },
+        {
+            nome: "ESP.2 — Tempo até o Polo de Especialistas (↓ menor é melhor)",
+            unid: "min",
+            vA: f3A.tempo_especialistas_min ?? 15,
+            vB: f3B.tempo_especialistas_min ?? 15,
+            digits: 0,
+            sentido: "menor_melhor"
+        },
+        {
+            nome: "DIAG.1 — Suporte de Exames Básicos Locais (Raio-X, US, ECG, Desfib)",
+            unid: "pts",
+            vA: f3A.escore_exames_basicos,
+            vB: f3B.escore_exames_basicos,
+            digits: 1,
+            sentido: "maior_melhor"
+        },
+        {
+            nome: "DIAG.2 — Suporte de Exames Avançados (TC, RM, Mamógrafo, Endoscopia)",
+            unid: "pts",
+            vA: f3A.escore_exames_avancados,
+            vB: f3B.escore_exames_avancados,
+            digits: 1,
+            sentido: "maior_melhor"
+        },
+        {
+            nome: "DIAG.3 — Tempo até Tomógrafo SUS mais próximo (↓ menor é melhor)",
+            unid: "min",
+            vA: f3A.tempo_tomografo_min ?? 15,
+            vB: f3B.tempo_tomografo_min ?? 15,
+            digits: 0,
+            sentido: "menor_melhor"
+        },
+        {
+            nome: "DIAG.4 — Tempo até Ressonância Magnética SUS mais próxima (↓ menor é melhor)",
+            unid: "min",
+            vA: f3A.tempo_ressonancia_min ?? 15,
+            vB: f3B.tempo_ressonancia_min ?? 15,
+            digits: 0,
+            sentido: "menor_melhor"
+        }
+    ];
+
+    const fase3RowsHtml = `
+        <tr style="background:#e0f2fe;">
+            <td colspan="3" style="text-align:center; color:#0369a1; font-weight:700; padding:0.45rem; font-size:0.84rem;">
+                🏥 Cirurgias, Especialistas &amp; Suporte Diagnóstico (Fase 3 — CNES 2023)
+            </td>
+        </tr>
+        ${fase3Rows.map(r => {
+            if (r.is_text) {
+                return `
+                    <tr>
+                        <td style="text-align:right; font-weight:600;">${r.vA_str}</td>
+                        <td style="text-align:center; background:#f8fafc; font-weight:600; font-size:0.82rem;">${r.nome}</td>
+                        <td style="text-align:left; font-weight:600;">${r.vB_str}</td>
+                    </tr>
+                `;
+            }
+            const aOk = typeof r.vA === "number" && !isNaN(r.vA);
+            const bOk = typeof r.vB === "number" && !isNaN(r.vB);
+            const winA = aOk && bOk && (r.sentido === "menor_melhor" ? r.vA < r.vB : r.vA > r.vB);
+            const winB = aOk && bOk && (r.sentido === "menor_melhor" ? r.vB < r.vA : r.vB > r.vA);
+
+            return `
+                <tr>
+                    <td style="text-align:right; font-weight:600; ${winA ? 'background:#f0fdf4;' : ''}">${fmtNum(r.vA, r.digits)} <small style="color:var(--color-text-subtle);">${r.unid}</small></td>
+                    <td style="text-align:center; background:#f8fafc; font-weight:600; font-size:0.82rem;">${r.nome}</td>
+                    <td style="text-align:left; font-weight:600; ${winB ? 'background:#f0fdf4;' : ''}">${fmtNum(r.vB, r.digits)} <small style="color:var(--color-text-subtle);">${r.unid}</small></td>
+                </tr>
+            `;
+        }).join("")}
+    `;
+
     // Contexto D4 e Camada Privada
     const ctxRows = [
         {
@@ -634,6 +775,7 @@ function renderMunicipiosComparison() {
                         ${vacRowsHtml}
                         ${urgRowsHtml}
                         ${oncoRowsHtml}
+                        ${fase3RowsHtml}
                         ${ctxRowsHtml}
                     </tbody>
                 </table>
