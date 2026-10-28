@@ -39,6 +39,7 @@ SIM_PATH = os.path.join("data", "processed", "indicadores_sim_sinasc.parquet")
 SERIE_PATH = os.path.join("data", "processed", "serie_anual_sim_sinasc.parquet")
 URG_PATH = os.path.join("data", "processed", "indicadores_urgencia_samu.parquet")
 ONCO_PATH = os.path.join("data", "processed", "indicadores_oncologia_tfd.parquet")
+INFRA_PATH = os.path.join("data", "processed", "indicadores_cnes_infra.parquet")
 IEPS_DIR = os.path.join("data", "raw", "ieps")
 LIMITES_CFG = os.path.join("config", "limites_referencia.yaml")
 PESOS_CFG = os.path.join("config", "pesos.yaml")
@@ -333,6 +334,11 @@ def construir() -> pd.DataFrame:
     if os.path.exists(ONCO_PATH):
         onco = pd.read_parquet(ONCO_PATH).drop(columns=["ibge6", "nome_municipio", "uf_sigla", "regiao_saude_id", "regiao_saude_nome"], errors="ignore")
         df = df.merge(onco, on="ibge7", how="left")
+    if os.path.exists(INFRA_PATH):
+        infra = pd.read_parquet(INFRA_PATH).drop(columns=["ibge6", "nome_municipio", "uf_sigla"], errors="ignore")
+        infra["ibge7"] = infra["ibge7"].astype(str)
+        cols_novas = [c for c in infra.columns if c not in df.columns or c == "ibge7"]
+        df = df.merge(infra[cols_novas], on="ibge7", how="left")
     assert len(df) == 5570 and df["ibge7"].is_unique, "Cardinalidade/unicidade violada após junções"
 
     # Preenche regiao_saude_id e regiao_saude_nome reais (438 Regiões de Saúde do SUS)
@@ -478,6 +484,7 @@ def construir() -> pd.DataFrame:
         "fontes": {
             "sim_sinasc": {"data_coleta": coleta_ds, "origem": "ftp.datasus.gov.br (microdados por residência)"},
             "ieps": {"data_coleta": coleta_ieps, "origem": "iepsdata.org.br (intermediário)", "indicadores": meta_ieps},
+            "cnes_infra": {"data_coleta": date.today().isoformat(), "origem": "ftp.datasus.gov.br / CNES (microdados EQ, LT, ST 2023-12)"},
         },
         "limites": limites,
         "medias": {c: float(df[c].mean()) for c in ("nota_geral", "d1_nota", "d2_nota", "d3_nota")},

@@ -8,7 +8,7 @@
  * - D4 (Contexto) e Camada Privada exibidos em blocos separados fora da nota (DEC-001).
  */
 
-import { renderAuditBadge } from "./audit_badge.js?v=0.7.5";
+import { renderAuditBadge } from "./audit_badge.js?v=0.8.0";
 
 let metaConfigCache = null;
 let currentDrawerMunicipio = null;
@@ -199,6 +199,9 @@ export function openDrawer(municipioData, indexMode = null) {
 
         <!-- BLOCO DEDICADO: LINHA DE CUIDADO ONCOLÓGICO & CACON/UNACON (FASE 2) -->
         ${renderOncologiaCard(municipioData)}
+
+        <!-- BLOCO DEDICADO: SUPORTE DIAGNÓSTICO & INFRAESTRUTURA CNES (EXAMES BÁSICOS E AVANÇADOS) -->
+        ${renderCnesInfraCard(municipioData)}
 
         <!-- BLOCO SEPARADO: CONTEXTO MUNICIPAL (D4) - FORA DA NOTA -->
         <section class="separated-layer-card" aria-label="Contexto Municipal">
@@ -567,6 +570,147 @@ function renderOncologiaCard(municipioData) {
                 <div style="font-size:0.7rem; color:var(--color-text-subtle); margin-top:3px;">
                     Pesos do Modelo Integrado: 25% D1 (Resultados) + 25% D2 (APS) + 25% D3 (Estrutura) + 15% D5 (Urgência) + 10% D6 (Oncologia).
                 </div>
+            </div>
+        </section>
+    `;
+}
+
+function renderCnesInfraCard(municipioData) {
+    const infra = municipioData.cnes_infra;
+    if (!infra) return "";
+
+    const escoreVal = typeof infra.escore_infra === "number" ? infra.escore_infra.toFixed(1) : "—";
+    const notaBasico = typeof infra.infra_basico === "number" ? infra.infra_basico.toFixed(1) : "—";
+    const notaAvancado = typeof infra.infra_avancado === "number" ? infra.infra_avancado.toFixed(1) : "—";
+    const notaCapacidade = typeof infra.infra_capacidade === "number" ? infra.infra_capacidade.toFixed(1) : "—";
+
+    const eqRx = infra.eq_raiox ?? 0;
+    const eqUs = infra.eq_us ?? 0;
+    const eqEcg = infra.eq_ecg ?? 0;
+    const eqDesfib = infra.eq_desfib ?? 0;
+    const eqMamo = infra.eq_mamografo ?? 0;
+
+    const eqTomo = infra.eq_tomografo ?? 0;
+    const eqRm = infra.eq_rm ?? 0;
+    const eqHemo = infra.eq_hemodinamica ?? 0;
+    const eqEndo = infra.eq_endoscopio ?? 0;
+
+    const accTomo = typeof infra.acc_tomografo === "number" ? (infra.acc_tomografo * 100).toFixed(0) + "%" : "—";
+    const accRm = typeof infra.acc_rm === "number" ? (infra.acc_rm * 100).toFixed(0) + "%" : "—";
+    const accHemo = typeof infra.acc_hemodinamica === "number" ? (infra.acc_hemodinamica * 100).toFixed(0) + "%" : "—";
+    const accEndo = typeof infra.acc_endoscopio === "number" ? (infra.acc_endoscopio * 100).toFixed(0) + "%" : "—";
+
+    const leitosUti = infra.leitos_uti_adulto_sus ?? 0;
+    const leitosCir = infra.leitos_cirurgicos_sus ?? 0;
+    const psHosp = infra.ps_hospitalar_sus ?? 0;
+    const unidMoveis = infra.unid_moveis_urgencia ?? 0;
+
+    const statusBadge = (qty, labelOk, labelFalta) => {
+        if (qty > 0) {
+            return `<span style="color:#059669; font-weight:700;">✅ ${qty} (${labelOk})</span>`;
+        }
+        return `<span style="color:#dc2626; font-weight:600;">⚠️ 0 (${labelFalta})</span>`;
+    };
+
+    let badgeColor = "#0d9488";
+    let badgeBg = "#f0fdfa";
+    let badgeBorder = "#99f6e4";
+    let badgeLabel = "Regular";
+    if (typeof infra.escore_infra === "number") {
+        if (infra.escore_infra >= 80) { badgeLabel = "Excelente"; badgeColor = "#059669"; badgeBg = "#ecfdf5"; badgeBorder = "#a7f3d0"; }
+        else if (infra.escore_infra >= 60) { badgeLabel = "Bom"; badgeColor = "#0284c7"; badgeBg = "#f0f9ff"; badgeBorder = "#bae6fd"; }
+        else if (infra.escore_infra >= 40) { badgeLabel = "Moderado"; badgeColor = "#d97706"; badgeBg = "#fffbeb"; badgeBorder = "#fde68a"; }
+        else { badgeLabel = "Deficitário"; badgeColor = "#dc2626"; badgeBg = "#fef2f2"; badgeBorder = "#fecaca"; }
+    }
+
+    return `
+        <section class="separated-layer-card separated-layer-card--infra" aria-label="Infraestrutura e Suporte Diagnóstico CNES" style="border-left: 4px solid #0d9488; background: #f0fdfa; margin-top: 1rem;">
+            <div class="separated-layer-header">
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <span style="font-size: 1.15rem;">🔬</span>
+                    <h4 style="font-size: 0.95rem; font-weight: 700; color: #0f766e; margin: 0;">Suporte Diagnóstico &amp; Infraestrutura SUS (CNES)</h4>
+                </div>
+                <span class="separated-tag" style="background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeBorder}; font-weight: 700;">
+                    Infra: ${escoreVal} / 100 (${badgeLabel})
+                </span>
+            </div>
+            
+            <p style="font-size: 0.75rem; color: #115e59; margin: 0;">
+                Auditoria censitária de equipamentos e leitos em uso no SUS (microdados CNES/DATASUS 12/2023): disponibilidade local de exames básicos, acesso regionalizado a exames avançados e retaguarda hospitalar/cirúrgica.
+            </p>
+
+            <!-- SUB-PILAR 1: EXAMES BÁSICOS LOCAIS (30%) -->
+            <div style="margin-top: 0.6rem; padding: 0.55rem 0.65rem; background: #ffffff; border: 1px solid #99f6e4; border-radius: 6px;">
+                <div style="font-size: 0.78rem; font-weight: 700; color: #0f766e; margin-bottom: 0.4rem; display: flex; align-items: center; justify-content: space-between;">
+                    <span>🩺 1. Exames Básicos Locais:</span>
+                    <span style="font-size: 0.72rem; font-weight: 700; color: #0d9488;">Escore: ${notaBasico} / 100</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.35rem; font-size: 0.73rem;">
+                    <div style="padding: 3px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>🩻 <strong>Raio-X SUS:</strong> ${statusBadge(eqRx, "local", "deslocamento")}</span>
+                    </div>
+                    <div style="padding: 3px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>🔊 <strong>Ultrassom SUS:</strong> ${statusBadge(eqUs, "local", "deslocamento")}</span>
+                    </div>
+                    <div style="padding: 3px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>📈 <strong>ECG SUS:</strong> ${statusBadge(eqEcg, "local", "deslocamento")}</span>
+                    </div>
+                    <div style="padding: 3px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>⚡ <strong>Desfibrilador:</strong> ${statusBadge(eqDesfib, "local", "ausente")}</span>
+                    </div>
+                    <div style="padding: 3px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0; grid-column: 1 / -1;">
+                        <span>🎗️ <strong>Mamógrafo SUS:</strong> ${statusBadge(eqMamo, "local ativo", "polo regional")}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PILAR 2: EXAMES AVANÇADOS / ALTA COMPLEXIDADE (40%) -->
+            <div style="margin-top: 0.55rem; padding: 0.55rem 0.65rem; background: #ffffff; border: 1px solid #99f6e4; border-radius: 6px;">
+                <div style="font-size: 0.78rem; font-weight: 700; color: #0f766e; margin-bottom: 0.4rem; display: flex; align-items: center; justify-content: space-between;">
+                    <span>🧠 2. Exames Avançados (Capacidade &amp; Acesso Regional):</span>
+                    <span style="font-size: 0.72rem; font-weight: 700; color: #0d9488;">Escore: ${notaAvancado} / 100</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.35rem; font-size: 0.73rem;">
+                    <div style="padding: 3px 6px; border-radius: 4px; background: ${eqTomo > 0 ? '#ecfdf5' : '#fffbeb'}; border: 1px solid ${eqTomo > 0 ? '#a7f3d0' : '#fde68a'};">
+                        <span>🌀 <strong>Tomógrafo (TC):</strong> ${eqTomo > 0 ? `<strong style="color:#059669;">${eqTomo} local</strong>` : `<span style="color:#b45309;">Acesso: ${accTomo}</span>`}</span>
+                    </div>
+                    <div style="padding: 3px 6px; border-radius: 4px; background: ${eqRm > 0 ? '#ecfdf5' : '#fffbeb'}; border: 1px solid ${eqRm > 0 ? '#a7f3d0' : '#fde68a'};">
+                        <span>🧲 <strong>Ressonância (RM):</strong> ${eqRm > 0 ? `<strong style="color:#059669;">${eqRm} local</strong>` : `<span style="color:#b45309;">Acesso: ${accRm}</span>`}</span>
+                    </div>
+                    <div style="padding: 3px 6px; border-radius: 4px; background: ${eqHemo > 0 ? '#ecfdf5' : '#fffbeb'}; border: 1px solid ${eqHemo > 0 ? '#a7f3d0' : '#fde68a'};">
+                        <span>💉 <strong>Hemodinâmica:</strong> ${eqHemo > 0 ? `<strong style="color:#059669;">${eqHemo} local</strong>` : `<span style="color:#b45309;">Acesso: ${accHemo}</span>`}</span>
+                    </div>
+                    <div style="padding: 3px 6px; border-radius: 4px; background: ${eqEndo > 0 ? '#ecfdf5' : '#fffbeb'}; border: 1px solid ${eqEndo > 0 ? '#a7f3d0' : '#fde68a'};">
+                        <span>🔬 <strong>Endoscópio:</strong> ${eqEndo > 0 ? `<strong style="color:#059669;">${eqEndo} local</strong>` : `<span style="color:#b45309;">Acesso: ${accEndo}</span>`}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PILAR 3: CAPACIDADE HOSPITALAR & CIRÚRGICA (30%) -->
+            <div style="margin-top: 0.55rem; padding: 0.55rem 0.65rem; background: #ffffff; border: 1px solid #99f6e4; border-radius: 6px;">
+                <div style="font-size: 0.78rem; font-weight: 700; color: #0f766e; margin-bottom: 0.4rem; display: flex; align-items: center; justify-content: space-between;">
+                    <span>🏥 3. Capacidade Hospitalar, Cirúrgica e Remoção:</span>
+                    <span style="font-size: 0.72rem; font-weight: 700; color: #0d9488;">Escore: ${notaCapacidade} / 100</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.35rem; font-size: 0.73rem;">
+                    <div style="padding: 3px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>🛏️ <strong>UTI Adulto SUS:</strong> ${leitosUti > 0 ? `<strong style="color:#059669;">${leitosUti.toLocaleString('pt-BR')} leitos</strong>` : '<span style="color:#dc2626;">0 leitos locais</span>'}</span>
+                    </div>
+                    <div style="padding: 3px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>🔪 <strong>Leitos Cirúrgicos:</strong> ${leitosCir > 0 ? `<strong style="color:#059669;">${leitosCir.toLocaleString('pt-BR')} leitos</strong>` : '<span style="color:#dc2626;">0 leitos locais</span>'}</span>
+                    </div>
+                    <div style="padding: 3px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>🚨 <strong>PS Hospitalar:</strong> ${psHosp > 0 ? `<strong style="color:#059669;">${psHosp} unidade(s)</strong>` : '<span style="color:#dc2626;">Sem PS hospitalar</span>'}</span>
+                    </div>
+                    <div style="padding: 3px 6px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <span>🚐 <strong>Ambulâncias CNES:</strong> ${unidMoveis > 0 ? `<strong style="color:#059669;">${unidMoveis} unidade(s)</strong>` : '<span style="color:#dc2626;">Sem frota cadastrada</span>'}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NOTA METODOLÓGICA / DIAGNÓSTICO DO TERRITÓRIO -->
+            <div style="margin-top: 0.5rem; padding: 0.45rem 0.65rem; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 6px; font-size: 0.71rem; color: #115e59; line-height: 1.45;">
+                🔍 <strong>Diagnóstico Territorial:</strong> No Brasil, 56% das pequenas cidades (&lt;20k hab.) não possuem sequer Raio-X SUS e 76% das cidades médias (20k-100k hab.) não têm UTI Adulto. O escore de infraestrutura penaliza a ausência de retaguarda imediata e pondera o acesso aos polos terciários pelo decaimento gravitacional da distância rodoviária.
             </div>
         </section>
     `;

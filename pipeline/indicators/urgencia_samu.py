@@ -198,25 +198,46 @@ def processar_urgencia_samu(
 
     df["lat"], df["lon"] = carregar_coordenadas_municipios(df)
 
-    # Definição de Polo Hospitalar e de Urgência:
-    # Município com >= 50 leitos SUS locais OU (>= 30 leitos SUS locais E presença de UPA 24h ou UTI Móvel USA)
-    df["eh_polo_hospitalar"] = (
+    # Infraestrutura real CNES (UTI adulto SUS, tomógrafo SUS, PS hospitalar, unidades móveis de urgência)
+    caminho_infra = os.path.join("data", "processed", "indicadores_cnes_infra.parquet")
+    if os.path.exists(caminho_infra):
+        infra = pd.read_parquet(caminho_infra)[["ibge7", "leitos_uti_adulto_sus", "eq_tomografo", "ps_hospitalar_sus", "unid_moveis_urgencia"]]
+        infra["ibge7"] = infra["ibge7"].astype(str)
+        df = df.merge(infra.rename(columns={"eq_tomografo": "tomografo_sus"}), on="ibge7", how="left")
+        for c in ("leitos_uti_adulto_sus", "tomografo_sus", "ps_hospitalar_sus", "unid_moveis_urgencia"):
+            df[c] = df[c].fillna(0).astype(int)
+    else:
+        for c in ("leitos_uti_adulto_sus", "tomografo_sus", "ps_hospitalar_sus", "unid_moveis_urgencia"):
+            df[c] = 0
+
+    # Definição de Polo Hospitalar e de Urgência (recalibrada v0.8.0):
+    # Município com >= 50 leitos SUS locais (ou >= 30 + UPA/USA) E retaguarda real de alta complexidade:
+    # UTI adulto SUS ou tomógrafo SUS. Polo sem UTI/tomógrafo não resolve trauma, AVC ou IAM e deixa de ser referência
+    # sempre que existir polo capacitado na UF (fallback ao critério antigo apenas se a UF não tiver nenhum).
+    polo_antigo = (
         (df["leitos_locais_sus"] >= 50)
         | ((df["leitos_locais_sus"] >= 30) & ((df["upa_mun"] >= 1) | (df["usa_mun"] >= 1)))
     )
+    retaguarda = (df["leitos_uti_adulto_sus"] >= 1) | (df["tomografo_sus"] >= 1)
+    capacitado = polo_antigo & retaguarda
+    ufs_com_capacitado = set(df.loc[capacitado, "uf_sigla"])
+    df["eh_polo_hospitalar"] = np.where(df["uf_sigla"].isin(ufs_com_capacitado), capacitado, polo_antigo)
+    df["polo_completo"] = (df["leitos_uti_adulto_sus"] >= 1) & (df["tomografo_sus"] >= 1)
 
     polos_df = df[df["eh_polo_hospitalar"]].copy()
-    polos_grandes_df = df[df["leitos_locais_sus"] >= 100].copy()
+    polos_grandes_df = df[(df["leitos_locais_sus"] >= 100) & df["eh_polo_hospitalar"]].copy()
 
     dist_polo_km = []
     tempo_ambulancia_min = []
     polo_hospitalar_ref = []
+    polo_ref_completo = []
 
     for _, row in df.iterrows():
         if row["eh_polo_hospitalar"]:
             dist_polo_km.append(0.0)
             tempo_ambulancia_min.append(12)
             polo_hospitalar_ref.append(f"{row['nome_municipio']} (Sede Local)")
+            polo_ref_completo.append(bool(row["polo_completo"]))
             continue
 
         # Candidatos: Polos da mesma Região de Saúde + Grandes Polos (>= 100 leitos) da mesma UF
@@ -244,46 +265,64 @@ def processar_urgencia_samu(
         dist_polo_km.append(d_rod)
         tempo_ambulancia_min.append(t_min)
         polo_hospitalar_ref.append(f"{p_row['nome_municipio']} - {p_row['uf_sigla']}")
+        polo_ref_completo.append(bool(p_row["polo_completo"]))
 
     df["dist_polo_km"] = dist_polo_km
     df["tempo_ambulancia_min"] = tempo_ambulancia_min
     df["polo_hospitalar_ref"] = polo_hospitalar_ref
+    df["polo_ref_completo"] = polo_ref_completo
 
     # Fator exponencial da "Hora de Ouro" (Golden Hour Decay):
     # f_dist(d) = exp(-0.012 * d_km) -> 1.00 em 0km, 0.79 em 20km, 0.55 em 50km, 0.30 em 100km
-    df["fator_golden_hour"] = np.exp(-0.012 * df["dist_polo_km"]).round(4)
+    df["fator_golden_hour"] = np.clip(np.exp(-0.012 * df["dist_polo_km"]), 0.0001, 1.0).round(4)
+    # Fator de capacidade resolutiva do polo de referência: polo sem UTI+tomógrafo SUS entrega só 70% do valor da rede
+    df["fator_capacidade_polo"] = np.where(df["polo_ref_completo"], 1.0, 0.7)
 
     # 1. Componente Regional Bruto da RUE (0 a 100):
+    # Saturação da frota = P90 nacional da taxa regional (derivada dos dados; antes 5,0/100k saturava regiões pequenas)
+    # Suavização Bayesiana Empírica das taxas regionais (mesma metodologia do projeto): regiões de saúde pequenas
+    # têm taxa por 100 mil inflada por 1 ou 2 veículos; encolhe-se para a taxa nacional agregada com peso pop/(pop+300 mil).
+    w_reg = (df["pop_regiao_saude"].fillna(0) / (df["pop_regiao_saude"].fillna(0) + 300_000.0))
+    nac_frota = float(((df["usb_mun"] + 2.5 * df["usa_mun"]).sum() / df["populacao_censo_2022"].sum()) * 100_000)
+    nac_upa = float((df["upa_mun"].sum() / df["populacao_censo_2022"].sum()) * 100_000)
+    df["tx_frota_samu_reg_100k"] = (w_reg * df["tx_frota_samu_reg_100k"] + (1 - w_reg) * nac_frota).round(2)
+    df["tx_upa_reg_100k"] = (w_reg * df["tx_upa_reg_100k"] + (1 - w_reg) * nac_upa).round(2)
+
+    ref_frota = float(df.loc[df["tx_frota_samu_reg_100k"] > 0, "tx_frota_samu_reg_100k"].quantile(0.90))
     norm_cob_reg = np.clip(df["cob_samu_efetiva"], 0.0, 100.0)
-    norm_frota_reg = np.clip(df["tx_frota_samu_reg_100k"] / 5.0 * 100.0, 0.0, 100.0)
+    norm_frota_reg = np.clip(df["tx_frota_samu_reg_100k"] / ref_frota * 100.0, 0.0, 100.0)
     norm_upa_reg = np.clip(df["tx_upa_reg_100k"] / 0.8 * 100.0, 0.0, 100.0)
     df["escore_rue_regional_bruto"] = (
         0.45 * norm_cob_reg + 0.35 * norm_frota_reg + 0.20 * norm_upa_reg
     ).round(1)
 
     # 2. Componente de Prontidão Imediata Local (0 a 100):
-    # Mede a capacidade de resposta nos primeiros 15 minutos dentro do próprio município:
     # - 25 pts: Cobertura local do SAMU 192
-    # - 25 pts: Presença de base local de ambulância (USB ou USA no município)
-    # - 25 pts: Presença de suporte avançado/emergência 24h local (USA ou UPA 24h no município)
-    # - 25 pts: Retaguarda de leitos SUS locais para estabilização (saturando em 50 leitos)
+    # - 25 pts: Base local de ambulância (USB/USA do SAMU ou unidade móvel de urgência/remoção no CNES)
+    # - 25 pts: Suporte avançado 24h local (USA, UPA 24h ou Pronto-Socorro hospitalar SUS)
+    # - 25 pts: Retaguarda hospitalar real: 10 leitos SUS (sat. 50) + 10 UTI adulto SUS (sat. 10 leitos) + 5 tomógrafo SUS
     pts_samu_local = 0.25 * np.clip(df["cob_samu_mun"], 0.0, 100.0)
-    pts_base_ambulancia = np.where((df["usb_mun"] >= 1) | (df["usa_mun"] >= 1), 25.0, 0.0)
+    pts_base_ambulancia = np.where((df["usb_mun"] >= 1) | (df["usa_mun"] >= 1) | (df["unid_moveis_urgencia"] >= 1), 25.0, 0.0)
+    tem_avancado_a = (df["usa_mun"] >= 1) | (df["ps_hospitalar_sus"] >= 1)
+    tem_avancado_b = df["upa_mun"] >= 1
     pts_suporte_avancado = np.where(
-        (df["usa_mun"] >= 1) & (df["upa_mun"] >= 1),
-        25.0,
-        np.where((df["usa_mun"] >= 1) | (df["upa_mun"] >= 1), 20.0, 0.0),
+        tem_avancado_a & tem_avancado_b, 25.0,
+        np.where(tem_avancado_a | tem_avancado_b, 20.0, 0.0),
     )
-    pts_leitos_locais = 25.0 * np.clip(df["leitos_locais_sus"] / 50.0, 0.0, 1.0)
+    pts_leitos_locais = (
+        10.0 * np.clip(df["leitos_locais_sus"] / 50.0, 0.0, 1.0)
+        + 10.0 * np.clip(df["leitos_uti_adulto_sus"] / 10.0, 0.0, 1.0)
+        + 5.0 * (df["tomografo_sus"] >= 1)
+    )
     df["escore_prontidao_local"] = (
         pts_samu_local + pts_base_ambulancia + pts_suporte_avancado + pts_leitos_locais
     ).round(1)
 
-    # 3. Escore Sintético Final de Urgência & Emergência (D5) ajustado pela Distância (Golden Hour):
-    # 35% Prontidão Imediata Local + 65% Rede Regional descontada pelo Fator de Distância até o Polo Hospitalar
+    # 3. Escore Sintético Final de Urgência & Emergência (D5) ajustado pela Distância (Golden Hour) e pela capacidade do polo:
+    # 35% Prontidão Imediata Local + 65% Rede Regional descontada por distância até o Polo e por sua capacidade resolutiva
     df["escore_urgencia_rue"] = np.clip(
         0.35 * df["escore_prontidao_local"]
-        + 0.65 * (df["escore_rue_regional_bruto"] * df["fator_golden_hour"]),
+        + 0.65 * (df["escore_rue_regional_bruto"] * df["fator_golden_hour"] * df["fator_capacidade_polo"]),
         0.0,
         100.0,
     ).round(1)
@@ -301,6 +340,8 @@ def processar_urgencia_samu(
         "tx_frota_samu_reg_100k", "tx_upa_reg_100k",
         "leitos_locais_sus", "eh_polo_hospitalar",
         "dist_polo_km", "tempo_ambulancia_min", "polo_hospitalar_ref", "fator_golden_hour",
+        "leitos_uti_adulto_sus", "tomografo_sus", "ps_hospitalar_sus", "unid_moveis_urgencia",
+        "polo_ref_completo", "fator_capacidade_polo",
         "escore_rue_regional_bruto", "escore_prontidao_local",
         "escore_urgencia_rue", "vintage_urgencia", "fonte_urgencia"
     ]

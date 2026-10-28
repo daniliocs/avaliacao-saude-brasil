@@ -9,8 +9,8 @@
  * - Modal de Rankings com 4 escopos separados: Top 100 Brasil, Por Estado (isolado), 27 Estados e 27 Capitais
  */
 
-import { openDrawer, refreshDrawerIndexMode } from "./drawer_municipio.js?v=0.7.5";
-import { updateCompareData } from "./compare_view.js?v=0.7.5";
+import { openDrawer, refreshDrawerIndexMode } from "./drawer_municipio.js?v=0.8.0";
+import { updateCompareData } from "./compare_view.js?v=0.8.0";
 
 let leafletMap = null;
 let canvasRenderer = null;
@@ -180,9 +180,9 @@ export async function initMap(metaConfig) {
 
 async function loadRankings() {
     const candidatePaths = [
-        "data/releases/latest/rankings_resumo.json?v=0.7.5",
-        "./data/releases/latest/rankings_resumo.json?v=0.7.5",
-        "../data/releases/latest/rankings_resumo.json?v=0.7.5"
+        "data/releases/latest/rankings_resumo.json?v=0.8.0",
+        "./data/releases/latest/rankings_resumo.json?v=0.8.0",
+        "../data/releases/latest/rankings_resumo.json?v=0.8.0"
     ];
 
     for (const path of candidatePaths) {
@@ -202,9 +202,9 @@ async function loadRankings() {
 
 async function loadMapaResumo() {
     const candidatePaths = [
-        "data/releases/latest/mapa_resumo.json?v=0.7.5",
-        "./data/releases/latest/mapa_resumo.json?v=0.7.5",
-        "../data/releases/latest/mapa_resumo.json?v=0.7.5"
+        "data/releases/latest/mapa_resumo.json?v=0.8.0",
+        "./data/releases/latest/mapa_resumo.json?v=0.8.0",
+        "../data/releases/latest/mapa_resumo.json?v=0.8.0"
     ];
 
     for (const path of candidatePaths) {

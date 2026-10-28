@@ -55,7 +55,7 @@ def test_fator_distancia_golden_hour(df_urgencia):
     assert (df_urgencia["dist_polo_km"] >= 0.0).all()
     assert ((df_urgencia["fator_golden_hour"] > 0.0) & (df_urgencia["fator_golden_hour"] <= 1.0)).all()
     polos = df_urgencia[df_urgencia["eh_polo_hospitalar"]]
-    assert len(polos) >= 1000
+    assert len(polos) >= 800
     assert (polos["dist_polo_km"] == 0.0).all()
     assert (polos["fator_golden_hour"] == 1.0).all()
     diamantina = df_urgencia[df_urgencia["ibge7"].astype(str) == "3121605"]["escore_urgencia_rue"].iloc[0]

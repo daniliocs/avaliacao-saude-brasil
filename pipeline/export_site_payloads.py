@@ -170,7 +170,7 @@ def build_meta_payload() -> dict:
             },
             "D5": {
                 "nome": "Rede de Urgência & SAMU 192 (Golden Hour)",
-                "descricao": "Prontidão imediata local (35%) e rede regional SAMU/UPA descontada pela distância rodoviária até o Polo Hospitalar (65%, f_dist = exp(-0.012 * d_km))",
+                "descricao": "Prontidão imediata local (35%) e rede regional SAMU/UPA descontada pela distância rodoviária até o Polo Hospitalar capacitado com UTI/tomógrafo (65%, f_dist = exp(-0.012 * d_km))",
                 "nivel_agregacao": "Município / Região de Saúde",
                 "peso_padrao": 0.15
             },
@@ -179,6 +179,12 @@ def build_meta_payload() -> dict:
                 "descricao": "Agilidade e cumprimento efetivo da Lei dos 60 dias sobre total de diagnosticados (30%), Diagnóstico Precoce auditado (20%), Conversão Terapêutica contra fila oculta TRATAMENTO=5 + Sobrevida D1 (25%) e Autonomia TFD + Terapias de Ponta CNES (25%)",
                 "nivel_agregacao": "Município / Polo de Referência",
                 "peso_padrao": 0.10
+            },
+            "INFRA": {
+                "nome": "Infraestrutura Assistencial & Suporte Diagnóstico (CNES)",
+                "descricao": "Exames básicos locais (Raio-X, US, ECG, Desfibrilador), Exames avançados regionalizados (Tomógrafo, RM, Hemodinâmica, Endoscopia) e Capacidade Hospitalar (Leitos UTI SUS, Leitos Cirúrgicos, PS Hospitalar, Unidades Móveis CNES)",
+                "nivel_agregacao": "Município / Polo Hospitalar",
+                "peso_padrao": 0.0
             }
         },
         "indicadores": indicadores_cfg.get("indicadores", []),
@@ -478,9 +484,6 @@ def build_mapa_resumo_payload(meta_build: dict):
                 "upa_mun": int(row["upa_mun"]) if pd.notna(row.get("upa_mun")) else 0,
                 "upa_reg": int(row["upa_reg"]) if pd.notna(row.get("upa_reg")) else 0,
                 "tx_frota_samu_reg_100k": num_or_none(row.get("tx_frota_samu_reg_100k"), 2),
-            "dist_polo_km": num_or_none(row.get("dist_polo_km"), 1),
-            "tempo_ambulancia_min": int(row["tempo_ambulancia_min"]) if pd.notna(row.get("tempo_ambulancia_min")) else 12,
-            "polo_hospitalar_ref": str(row.get("polo_hospitalar_ref", "")),
                 "tx_upa_reg_100k": num_or_none(row.get("tx_upa_reg_100k"), 2),
                 "leitos_locais_sus": int(row["leitos_locais_sus"]) if pd.notna(row.get("leitos_locais_sus")) else 0,
                 "eh_polo_hospitalar": bool(row.get("eh_polo_hospitalar", False)),
@@ -488,6 +491,12 @@ def build_mapa_resumo_payload(meta_build: dict):
                 "tempo_ambulancia_min": int(row["tempo_ambulancia_min"]) if pd.notna(row.get("tempo_ambulancia_min")) else 12,
                 "polo_hospitalar_ref": str(row.get("polo_hospitalar_ref", "")),
                 "fator_golden_hour": num_or_none(row.get("fator_golden_hour"), 3),
+                "leitos_uti_adulto_sus": int(row["leitos_uti_adulto_sus"]) if pd.notna(row.get("leitos_uti_adulto_sus")) else 0,
+                "tomografo_sus": int(row["tomografo_sus"]) if pd.notna(row.get("tomografo_sus")) else 0,
+                "ps_hospitalar_sus": int(row["ps_hospitalar_sus"]) if pd.notna(row.get("ps_hospitalar_sus")) else 0,
+                "unid_moveis_urgencia": int(row["unid_moveis_urgencia"]) if pd.notna(row.get("unid_moveis_urgencia")) else 0,
+                "polo_ref_completo": bool(row.get("polo_ref_completo", False)),
+                "fator_capacidade_polo": num_or_none(row.get("fator_capacidade_polo"), 2),
                 "escore_prontidao_local": num_or_none(row.get("escore_prontidao_local"), 1),
                 "escore_rue_regional_bruto": num_or_none(row.get("escore_rue_regional_bruto"), 1),
                 "no_regiao_saude": str(row.get("no_regiao_saude", ""))
@@ -521,6 +530,32 @@ def build_mapa_resumo_payload(meta_build: dict):
                 "polo_onco_pediatrica": bool(row.get("polo_onco_pediatrica", False)),
                 "polo_hematologia_tmo": bool(row.get("polo_hematologia_tmo", False)),
                 "polo_total_centros": int(row["polo_total_centros"]) if pd.notna(row.get("polo_total_centros")) else 1,
+            },
+            "cnes_infra": {
+                "escore_infra": num_or_none(row.get("escore_infra"), 1),
+                "infra_basico": num_or_none(row.get("infra_basico"), 1),
+                "infra_avancado": num_or_none(row.get("infra_avancado"), 1),
+                "infra_capacidade": num_or_none(row.get("infra_capacidade"), 1),
+                "eq_raiox": int(row["eq_raiox"]) if pd.notna(row.get("eq_raiox")) else 0,
+                "eq_us": int(row["eq_us"]) if pd.notna(row.get("eq_us")) else 0,
+                "eq_ecg": int(row["eq_ecg"]) if pd.notna(row.get("eq_ecg")) else 0,
+                "eq_desfib": int(row["eq_desfib"]) if pd.notna(row.get("eq_desfib")) else 0,
+                "eq_mamografo": int(row["eq_mamografo"]) if pd.notna(row.get("eq_mamografo")) else 0,
+                "eq_tomografo": int(row["eq_tomografo"]) if pd.notna(row.get("eq_tomografo")) else 0,
+                "eq_rm": int(row["eq_rm"]) if pd.notna(row.get("eq_rm")) else 0,
+                "eq_hemodinamica": int(row["eq_hemodinamica"]) if pd.notna(row.get("eq_hemodinamica")) else 0,
+                "eq_endoscopio": int(row["eq_endoscopio"]) if pd.notna(row.get("eq_endoscopio")) else 0,
+                "leitos_uti_adulto_sus": int(row["leitos_uti_adulto_sus"]) if pd.notna(row.get("leitos_uti_adulto_sus")) else 0,
+                "leitos_cirurgicos_sus": int(row["leitos_cirurgicos_sus"]) if pd.notna(row.get("leitos_cirurgicos_sus")) else 0,
+                "ps_hospitalar_sus": int(row["ps_hospitalar_sus"]) if pd.notna(row.get("ps_hospitalar_sus")) else 0,
+                "unid_moveis_urgencia": int(row["unid_moveis_urgencia"]) if pd.notna(row.get("unid_moveis_urgencia")) else 0,
+                "acc_tomografo": num_or_none(row.get("acc_tomografo"), 2),
+                "acc_rm": num_or_none(row.get("acc_rm"), 2),
+                "acc_hemodinamica": num_or_none(row.get("acc_hemodinamica"), 2),
+                "acc_endoscopio": num_or_none(row.get("acc_endoscopio"), 2),
+                "acc_uti": num_or_none(row.get("acc_uti"), 2),
+                "acc_cir": num_or_none(row.get("acc_cir"), 2),
+                "vintage_infra": str(row.get("vintage_infra", "CNES 2023-12")),
             }
         }
 
@@ -560,9 +595,6 @@ def build_rankings_payload(df: pd.DataFrame):
             "posicao_estadual_urgencia": int(row["posicao_estadual_urgencia"]) if pd.notna(row.get("posicao_estadual_urgencia")) else None,
             "cob_samu_efetiva": num_or_none(row.get("cob_samu_efetiva"), 1),
             "tx_frota_samu_reg_100k": num_or_none(row.get("tx_frota_samu_reg_100k"), 2),
-            "dist_polo_km": num_or_none(row.get("dist_polo_km"), 1),
-            "tempo_ambulancia_min": int(row["tempo_ambulancia_min"]) if pd.notna(row.get("tempo_ambulancia_min")) else 12,
-            "polo_hospitalar_ref": str(row.get("polo_hospitalar_ref", "")),
             "tmi_bayes": num_or_none(row.get("tmi_bayes"), 2),
             "faixa_min": int(row["faixa_posicao_min"]) if pd.notna(row.get("faixa_posicao_min")) else None,
             "faixa_max": int(row["faixa_posicao_max"]) if pd.notna(row.get("faixa_posicao_max")) else None,
@@ -587,7 +619,10 @@ def build_rankings_payload(df: pd.DataFrame):
             "polo_radio_avancada": bool(row.get("polo_radio_avancada", False)),
             "polo_cirurgia_onco": bool(row.get("polo_cirurgia_onco", False)),
             "polo_onco_pediatrica": bool(row.get("polo_onco_pediatrica", False)),
-            "polo_hematologia_tmo": bool(row.get("polo_hematologia_tmo", False))
+            "polo_hematologia_tmo": bool(row.get("polo_hematologia_tmo", False)),
+            "escore_infra": num_or_none(row.get("escore_infra"), 1),
+            "leitos_uti_adulto_sus": int(row["leitos_uti_adulto_sus"]) if pd.notna(row.get("leitos_uti_adulto_sus")) else 0,
+            "eq_tomografo": int(row["eq_tomografo"]) if pd.notna(row.get("eq_tomografo")) else 0
         }
 
     df_sorted = cls.sort_values(by=["nota_geral", "populacao_censo_2022"], ascending=[False, False])
@@ -626,6 +661,9 @@ def build_rankings_payload(df: pd.DataFrame):
             "total_upas_uf": int(group["upa_mun"].sum()) if "upa_mun" in group else 0,
             "total_usb_uf": int(group["usb_mun"].sum()) if "usb_mun" in group else 0,
             "total_usa_uf": int(group["usa_mun"].sum()) if "usa_mun" in group else 0,
+            "total_uti_adulto_sus_uf": int(group["leitos_uti_adulto_sus"].sum()) if "leitos_uti_adulto_sus" in group else 0,
+            "total_tomografos_sus_uf": int(group["eq_tomografo"].sum()) if "eq_tomografo" in group else 0,
+            "media_infra_uf": round(float(group["escore_infra"].mean()), 1) if "escore_infra" in group and group["escore_infra"].notna().any() else None,
             "mediana_tmi_uf": round(float(group["tmi_bayes"].median()), 2),
             "media_gasto_pc_uf": round(float(group["gasto_pc_def_val"].dropna().mean()), 2) if group["gasto_pc_def_val"].notna().any() else None,
             "media_cob_priv_uf": round(float(group["cob_priv_val"].dropna().mean()), 1) if group["cob_priv_val"].notna().any() else None,
