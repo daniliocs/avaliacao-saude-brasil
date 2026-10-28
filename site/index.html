@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   
   <!-- Estilos da Aplicação -->
-  <link rel="stylesheet" href="assets/css/style.css?v=0.8.0">
+  <link rel="stylesheet" href="assets/css/style.css?v=0.8.1">
 </head>
 <body>
 
@@ -22,7 +22,7 @@
     <div class="header-container">
       <div class="brand-block">
         <h1 class="brand-title">Índice de Saúde Municipal</h1>
-        <span class="brand-badge version-display">v0.8.0</span>
+        <span class="brand-badge version-display">v0.8.1</span>
         <button id="btn-info" class="btn-info-pill" aria-label="Aviso e Metodologia" title="Clique para ver o Aviso de Interpretação e Metodologia">
           ℹ️ Info
         </button>
@@ -176,26 +176,70 @@
             </div>
             <div class="info-modal-body">
               <div class="info-alert-box">
-                <strong>Aviso Obrigatório de Interpretação (Seção 10):</strong>
-                <p>Pequenas diferenças de pontuação entre municípios não representam necessariamente diferenças reais na atenção à saúde. O índice é analítico e experimental (<code>v0.8.0 (Fase 2 — Oncologia, Urgência & Infraestrutura CNES)</code>) e descreve as condições públicas do SUS no <em>território municipal e regional</em>, e não a avaliação isolada de equipes ou unidades hospitalares.</p>
+                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+                  <span style="font-size:1.15rem;">⚖️</span>
+                  <strong style="color:#854d0e; font-size:0.92rem;">Aviso Obrigatório de Interpretação (Seção 10):</strong>
+                </div>
+                <p style="margin:0; font-size:0.82rem; line-height:1.5; color:#713f12;">
+                  Pequenas diferenças de pontuação entre municípios não representam necessariamente diferenças reais na atenção à saúde. O índice é analítico e experimental (<strong>v0.8.1 — Imunização 6V + HPV, Oncologia, Urgência &amp; Infraestrutura CNES</strong>) e descreve as condições públicas do SUS no <em>território municipal e regional</em>, e não a avaliação isolada de equipes ou unidades hospitalares. É vedado o uso deste índice para fins punitivos ou descontextualizados.
+                </p>
               </div>
 
-              <div class="info-structure-box">
-                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 700; color: #1e293b;">Composição do Índice Sintético Consolidado (v0.8.0 (Fase 2 — Oncologia, Urgência & Infraestrutura CNES)):</h4>
-                <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.84rem; line-height: 1.6; color: #334155;">
-                  <li><strong>D1 — Resultados em Saúde da População (33,3%):</strong> Mortalidade Infantil suavizada (40%), Mortalidade Prematura 30–69a por DCNT suavizada (30%) e Mortalidade por Causas Evitáveis pelo SUS (30%) no triênio 2021–2023 por residência (SIM / SINASC / Censo 2022). Razão de Mortalidade Materna (2019–2023) exibida como informativa.</li>
-                  <li><strong>D2 — Atenção Primária e Prevenção (33,3%):</strong> Internações por Condições Sensíveis à APS — ICSAP (33,3%), Pré-Natal Adequado 7+ consultas no SINASC (33,3%) e Cobertura Vacinal Infantil Composta (Poliomielite, Pentavalente e Tríplice Viral D1 — 33,3%) no triênio 2021–2023.</li>
-                  <li><strong>D3 — Acesso e Capacidade Assistencial (33,3%):</strong> Leitos SUS na Região de Saúde ajustados pelo Fator de Distância Hospitalar <em>Golden Hour</em> (33,3%), Médicos + Enfermeiros padronizados por carga horária de 40h/sem (33,3%) e Cobertura da Estratégia Saúde da Família - eSF (33,3%) no triênio 2021–2023.</li>
-                  <li><strong>Normalização Relativa (P5–P95):</strong> Indicadores normalizados pelos percentis empíricos P5 e P95 da distribuição nacional observada, com análise de sensibilidade completa.</li>
-                  <li><strong>Dimensão 4 (Financiamento SIOPS deflacionado) e Camada Privada (ANS/CNES):</strong> Populados para os 5.570 municípios e exibidos separadamente fora da nota principal.</li>
-                  <li><strong>Dimensão 6 — Linha de Cuidado Oncológico &amp; CACON/UNACON (10% no Modelo Integrado):</strong> Avalia Agilidade e Cumprimento Efetivo da Lei dos 60 Dias sobre todos os diagnosticados (penalizando a fila oculta <code>TRATAMENTO=5</code>, Acórdão TCU 1.944/2019 — 30%), Diagnóstico Precoce auditado + Rastreamento APS (20%), Taxa de Conversão Terapêutica + Sobrevida Padronizada D1 (25%) e Autonomia Local TFD + Terapias de Ponta CNES (Imunoterapia, Terapia Alvo, IMRT, Cirurgia Oncológica, Onco Pediátrica e TMO — 25%).</li>
-                  <li><strong>Dimensão 5 — Urgência, SAMU 192 &amp; Fator de Distância <em>Golden Hour</em>:</strong> Combina prontidão imediata local (35%: base local de ambulância, UPA 24h/UTI móvel e leitos de estabilização) e rede regional descontada pela distância rodoviária até o Polo Hospitalar de Referência ($f_{dist} = \exp(-0,012 \cdot d_{km})$, 65%). Disponível como camada visualizável (0–100) e como modelo alternativo com 15% de peso (30% D1 + 25% D2 + 30% D3 + 15% D5).</li>
+              <!-- MODELOS DE CÁLCULO E PESOS -->
+              <div class="info-structure-box" style="margin-top:0.75rem; border-left:4px solid #0284c7; background:#f0f9ff;">
+                <h4 style="margin:0 0 0.45rem 0; font-size:0.95rem; font-weight:700; color:#0369a1;">
+                  📊 Os 3 Modelos de Cálculo &amp; Ponderações Oficiais:
+                </h4>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0.5rem; font-size:0.78rem;">
+                  <div style="background:#ffffff; border:1px solid #bae6fd; border-radius:6px; padding:0.5rem;">
+                    <strong style="color:#0369a1; display:block; margin-bottom:2px;">1. ⚖️ Padrão Oficial (3D)</strong>
+                    <span style="color:#0284c7; font-weight:700;">33,3% D1 + 33,3% D2 + 33,3% D3</span>
+                    <p style="font-size:0.72rem; color:#64748b; margin:4px 0 0 0;">Modelo tri-dimensional clássico pactuado, cobrindo Resultados, Atenção Primária e Capacidade Assistencial.</p>
+                  </div>
+                  <div style="background:#ffffff; border:1px solid #bae6fd; border-radius:6px; padding:0.5rem;">
+                    <strong style="color:#0369a1; display:block; margin-bottom:2px;">2. ⚡ Com Urgência (RUE)</strong>
+                    <span style="color:#0284c7; font-weight:700;">30% D1 + 25% D2 + 30% D3 + 15% D5</span>
+                    <p style="font-size:0.72rem; color:#64748b; margin:4px 0 0 0;">Integra a prontidão de socorro a infartos, traumas e AVCs com decaimento gravitacional Golden Hour.</p>
+                  </div>
+                  <div style="background:#ffffff; border:1.5px solid #d8b4fe; border-radius:6px; padding:0.5rem; background:#faf5ff;">
+                    <strong style="color:#6b21a8; display:block; margin-bottom:2px;">3. 🎗️⚡ Integrado Completo</strong>
+                    <span style="color:#7e22ce; font-weight:700;">25% D1 + 25% D2 + 25% D3 + 15% D5 + 10% Onco</span>
+                    <p style="font-size:0.72rem; color:#64748b; margin:4px 0 0 0;">Ponderação integral contemplando alta complexidade, acesso a CACON/UNACON e auditoria do câncer.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- DETALHAMENTO DAS DIMENSÕES -->
+              <div class="info-structure-box" style="margin-top:0.75rem;">
+                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 700; color: #1e293b;">Detalhamento das Dimensões Ativas no Índice:</h4>
+                <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.82rem; line-height: 1.6; color: #334155;">
+                  <li><strong>D1 — Resultados em Saúde da População (Peso 33,3% no 3D):</strong> Mortalidade Infantil suavizada por Empirical Bayes (40%), Mortalidade Prematura 30–69a por DCNT suavizada (30%) e Mortalidade por Causas Evitáveis pelo SUS (30%) corrigida por causas mal definidas e padronizada por idade (triênio 2021–2023 por residência / SIM + SINASC + Censo 2022). Razão de Mortalidade Materna (2019–2023) exibida como informativa.</li>
+                  <li><strong>D2 — Atenção Primária e Prevenção (Peso 33,3% no 3D):</strong> Internações por Condições Sensíveis à APS — ICSAP (33,3%), Pré-Natal Adequado 7+ consultas no SINASC (33,3%) e <strong>Cobertura Vacinal Infantil Composta por 6 Vacinas Estratégicas do 1º ano</strong> (Poliomielite, Pentavalente, Tríplice Viral D1, Pneumocócica 10, Meningocócica C e Rotavírus Humano — 33,3%) no triênio 2021–2023.</li>
+                  <li><strong>D3 — Acesso e Capacidade Assistencial (Peso 33,3% no 3D):</strong> Leitos SUS na Região de Saúde ponderados pela população SUS-dependente e ajustados pelo Fator de Distância Hospitalar <em>Golden Hour</em> (33,3%), Médicos + Enfermeiros padronizados por carga horária de 40h/sem (33,3%) e Cobertura da Estratégia Saúde da Família - eSF com complementaridade de APS (33,3%) no triênio 2021–2023.</li>
+                  <li><strong>D5 — Rede de Urgência, SAMU 192 &amp; Fator Golden Hour (15% nos modelos expandidos):</strong> Combina prontidão imediata local (35%: ambulâncias municipais USB/USA, UPAs 24h e leitos de estabilização) e capacidade regional descontada pela distância rodoviária real até o Polo Hospitalar de Referência ($f_{dist} = \exp(-0,012 \cdot d_{km})$, 65%). Base oficial DEMAS/SEIDIGI 2024.</li>
+                  <li><strong>D6 — Linha de Cuidado Oncológico &amp; CACON/UNACON (10% no modelo integrado):</strong> Cumprimento efetivo da Lei dos 60 Dias auditando a fila oculta (código 5 do SISCAN/POBR — 30%, Acórdão TCU 1.944/2019), Diagnóstico Precoce auditado + Rastreamento na APS (20%), Taxa de Conversão Terapêutica + Sobrevida Padronizada (25%) e Autonomia Local TFD + Terapias de Ponta CNES (Imunoterapia, Terapia Alvo, Radioterapia IMRT, Cirurgia Oncológica, Onco Pediátrica e TMO — 25%). Avaliada sob régua absoluta de calibração.</li>
                 </ul>
               </div>
 
-              <p style="font-size: 0.8125rem; color: var(--color-text-muted); margin: 0;">
-                Use a aba <strong>"⚖️ Comparar Cidades / Estados"</strong> para confrontar lado a lado quaisquer dois municípios ou estados brasileiros.
-              </p>
+              <!-- CAMADAS INFORMATIVAS (FORA DA NOTA) -->
+              <div class="info-structure-box" style="margin-top:0.75rem; border-left:4px solid #10b981; background:#f0fdf4;">
+                <h4 style="margin: 0 0 0.45rem 0; font-size: 0.95rem; font-weight: 700; color: #065f46;">
+                  🔍 Camadas Informativas &amp; Auditoria Territorial (Fora da Nota):
+                </h4>
+                <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.81rem; line-height: 1.55; color: #166534;">
+                  <li><strong>Destaque Vacinal HPV (9 a 14 anos):</strong> Dados oficiais do Ministério da Saúde / InfoMS / RNDS com segregação censitária entre 👧 <strong>Meninas</strong> e 👦 <strong>Meninos</strong> sob dose única frente à meta de 90%. As vacinas complementares (BCG, Hepatite A e Hepatite B) também são exibidas de forma informativa no card municipal.</li>
+                  <li><strong>Suporte Diagnóstico &amp; Infraestrutura CNES:</strong> Censo de equipamentos em uso no SUS (microdados CNES 12/2023): disponibilidade local de exames básicos (Raio-X, Ultrassom, ECG, Desfibrilador, Mamógrafo) e acesso regionalizado a exames avançados (Tomógrafo, Ressonância Magnética, Hemodinâmica e Endoscopia) com leitos cirúrgicos e UTI Adulto.</li>
+                  <li><strong>Dimensão 4 (Financiamento SIOPS):</strong> Despesa Total em Saúde per capita deflacionada e percentual de receita própria aplicada em saúde (EC 29).</li>
+                  <li><strong>Camada Privada (ANS / CNES):</strong> Taxa de cobertura de planos de saúde privados e leitos exclusivamente privados por 100k hab.</li>
+                </ul>
+              </div>
+
+              <div style="margin-top:0.75rem; padding:0.5rem 0.75rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; font-size:0.78rem; color:#475569; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                <span>💡 <em>Consulte a aba <strong>"📐 Como é Calculado"</strong> para ver todas as equações, tabelas de pesos e testes estatísticos.</em></span>
+                <button onclick="document.querySelector('[data-view=\'metodologia\']')?.click(); document.getElementById('btn-close-info')?.click();" class="badge badge--quality-high" style="border:none; cursor:pointer; padding:4px 8px;">
+                  Ir para Como é Calculado ↗
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -219,6 +263,7 @@
         <!-- GAVETA LATERAL DO MUNICÍPIO (DRAWER) -->
         <div id="drawer-backdrop" class="drawer-backdrop"></div>
         <aside id="municipio-drawer" class="municipio-drawer" aria-labelledby="drawer-mun-title" role="dialog" aria-modal="true">
+          <div class="drawer-drag-handle" aria-hidden="true" title="Arraste para fechar"></div>
           <div class="drawer-header">
             <div>
               <h2 id="drawer-mun-title" class="drawer-mun-title">Selecione um Município</h2>
@@ -290,6 +335,6 @@
   </script>
 
   <!-- Script Principal da Aplicação com Cache-Buster -->
-  <script type="module" src="assets/js/app.js?v=0.8.0"></script>
+  <script type="module" src="assets/js/app.js?v=0.8.1"></script>
 </body>
 </html>

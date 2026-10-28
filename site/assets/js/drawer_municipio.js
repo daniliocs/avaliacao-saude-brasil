@@ -8,7 +8,7 @@
  * - D4 (Contexto) e Camada Privada exibidos em blocos separados fora da nota (DEC-001).
  */
 
-import { renderAuditBadge } from "./audit_badge.js?v=0.8.0";
+import { renderAuditBadge } from "./audit_badge.js?v=0.8.1";
 
 let metaConfigCache = null;
 let currentDrawerMunicipio = null;
@@ -24,8 +24,10 @@ export function refreshDrawerIndexMode(indexMode) {
 
 export function initDrawer(metaConfig) {
     metaConfigCache = metaConfig;
+    const drawer = document.getElementById("municipio-drawer");
     const backdrop = document.getElementById("drawer-backdrop");
     const btnClose = document.getElementById("btn-close-drawer");
+    const dragHandle = drawer ? drawer.querySelector(".drawer-drag-handle") : null;
 
     if (backdrop) {
         backdrop.addEventListener("click", closeDrawer);
@@ -33,12 +35,56 @@ export function initDrawer(metaConfig) {
     if (btnClose) {
         btnClose.addEventListener("click", closeDrawer);
     }
+    if (dragHandle) {
+        dragHandle.addEventListener("click", closeDrawer);
+    }
 
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
             closeDrawer();
         }
     });
+
+    // Gestos de Toque (Mobile / Tablet / Telas Verticais):
+    // Swipe-down fecha no modo bottom-sheet (mobile); Swipe-right fecha no modo lateral (desktop)
+    if (drawer) {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+
+        drawer.addEventListener("touchstart", (e) => {
+            if (!e.changedTouches || e.changedTouches.length === 0) return;
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+            touchStartTime = Date.now();
+        }, { passive: true });
+
+        drawer.addEventListener("touchend", (e) => {
+            if (!e.changedTouches || e.changedTouches.length === 0) return;
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            const elapsed = Date.now() - touchStartTime;
+
+            const isMobile = window.innerWidth <= 768;
+            const drawerBody = drawer.querySelector(".drawer-body");
+            const atTop = !drawerBody || drawerBody.scrollTop <= 8;
+
+            if (isMobile) {
+                // Modo Bottom Sheet: arrastar para baixo fecha se estiver no topo ou iniciado no cabeçalho/alça
+                const targetIsHeaderOrHandle = e.target.closest(".drawer-header") || e.target.closest(".drawer-drag-handle");
+                if ((targetIsHeaderOrHandle || atTop) && deltaY > 60 && deltaY > Math.abs(deltaX) * 1.1) {
+                    closeDrawer();
+                }
+            } else {
+                // Modo Lateral Desktop: arrastar para a direita fecha
+                if (deltaX > 75 && deltaX > Math.abs(deltaY) * 1.2) {
+                    closeDrawer();
+                }
+            }
+        }, { passive: true });
+    }
 }
 
 export function openDrawer(municipioData, indexMode = null) {

@@ -164,6 +164,41 @@ export function renderDownloadsView(metaBuild) {
                                 <td>Qualidade</td>
                                 <td>Quality Gates</td>
                             </tr>
+                            <tr>
+                                <td><code>d5_nota</code></td>
+                                <td>Float (0–100)</td>
+                                <td>Escore sintético da Dimensão 5 (Rede de Urgência, UPAs e SAMU 192)</td>
+                                <td>D5</td>
+                                <td>DEMAS/MS / CNES</td>
+                            </tr>
+                            <tr>
+                                <td><code>nota_com_urgencia</code></td>
+                                <td>Float (0–100)</td>
+                                <td>Nota sintética Modelo 2 (Padrão 3D + 15% Dimensão 5 de Urgência)</td>
+                                <td>Índice RUE</td>
+                                <td>Cálculo próprio</td>
+                            </tr>
+                            <tr>
+                                <td><code>escore_oncologia</code></td>
+                                <td>Float (0–100)</td>
+                                <td>Escore sintético da Linha de Cuidado Oncológico &amp; CACON/UNACON</td>
+                                <td>D6</td>
+                                <td>Painel-Oncologia / INCA</td>
+                            </tr>
+                            <tr>
+                                <td><code>nota_integrada</code></td>
+                                <td>Float (0–100)</td>
+                                <td>Nota sintética Modelo 3 Integrado (D1 25% + D2 25% + D3 25% + D5 15% + D6 10%)</td>
+                                <td>Índice Integrado</td>
+                                <td>Cálculo próprio</td>
+                            </tr>
+                            <tr>
+                                <td><code>detalhes_vacinas</code></td>
+                                <td>Object (JSON)</td>
+                                <td>Coberturas individuais das 6 vacinas do 1º ano, BCG, Hepatites A/B e HPV segregado por sexo</td>
+                                <td>D2 / Informativo</td>
+                                <td>SI-PNI / DataSUS</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

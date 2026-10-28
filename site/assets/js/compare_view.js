@@ -8,7 +8,7 @@
  *      D1, D2, D3, mediana de TMI, gasto SIOPS, planos privados e Top 5 municípios de cada UF.
  */
 
-import { openDrawer } from "./drawer_municipio.js?v=0.8.0";
+import { openDrawer } from "./drawer_municipio.js?v=0.8.1";
 
 let mapaResumoRef = {};
 let rankingsRef = {};
@@ -27,7 +27,7 @@ const INDICADORES_META = [
     { id: "D1.4", nome: "D1.4 — Mortalidade por Causas Evitáveis", unidade: "óbitos / 100k hab", sentido: "menor_melhor", dim: "D1" },
     { id: "D2.1", nome: "D2.1 — Internações Sensíveis à APS (ICSAP)", unidade: "int. / 10k hab", sentido: "menor_melhor", dim: "D2" },
     { id: "D2.2", nome: "D2.2 — Pré-natal Adequado (7+ consultas)", unidade: "%", sentido: "maior_melhor", dim: "D2" },
-    { id: "D2.3", nome: "D2.3 — Cobertura Vacinal Composta (Pólio/Penta/TV)", unidade: "%", sentido: "maior_melhor", dim: "D2" },
+    { id: "D2.3", nome: "D2.3 — Cobertura Vacinal Composta (6 Vacinas do 1º ano)", unidade: "%", sentido: "maior_melhor", dim: "D2" },
     { id: "D3.1", nome: "D3.1 — Leitos SUS na Região de Saúde", unidade: "leitos / 100k hab", sentido: "maior_melhor", dim: "D3" },
     { id: "D3.2", nome: "D3.2 — Médicos + Enfermeiros (40h/sem)", unidade: "prof. / 1.000 hab", sentido: "maior_melhor", dim: "D3" },
     { id: "D3.3", nome: "D3.3 — Cobertura Estratégia Saúde da Família (eSF)", unidade: "%", sentido: "maior_melhor", dim: "D3" }
@@ -208,6 +208,48 @@ function renderMunicipiosComparison() {
             </tr>
         `;
     }).join("");
+
+    // Cobertura Vacinal Detalhada (6 Vacinas do 1º ano + Informativas + HPV Meninas/Meninos)
+    const vacA = munA.detalhes_vacinas || {};
+    const vacB = munB.detalhes_vacinas || {};
+
+    const vacRows = [
+        { nome: "VAC.1 — D2.3 Composta (Penta/Pólio/Pneumo/Meningo/Rota/FA)", unid: "%", vA: vacA.cob_vac_composta, vB: vacB.cob_vac_composta, digits: 1, sentido: "maior_melhor" },
+        { nome: "VAC.2 — Poliomielite / VIP (Paralisia Infantil)", unid: "%", vA: vacA.polio, vB: vacB.polio, digits: 1, sentido: "maior_melhor" },
+        { nome: "VAC.3 — Pentavalente (DTP / Hepatite B / Hib)", unid: "%", vA: vacA.penta, vB: vacB.penta, digits: 1, sentido: "maior_melhor" },
+        { nome: "VAC.4 — Pneumocócica 10-valente (Pneumonia/Meningite)", unid: "%", vA: vacA.pneumo, vB: vacB.pneumo, digits: 1, sentido: "maior_melhor" },
+        { nome: "VAC.5 — Meningocócica C Conjugada", unid: "%", vA: vacA.menin, vB: vacB.menin, digits: 1, sentido: "maior_melhor" },
+        { nome: "VAC.6 — Rotavírus Humano", unid: "%", vA: vacA.rota, vB: vacB.rota, digits: 1, sentido: "maior_melhor" },
+        { nome: "VAC.7 — Tríplice Viral D1 (Sarampo, Caxumba, Rubéola)", unid: "%", vA: vacA.tvd1, vB: vacB.tvd1, digits: 1, sentido: "maior_melhor" },
+        { nome: "VAC.INFO.1 — BCG (Tuberculose — Informativo)", unid: "%", vA: vacA.bcg, vB: vacB.bcg, digits: 1, sentido: "maior_melhor" },
+        { nome: "VAC.INFO.2 — Hepatite A (Informativo)", unid: "%", vA: vacA.hepa, vB: vacB.hepa, digits: 1, sentido: "maior_melhor" },
+        { nome: "VAC.INFO.3 — Hepatite B até 30 dias (Informativo)", unid: "%", vA: vacA.hepb, vB: vacB.hepb, digits: 1, sentido: "maior_melhor" },
+        { nome: "HPV.1 — HPV em Meninas (9–14 anos — Informativo)", unid: "%", vA: vacA.hpv_meninas, vB: vacB.hpv_meninas, digits: 1, sentido: "maior_melhor" },
+        { nome: "HPV.2 — HPV em Meninos (9–14 anos — Informativo)", unid: "%", vA: vacA.hpv_meninos, vB: vacB.hpv_meninos, digits: 1, sentido: "maior_melhor" },
+        { nome: "HPV.3 — HPV Cobertura Consolidada (Meninas + Meninos)", unid: "%", vA: vacA.hpv_total, vB: vacB.hpv_total, digits: 1, sentido: "maior_melhor" }
+    ];
+
+    const vacRowsHtml = `
+        <tr style="background:#f0fdf4;">
+            <td colspan="3" style="text-align:center; color:#15803d; font-weight:700; padding:0.45rem; font-size:0.84rem;">
+                🛡️ Cobertura Vacinal Detalhada &amp; HPV Adolescente (PNI / DataSUS 2021–2023)
+            </td>
+        </tr>
+        ${vacRows.map(r => {
+            const aOk = typeof r.vA === "number" && !isNaN(r.vA);
+            const bOk = typeof r.vB === "number" && !isNaN(r.vB);
+            const winA = aOk && bOk && (r.sentido === "menor_melhor" ? r.vA < r.vB : r.vA > r.vB);
+            const winB = aOk && bOk && (r.sentido === "menor_melhor" ? r.vB < r.vA : r.vB > r.vA);
+
+            return `
+                <tr>
+                    <td style="text-align:right; font-weight:600; ${winA ? 'background:#f0fdf4;' : ''}">${fmtNum(r.vA, r.digits)} <small style="color:var(--color-text-subtle);">${r.unid}</small></td>
+                    <td style="text-align:center; background:#f8fafc; font-weight:600; font-size:0.82rem;">${r.nome}</td>
+                    <td style="text-align:left; font-weight:600; ${winB ? 'background:#f0fdf4;' : ''}">${fmtNum(r.vB, r.digits)} <small style="color:var(--color-text-subtle);">${r.unid}</small></td>
+                </tr>
+            `;
+        }).join("")}
+    `;
 
     // Dimensão 5: Urgência e SAMU 192 (DEMAS/MS)
     const urgA = munA.urgencia_samu || {};
@@ -589,6 +631,7 @@ function renderMunicipiosComparison() {
                     </thead>
                     <tbody>
                         ${indRowsHtml}
+                        ${vacRowsHtml}
                         ${urgRowsHtml}
                         ${oncoRowsHtml}
                         ${ctxRowsHtml}

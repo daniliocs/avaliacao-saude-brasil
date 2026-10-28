@@ -9,8 +9,8 @@
  * - Modal de Rankings com 4 escopos separados: Top 100 Brasil, Por Estado (isolado), 27 Estados e 27 Capitais
  */
 
-import { openDrawer, refreshDrawerIndexMode } from "./drawer_municipio.js?v=0.8.0";
-import { updateCompareData } from "./compare_view.js?v=0.8.0";
+import { openDrawer, refreshDrawerIndexMode } from "./drawer_municipio.js?v=0.8.1";
+import { updateCompareData } from "./compare_view.js?v=0.8.1";
 
 let leafletMap = null;
 let canvasRenderer = null;

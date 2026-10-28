@@ -1658,34 +1658,515 @@ details.dim-accordion[open] summary.dim-summary::after {
 }
 
 /* Responsividade Mobile-First */
-@media (max-width: 768px) {
+/* ==========================================================================
+   Responsividade, Telas Verticais e Otimizações de Toque (Mobile / Tablet)
+   v0.8.1 - Adaptação Completa para Celulares, Tablets e Gestos de Toque
+   ========================================================================== */
+
+/* Melhorias Globais de Ergonomia e Toque */
+button, input, select, a, .nav-tab, .layer-btn, .index-mode-btn, .marker-mode-btn, .btn-ranking-toggle, .btn-expand-toolbar {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(2, 132, 199, 0.15);
+}
+
+/* Base da Alça de Arraste da Gaveta */
+.drawer-drag-handle {
+  display: none;
+}
+
+/* ==========================================================================
+   TABLETS EM MODO RETRATO E TELAS INTERMEDIÁRIAS (769px a 1024px)
+   ========================================================================== */
+@media (min-width: 769px) and (max-width: 1024px) {
   .header-container {
-    flex-direction: column;
-    align-items: stretch;
+    padding: 0.65rem 1rem;
+    gap: 0.6rem;
   }
 
-  .main-nav {
-    justify-content: flex-start;
+  .municipio-drawer {
+    width: 480px;
+    max-width: 50vw;
   }
 
   .map-toolbar {
+    padding: 0.4rem 0.85rem;
+    gap: 0.4rem;
+  }
+
+  .search-box {
+    min-width: 220px;
+    max-width: 280px;
+  }
+
+  .info-modal-content, .rankings-modal-content {
+    max-width: 88vw;
+  }
+}
+
+/* ==========================================================================
+   SMARTPHONES E TELAS VERTICAIS (<= 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Prevenção de Zoom Indesejado no iOS Safari (Inputs com font-size >= 16px) */
+  input[type="text"],
+  input[type="search"],
+  select,
+  .search-input,
+  .filter-select {
+    font-size: 16px !important;
+  }
+
+  /* Cabeçalho da Aplicação */
+  .header-container {
     flex-direction: column;
     align-items: stretch;
+    padding: 0.5rem 0.75rem;
+    gap: 0.45rem;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .header-title {
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+
+  /* Navegação Horizontal Deslizável (Touch Swipe) */
+  .main-nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0.4rem;
+    width: 100%;
+    padding: 0.2rem 0;
+    margin: 0;
+  }
+
+  .main-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-tab {
+    flex-shrink: 0;
+    min-height: 42px;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.82rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  /* Barra de Ferramentas do Mapa */
+  .map-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.5rem 0.75rem;
+    gap: 0.45rem;
   }
 
   .search-box {
     max-width: 100%;
+    width: 100%;
+    min-width: 100%;
   }
 
+  .search-input {
+    height: 42px;
+    border-radius: var(--radius-md);
+    padding-left: 2.25rem;
+  }
+
+  .search-results-dropdown {
+    max-height: 240px;
+    font-size: 0.85rem;
+  }
+
+  .filters-group {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 0.45rem;
+  }
+
+  .filter-select {
+    width: 100%;
+    height: 40px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Grupos de Seleção com Rolagem Horizontal Suave (Chips) */
+  .layer-selector,
+  .index-mode-selector,
+  .marker-mode-selector {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    width: 100%;
+    gap: 0.35rem;
+    padding: 0.25rem 0;
+  }
+
+  .layer-selector::-webkit-scrollbar,
+  .index-mode-selector::-webkit-scrollbar,
+  .marker-mode-selector::-webkit-scrollbar {
+    display: none;
+  }
+
+  .layer-btn,
+  .index-mode-btn,
+  .marker-mode-btn {
+    flex-shrink: 0;
+    min-height: 40px;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.78rem;
+    border-radius: 20px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-ranking-toggle,
+  .btn-expand-toolbar {
+    width: 100%;
+    min-height: 42px;
+    font-size: 0.85rem;
+    border-radius: var(--radius-sm);
+    justify-content: center;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Canvas do Mapa Leaflet em Telas Verticais */
+  #leaflet-map {
+    height: calc(100dvh - 165px);
+    min-height: 380px;
+  }
+
+  /* Controles Leaflet para Toque (Zoom maior e mais espaçado) */
+  .leaflet-control-zoom {
+    margin-right: 12px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .leaflet-control-zoom a {
+    width: 42px !important;
+    height: 42px !important;
+    line-height: 42px !important;
+    font-size: 20px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Legenda do Mapa Compacta em Telas Verticais */
+  .map-legend {
+    bottom: 12px;
+    left: 8px;
+    max-width: 195px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.72rem;
+  }
+
+  .legend-header {
+    margin-bottom: 0.25rem;
+  }
+
+  .legend-item {
+    font-size: 0.7rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .legend-swatch {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* ========================================================================
+     GAVETA MUNICIPAL (BOTTOM SHEET NATIVO NO MOBILE)
+     ======================================================================== */
   .municipio-drawer {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
     max-width: 100%;
+    height: 86vh;
+    max-height: 86vh;
+    border-radius: 22px 22px 0 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 -12px 35px rgba(0, 0, 0, 0.3);
+    transform: translateY(105%);
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    overscroll-behavior: contain;
+    z-index: 1250;
   }
 
+  .municipio-drawer.active {
+    transform: translateY(0);
+  }
+
+  /* Alça Superior para Fechamento por Toque / Swipe */
+  .drawer-drag-handle {
+    display: block;
+    width: 48px;
+    height: 5px;
+    background-color: #cbd5e1;
+    border-radius: 3px;
+    margin: 10px auto 4px auto;
+    cursor: grab;
+    touch-action: none;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+  }
+
+  .drawer-drag-handle:active {
+    background-color: #94a3b8;
+    cursor: grabbing;
+  }
+
+  .drawer-header {
+    padding: 0.75rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .drawer-mun-title {
+    font-size: 1.2rem;
+    line-height: 1.25;
+  }
+
+  .btn-close-drawer {
+    width: 44px;
+    height: 44px;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+
+  .drawer-body {
+    padding: 0.85rem 1rem 3rem 1rem;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Grades Internas da Gaveta em Coluna Única */
   .dimensions-trio-grid {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 
   .audit-card__metrics {
     grid-template-columns: 1fr;
+    gap: 0.5rem;
   }
+
+  .vacinas-card__grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  /* ========================================================================
+     MODAIS RESPONSIVOS (INFO & RANKINGS)
+     ======================================================================== */
+  .info-modal,
+  .rankings-modal {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .info-modal-content,
+  .rankings-modal-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 20px 20px 0 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .info-modal-header,
+  .rankings-modal-header {
+    padding: 0.85rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .btn-close-modal {
+    width: 44px;
+    height: 44px;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+
+  .info-modal-body,
+  .rankings-modal-body {
+    padding: 0.85rem 1rem 2.5rem 1rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .info-models-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* ========================================================================
+     COMPARADOR LADO A LADO EM TELAS VERTICAIS
+     ======================================================================== */
+  .compare-selectors-grid {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+
+  #btn-swap-mun {
+    width: 100%;
+    min-height: 40px;
+    margin: 0.2rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .compare-cards-duo {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .compare-metric-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+  }
+
+  .compare-center-label {
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.82rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .compare-side {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .compare-side--left {
+    flex-direction: row-reverse;
+  }
+
+  .compare-side--right {
+    flex-direction: row;
+  }
+
+  .compare-bar-track {
+    width: 100%;
+  }
+
+  /* Tabelas com Rolagem Horizontal Suave e Fluida */
+  .sources-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    margin-bottom: 1rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .data-table {
+    min-width: 580px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.45rem 0.6rem;
+    font-size: 0.78rem;
+  }
+
+  /* Vistas de Conteúdo (Metodologia, Fontes, Downloads) */
+  .page-container {
+    padding: 0.85rem 0.75rem 3rem 0.75rem;
+  }
+
+  .page-title {
+    font-size: 1.35rem;
+  }
+
+  .page-lead {
+    font-size: 0.85rem;
+  }
+
+  .content-section {
+    padding: 1rem 0.85rem;
+  }
+}
+
+/* ==========================================================================
+   SMARTPHONES PEQUENOS (< 480px)
+   ========================================================================== */
+@media (max-width: 480px) {
+  .header-title {
+    font-size: 1.02rem;
+  }
+
+  .brand-badge {
+    font-size: 0.68rem;
+    padding: 0.15rem 0.45rem;
+  }
+
+  .nav-tab {
+    font-size: 0.76rem;
+    padding: 0.35rem 0.65rem;
+  }
+
+  .layer-btn,
+  .index-mode-btn,
+  .marker-mode-btn {
+    font-size: 0.74rem;
+    padding: 0.35rem 0.65rem;
+  }
+
+  .municipio-drawer {
+    height: 90vh;
+    max-height: 90vh;
+  }
+
+  .drawer-mun-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* Drawer drag handle (hidden on desktop, active on mobile bottom-sheet) */
+.drawer-drag-handle {
+  display: none;
 }
