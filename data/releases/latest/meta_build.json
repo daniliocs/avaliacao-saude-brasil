@@ -1,5 +1,5 @@
 {
-  "build_timestamp": "2026-10-28T15:40:13.782668+00:00",
+  "build_timestamp": "2026-11-22T04:21:07.591822+00:00",
   "versao_metodologia": "v0.8.1",
   "status_metodologia": "Experimental — Normalização Relativa por Percentis (P5–P95)",
   "regras_inegociaveis": [
@@ -1557,24 +1557,24 @@
   },
   "manifesto_hashes": {
     "config/metodologia_versao.txt": {
-      "sha256": "fb27c91c511073ae52f0ef3034acd36a88912826015f6163f590019eddb12dc8",
-      "bytes": 12
+      "sha256": "c7fbe27613f6765debfd08a3b9ead1acdcfa45fbfa0eb281476170763d9fd61e",
+      "bytes": 7
     },
     "config/indicadores.yaml": {
-      "sha256": "309f90d483d8f2a3aa0c8f51b372fbc65bf13f5156301ff98efd0e4943380693",
-      "bytes": 9048
+      "sha256": "2e4d1cb8f66eab996126dbad20bf3824fedd1a8d6bb47c3fdae2381bee8fbb28",
+      "bytes": 9205
     },
     "config/pesos.yaml": {
       "sha256": "345078349d0ad3fb0b80f9a4a94e29cc36d920854ebc735e7d31aa4a09e728a2",
       "bytes": 2409
     },
     "config/limites_referencia.yaml": {
-      "sha256": "3be4bbc5b062977fa1293223c68cd4a362403e2f7b40f84fdf197cb98eeb7df2",
-      "bytes": 3690
+      "sha256": "7c32188ff1e008cebc4b66bcb4c57465c3cfe22093755d74866141225ebf3a7a",
+      "bytes": 3885
     },
     "config/limites_calculados.json": {
-      "sha256": "4079a08525c1178b8444da7a76b38c49a3c2c31d0db6e64b9f7480293de9b9f2",
-      "bytes": 2574
+      "sha256": "062c2a4ca3a3e82e89a1236e47dd06c8c470a65efa6caeb61c3b3dc81d480ff1",
+      "bytes": 2406
     },
     "config/janelas.yaml": {
       "sha256": "320a5366f3a901f07f7a1e618ee355920bae8584068cc42d9bf68b511849d30f",
@@ -1585,28 +1585,28 @@
       "bytes": 652
     },
     "sources/registry.yaml": {
-      "sha256": "5987650133657644e29f24a3f1d84d8b4132db5f999386046a9a64b827d86861",
-      "bytes": 11865
+      "sha256": "1910fc6723b69f9f2b8427be41e08a4398ec7ef6e1cd386a277dbb8400d46862",
+      "bytes": 12015
     },
     "data/processed/dim_municipio.parquet": {
-      "sha256": "e0d492ed7dbca5d56355f8b6c7be0ea42b54514c394f6631df8ded433bfb87fd",
-      "bytes": 202659
+      "sha256": "23c03f8181f27e8eb83076a3adb279418bc320923d34b908fdaeac440489275b",
+      "bytes": 202547
     },
     "data/processed/serie_anual_sim_sinasc.parquet": {
       "sha256": "1fd7d0a5d2a5ccae3c66206464b6962f4dd5f63f6b93b65207906b7ed45ce357",
       "bytes": 399472
     },
     "data/processed/indicadores_sim_sinasc.parquet": {
-      "sha256": "81fa82304ec18462d9e60f9ba2e57cdb1a389073443610299f2c64fee745850b",
-      "bytes": 925469
+      "sha256": "e356578a33494b505292ddf7e12a6fc52643616579e5d11d6841e4fe2088d608",
+      "bytes": 989104
     },
     "data/processed/indice_saude_municipal.parquet": {
-      "sha256": "bec8f051b21ad57dbede46e661cb832f0d84446c79c9cece36c2dc96550d7c81",
-      "bytes": 2406622
+      "sha256": "03478def7cb55098e5252accf512a7dd7a31e7ea646d8bad2794c45852f6d0e4",
+      "bytes": 3818507
     },
     "data/processed/relatorio_comparacao_fontes.json": {
-      "sha256": "feb374256a98e34e2479a7fb9bd408bdee3ca34f00099627e54486bf8cdbd06c",
-      "bytes": 5891
+      "sha256": "0a5f53fedf1cc52adc12804bdab9196cd8fc0d0da8d1f2b9b3f0fa11896bfd5a",
+      "bytes": 5688
     }
   }
 }
